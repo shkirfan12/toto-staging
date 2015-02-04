@@ -1,0 +1,111 @@
+<?php
+$result = $this->userinfo;
+$state = $this->state;
+//print_r($result); die;
+error_reporting(0);
+?>
+
+
+<script>
+  $(document).ready(function(){
+      $("#submtfrm").click(function(e){
+          var fname = $("#edit_fname").val();
+        var lname = $("#edit_lname").val();
+        var mail = $("#edit_email").val();
+        var type = $("#utype").val();
+        var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/; 
+       if(fname==''){
+            alert("Please Enter First name");
+            return false;
+        }else if(lname==''){
+            alert("Please Enter Last name");
+            return false;
+        } else if(mail=='') {
+            alert("Please Enter Your Email");
+            return false; 
+              }else if(reg.test(mail) == false)  {
+            alert('Invalid Email');
+            return false;    
+        }
+       
+//        else if (mail !=''){
+//            $.ajax({
+//                type:"POST",
+//                data: "mail="+mail,
+//                url: '/admin/user-management/checkmail',
+//                success: function(response){
+//                    if(response == 1){
+//                        alert("username already exist");
+//                        return false;
+//                    } 
+                    else{
+                        $("#editForm").submit();
+                    }
+//                     }
+//            });
+//             } 
+//      
+     
+      });
+      $(".modal_close").click(function(){
+            $("#edit").fadeOut();
+       });
+
+            
+    });
+    </script>
+<div id="edit">
+       <form id="editForm" name="editForm" method="post" action="/admin/user-management/updateuser" enctype="multipart/form-data"> 
+            <div class="overlay-block">
+                <p class="title">User Account Management</p>
+                <a href="#" class="modal_close"></a>
+                <div>
+                    <p>
+                        <input type="hidden" id="editId" name="editId" value="<?php echo $result['user_id']; ?>"></input> 
+                        <label>First Name</label>
+                        <input type="text" id="edit_fname" name="edit_fname"  value="<?php echo $result['fname']; ?>" />
+                    </p>
+                     <p>
+                        <label>Last Name</label>
+                        <input type="text" id="edit_lname" name="edit_lname"  value="<?php echo $result['lname']; ?>"/>
+                    </p>
+<!--                     <p>
+                        <label>Password</label>
+                        <input type="password" id="edit_password" name="edit_password"  value="<?php echo $result['password']; ?>"  />
+                    </p>-->
+                    <p>
+                        <label>Email</label>
+                        <input type="text" id="edit_email" name="edit_email"  value="<?php echo $result['email_id']; ?>" />
+                    </p>
+                     <p>
+                        <label>User type</label>
+                        <select class="styled" id="utype" name="edit_utype">
+                            <option value="select">Select</option> 
+                        <?php 
+                            $utype = array('Admin','Manager','Consumer','Home Owner','Architect','Designer','Engineer-Mechanical','Engineer-Electrical','Engineer-Plumbing','Contractor-Home Builder','Contractor-Commercial','Contractor-Electrician','Contractor-Plumber','Contractor-Remodeler','Consultant','Facility Manager','Building Product Manufacturer Representative');
+                            foreach ($utype as $key => $value){?>
+                               <option value="<?php echo $value; ?>" <?php if($value == $result['profileType']){ echo "selected='selected'"; }?>><?php echo $value; ?></option>
+                            <?php }
+                        ?>         
+                        </select>
+                     </p>
+                     <p>
+                        <label>state</label> 
+                         <select class="styled" id="edit_state" name="edit_state">
+                            <option value="select">Select</option> 
+                        <?php 
+//                            $utype = array('Admin','Manager','Consumer','Home Owner','Architect','Designer','Engineer-Mechanical','Engineer-Electrical','Engineer-Plumbing','Contractor-Home Builder','Contractor-Commercial','Contractor-Electrician','Contractor-Plumber','Contractor-Remodeler','Consultant','Facility Manager','Building Product Manufacturer Representative');
+                             foreach ($state as $val){?>
+                               <option  <?php if($result['state_id'] == $val['state_id']){ echo "selected='selected'"; }?> value="<?php echo $val['state_id']; ?>"><?php echo $val['state']; ?></option>
+                         
+                            <?php }
+                        ?>   
+                        </select>
+                     </p>
+                    <p>
+                        <a id="submtfrm" class="save-changes" href="#"><img src="<?php echo $this->baseUrl(); ?>/images/save.png" alt="save changes" /></a>
+                    </p>
+                </div>
+            </div>
+       </form>
+        </div>

@@ -1,0 +1,103 @@
+<?php
+           $result=$this->clientinfo;
+//           print_r($result); die;
+            ?>
+
+
+<script>
+  $(document).ready(function(){
+      $("#submtfrm").click(function(e){
+      $("#editForm").submit();
+     
+      });
+      $(".modal_close").click(function(){
+            $("#edit").fadeOut();
+       });
+  });
+    </script>
+<div id="edit">
+       <form id="editForm" name="editForm" method="post" action="/admin/User-Management/updateclient" enctype="multipart/form-data"> 
+            <div class="overlay-block">
+                <p class="title">Client Account Management</p>
+                <a href="#" class="modal_close"></a>
+                <div>
+                    <p>
+                        <input type="hidden" id="editId" name="editId" value="<?php echo $result['client_id']; ?>"></input> 
+                        <label>Client Name</label>
+                        <input type="text" id="edit_cname" name="edit_cname"  value="<?php echo $result['client_name']; ?>" />
+                    </p>
+                     <p>
+                        <label>Payment Status</label>
+                        <select class="styled" id="edit_payment" name="edit_payment">
+                              <option
+                                <?php 
+                       if($result['payment_status']== 'Paid')
+                       {
+                            echo "selected"; 
+                       }
+                           
+                       ?> value="Paid">Paid</option>
+                              
+                              <option
+                                <?php 
+                       if($result['payment_status']== 'Pending')
+                       {
+                            echo "selected"; 
+                       }
+                           
+                       ?> value="Pending">Pending</option>
+                              
+                               <option
+                                <?php 
+                       if($result['payment_status']== 'Canceled')
+                       {
+                            echo "selected"; 
+                       }
+                           
+                       ?> value="Canceled">Canceled</option>
+                        </select>
+                    </p>
+
+                    <p>
+                        <label>Launch Status</label>
+                       <select class="styled" id="edit_status" name="edit_status">
+                              <option
+                                <?php 
+                       if($result['launch_status']== 'Live')
+                       {
+                            echo "selected"; 
+                       }
+                           
+                       ?> value="Live">Live</option>
+                              
+                              <option
+                                <?php 
+                       if($result['launch_status']== 'Staging')
+                       {
+                            echo "selected"; 
+                       }
+                           
+                       ?> value="Staging">Staging</option>
+                              
+                               <option
+                                <?php 
+                       if($result['launch_status']== 'Inactive')
+                       {
+                            echo "selected"; 
+                       }
+                           
+                       ?> value="Inactive">Inactive</option>
+                        </select>
+                    </p>
+                   
+                    <p>
+                      <label>Site Address</label>  
+                      <input type="text" id="address" name="address" value="<?php echo $result['site_address'];  ?>" />
+                    </p>
+                    <p>
+                        <a id="submtfrm" class="save-changes" href="#"><img src="<?php echo $this->baseUrl(); ?>/images/save.png" alt="save changes" /></a>
+                    </p>
+                </div>
+            </div>
+       </form>
+        </div>

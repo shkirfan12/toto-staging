@@ -1,0 +1,116 @@
+<?php
+$query = explode("/", $_SERVER['HTTP_REFERER']); 
+$pid = end($query);
+?>
+<!-- CSS -->
+<link rel="stylesheet" href="/uploadifyit/uploadify.css" type="text/css" />
+
+<!-- Javascript -->
+<script type="text/javascript" src="/uploadifyit/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="/uploadifyit/swfobject.js"></script>
+<script type="text/javascript" src="/uploadifyit/jquery.uploadify.v2.1.4.min.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function() {
+        var pid = '<?php echo $pid; ?>';
+	//alert('I am ready to use uploadify!');
+	$("#file_upload").uploadify({
+		'uploader': '/uploadifyit/uploadify.swf',
+		'script': '/uploadifyit/uploadify.php',
+		'cancelImg': '/uploadifyit/cancel.png',
+		'folder': '/batchUpload/',
+		'auto': false, // use for auto upload
+		'multi': true,
+                'method' : 'POST',
+                'scriptData': {'pid':pid}, //you can post the id here
+             //  'height'  : 20, // The height of the flash button
+		//'width' : 70, // The width of the flash button
+                'buttonText':'Select files',
+                'fileExt':'*.jpg;*.png;*.gif;*.bmp;*.jpeg;',
+                'fileDesc'    : 'Batch-Upload Files',
+                /*'onError'      : function(errorType) {
+                    alert('The error was: ' + errorType);
+                }*/ 
+                'onError' : function(event, ID, fileObj, errorObj) {
+                    alert(errorObj.type+"::"+errorObj.info);
+                }
+	});
+        
+});
+
+</script>
+
+
+<style>
+    table td{
+         padding-left: 12px;
+    text-align: left;
+    }
+   
+    </style>
+<div class="batchupload">
+    <form id="uploadcsv" action="/admin/product-management/batch-upload" method="post" enctype="multipart/form-data" height="10px">
+        <div class="title-login" style="margin-left:65x;font-weight: bold;font-size: 16px;margin-bottom: 10px;" >Batch Upload Images</div>
+        <div class=col300">
+            <p align="right" style="margin-left:65x;font-weight: bold;font-size: 14px;margin-bottom: 10px;" > <a href="javascript:$('#file_upload').uploadifyUpload();">Upload File</a> |  <a href="javascript:$('#file_upload').uploadifyClearQueue();">Clear Queue</a><br/></p>
+            <p><input type="file" id="file_upload" name="file_upload" /></p>
+            <span>&nbsp;</span>
+            <div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+    </form>
+    <table >
+        <tr>  <td>
+                <b>  Uploaded Images List</b>
+            </td>
+             <tr/>
+    </table>
+    <div style="height: 182px; overflow-y: scroll; overflow-x: hidden;">
+    <table >
+       
+     <?php
+$dir = 'batchUpload/main/';
+//$i = 0;
+if ($handle = opendir($dir)) {
+?>     
+ <?php
+    while (($file = readdir($handle)) !== false) {
+
+        if (!in_array($file, array('.', '..')) && !is_dir($dir . $file)){
+            if(trim($file) != '.'){
+            $imageNameArray[] = trim($file);
+ ?> 
+       
+
+<?php
+            }
+        }
+         //  $i++;
+    }
+?>
+<?php
+}
+?>
+<?php 
+
+ asort($imageNameArray);
+//print_r("<pre>");
+//print_r($imageNameArray);
+//print_r("</pre>");
+//die;
+foreach ($imageNameArray as $key => $value) {
+
+?>
+         <tr>  <td>
+                <?php echo $value; ?>
+            </td>
+             <tr/>
+<?php
+    
+}
+?>
+        
+
+</table>
+    </div>
+</div>

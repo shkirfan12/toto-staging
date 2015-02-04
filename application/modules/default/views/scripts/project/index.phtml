@@ -1,0 +1,137 @@
+<?php // Path : Default_project_index
+$projectList = $this->projectList; 
+$projDtl = $this->projDtl; //print_r($projDtl); die;
+$savings = array();
+$energy =  array();
+$water =  array();
+
+if(!empty($projDtl)){
+    for($p=0;$p<count($projDtl);$p++){
+        $savings[$p] = $projDtl[$p]['savings'];
+        $energy[$p]  = $projDtl[$p]['energy'];
+        $water[$p]   = $projDtl[$p]['water'];
+    }
+}
+
+$savings = array_sum($savings);
+//$savings = format_num($savings);
+
+$energy = array_sum($energy);
+//$energy = format_num($energy);
+
+$water = array_sum($water);
+//$water = format_num($water);
+
+
+function format_num($num, $precision = 2) {
+   if ($num >= 1000 && $num < 1000000) {
+    $n_format = number_format($num/1000,$precision).'K';
+    } else if ($num >= 1000000 && $num < 1000000000) {
+    $n_format = number_format($num/1000000,$precision).'M';
+   } else if ($num >= 1000000000) {
+   $n_format=number_format($num/1000000000,$precision).'B';
+   } else {
+   $n_format = $num;
+    }
+  return $n_format;
+} 
+?> 
+<style>
+    .spanValues{
+        display: inline-block !important;
+    text-align: right;
+     width: 77%;
+    }
+    .spanText{
+        display: inline-block !important;
+    margin-left: 10px;
+    text-align: left;
+    width: 20%;
+        
+    }
+    
+</style>
+<div class="container">
+    <div class="content">
+        <div class="page-heading">
+            <h2>MY <span>PROJECT SUMMARY</span></h2>
+        </div>
+        <div class="my-profile-block">
+            <div class="my-profile-summary">
+                <p>
+                    <span>Total Impact of Products Utilized in MyGreenPayback over the length of analysis selected</span>
+                <div>
+                    <span class="spanValues"><?php if(!empty($savings)){echo '$';echo number_format($savings); }else{ echo "$00"; } ?></span> <span class="spanText">$ of savings</span><br/>
+                    <span class="spanValues"><?php if(!empty($energy)){echo number_format($energy); }else{ echo "00"; } ?></span> <span class="spanText"> kWh of electricity savings</span><br/>
+                    <span class="spanValues"><?php if(!empty($water)){echo number_format($water); }else{ echo "00"; } ?></span> <span class="spanText"> gallons of water savings</span><br/><br/>
+                </div>  
+                </p>
+            </div>
+            <div class="add-project-block">
+                <!--a href="/project/analysis">Add project <img src="/images/frontPanel/plus.png" alt="plus" /></a-->
+                <a href="/product">Add project <img src="/images/frontPanel/plus.png" alt="plus" /></a>
+                <span style="margin-left: 2px;font-family: 'PT Sans';color: #4d4d4d;font-size: 15px;margin-top: 7px;float: left;">Project Count : <?php echo count ($projectList); ?></span>
+                <table>
+                    <tr class="tb-head">
+                        <td class="alg-left">Project Name</td>
+                        <td class="w-75">Date Created</td>
+                        <td class="w-75"></td>
+                    </tr>
+                    <?php
+                    if(!empty($projectList)){
+                        foreach ($projectList as $key => $value) {
+                        $dateArr = explode(' ', $value['created_date']); 
+                        if(isset($dateArr[0])){
+                            $date = explode('-', $dateArr[0]); 
+                            if (isset($date[1])) {
+                                $date[0] = substr($date[0], -2); 
+                                $dataFormat = $date[1] . "-" . $date[2] . "-" . $date[0];
+                            }
+                        }
+                        ?>
+                        <tr>
+                            <td class="alg-left"><a style="float:left;" href="/project/configuration/type/<?php echo $value['project_type']; ?>/pid/<?php echo $value['project_id']; ?>"><?php echo $value['project_name']; ?></a></td>
+                            <td><?php echo $dataFormat; ?></td>
+                            <td><a href="javascript:void(0);" id="<?php echo $value['project_id']; ?>" class="delProjectById"><img src="/images/frontPanel/delete.jpg" alt="delete" /></a></td>
+                        </tr>
+                        <?php }
+                    }else{?>
+                        <tr><td colspan="3">No Record Found.</td></tr>
+                    <?php }
+                    ?>
+                </table>
+            </div>
+        </div>
+        <div class="desk-side-bar" style="margin: 0;">
+            <h2>Lorem <span>Ipsum</span></h2>
+            <div>
+                <a><img src="/images/frontPanel/sidebar-img1.jpg" alt="sidebar" class="img-responsive" /></a>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ullamcorper augue eget ante faucibus aliquam. Nam sit amet commodo mauris. Donec sapien ligula, interdum et cursus luctus, bibend um in felis. Fusce bibendum fringilla risus ut eleifend. Sed egestas quam at dolor aliquet eget porta sapien lacinia.</p>
+    </div>
+            <div>
+                <a><img src="/images/frontPanel/sidebar-img2.jpg" alt="sidebar" class="img-responsive" /></a>
+</div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $().ready(function(){
+        $('.delProjectById').click(function() {
+            var projId = $(this).attr('id');
+            if(confirm("Are you sure you want to delete this project?")) {
+                $.ajax({
+                    type: "GET",
+                    url: "/project/ajax-project-del/projectId/" + projId,
+                    success: function(data) {
+                        if (data == 'success') {
+                            location.reload();
+                        }
+                    },
+                    error: function(event, request, settings) {
+                        return false;
+                    }
+                });
+            }
+        });
+    });
+</script>

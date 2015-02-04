@@ -1,0 +1,104 @@
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/style.css" rel="stylesheet">
+<link href="/font/font.css" rel="stylesheet">
+<style>
+   .overlay-block input {
+        border: 1px solid #8E8D8E;
+        border-radius: 5px;
+        height: 30px;
+        width: 200px;
+    }
+    .overlay-block {
+        -moz-border-bottom-colors: none;
+        -moz-border-left-colors: none;
+        -moz-border-right-colors: none;
+        -moz-border-top-colors: none;
+        background: none repeat scroll 0 0 #FFFFFF;
+        border-color: #8CC63F -moz-use-text-color;
+        border-image: none;
+        border-style: solid none;
+        border-width: 40px 0;
+/*        display: table;*/
+        left: 0px;;
+        padding: 20px;
+        position: fixed;
+        top: 0px;
+        width: 444px;
+        height: 321px;
+    }
+    .overlay-block label {
+        font-weight: normal;
+        margin: 0 20px 0 0;
+        text-align: left;
+        width: 120px;
+    }
+    #submit{
+        background:url(/images/save.png) no-repeat top left;
+        width:60px;
+        height:28px;
+        border:none;
+        cursor:pointer;
+    }
+</style>
+<script src="/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox.css?v=2.1.4" media="all" />
+<?php
+    if(!empty($this->succMesg)){?>
+    <script language="JavaScript" type="text/javascript">
+    $(document).ready(function() { 
+        parent.jQuery.fancybox.close();
+    });
+    </script>
+    <?php }
+?>
+<div class='contact-content'><div class="overlay-block"><div class="errors" id="errors"></div><br/>
+    <form id="uploadcsv" action="/admin/product-management/import" method="post" enctype="multipart/form-data" onsubmit="return validation();"/>
+        <?php
+        if(!empty($this->sussMsg)){
+            echo '<p style="color:green;">'.$this->sussMsg.'<p>';
+        }
+        ?>
+        <p>
+            <label style='float:left'>Select csv file:</label>
+            <input type="file" name="csvfile" id="csvfile" style="border:none;"/><br/>
+             Please select .csv file format for upload
+        </p>
+        <p>
+             <input type="submit" id="submit" name="submit" class="buttonSubmit" value=""/>
+        </p>
+    </form>
+</div></div>   
+    
+
+<script type="text/javascript">
+     function validation(){
+        var errorCount  = 0;
+        var alphaExp    = /^[a-zA-Z\s]+$/;
+        var alphaNumExp = /^[a-zA-Z0-9\s]+$/;
+        var numExp      = /^[0-9]+$/; 
+        
+         $('#errors').html('');
+        
+         if(($('#csvfile').val() == '')){
+            errorCount++;
+            $('<font color= "red">Please select CSV file for upload.</font><br>').appendTo('#errors');
+        }
+         if($('#csvfile').val() != ''){
+            var fileName  = document.getElementById('csvfile').value; 
+            var extension = fileName.substr(fileName.lastIndexOf('.')+1);
+            if(extension != 'csv'){
+                errorCount++;
+                $('<font color= "red">Please select .csv file format for upload </font><br>').appendTo('#errors');
+            }
+         }
+
+        if(errorCount == 0){
+            return true;
+        }else{
+            return false;
+         }
+    }
+
+</script>   
+    

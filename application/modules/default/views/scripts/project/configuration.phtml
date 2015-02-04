@@ -1,0 +1,502 @@
+<?php  //Path : Default_Project_configuration    
+$configurationType = $this->configurationType;
+$stateList = $this->stateList;
+$countryList = $this->countryList;
+$projInfoById = $this->projInfoById; 
+//echo "<pre>"; print_r($projInfoById); die;
+ $productAnalysis = new Zend_Session_Namespace('productAnalysis');
+?>
+<style>
+/*    .submit{
+    background:url(/images/frontPanel/save.png) no-repeat top left;
+    cursor:pointer;  
+    border:none !important;
+    height: 28px;
+    width: 60px !important;
+    margin-left:125px;
+} */
+ .topSaveBtn,.submit{
+    background:none repeat scroll 0 0 #8c8c8c;
+    cursor:pointer;  
+    border:none !important;
+    height: 26px;
+    width: 93px !important;
+    border-radius: 0 !important;
+    color : #fff;   
+    font-family: "Gotham SSm A","Gotham SSm B";
+    font-size: 18px;
+ }
+ .topNextBtn1,.topNextBtn2, .topNextBtn3{
+    background:none repeat scroll 0 0 #8c8c8c;
+    cursor:pointer;  
+    border:none !important;
+    height: 26px;
+    width: 93px !important;
+    border-radius: 0 !important;
+    color : #fff;   
+    font-family: "Gotham SSm A","Gotham SSm B";
+    font-size: 18px;
+ }
+</style>
+<div class="container">
+    <div class="content">
+              
+        <div class="project-config-block">
+            <!-- Projrct Header << --->
+            <?php
+                $objProject = new Default_Model_Project();
+
+                $query1 = explode("/", $_SERVER['REQUEST_URI']); 
+
+                 if (in_array("product-config", $query1)) { 
+                     $c1 = 'pro-list-tab active';
+                     if (in_array("pid", $query1)) { 
+                           $projId =  end($query1);
+                           $projInfoById = $objProject->fetchProjectInfoById($projId);
+                           $projInfoById['project_type'];
+                      }
+                 }else{ 
+                     $c1 = 'pro-list-tab';
+                 }
+
+                 if (in_array("configuration", $query1)) { 
+                     $c2 = 'pro-conf-tab active'; 
+                      if (in_array("pid", $query1)) { 
+                           $projId =  end($query1);
+                           $projInfoById = $objProject->fetchProjectInfoById($projId);
+                      }
+                 }else{ 
+                     $c2 = 'pro-conf-tab';
+                 } 
+
+                 if (in_array("payback-analysis", $query1)) { 
+                     $c3 = 'pay-anly-tab active';
+                     if (in_array("pid", $query1)) { 
+                           $projId =  end($query1);
+                           $projInfoById = $objProject->fetchProjectInfoById($projId);
+                           $projInfoById['project_type'];
+                      }
+                 }else{ 
+                     $c3 = 'pay-anly-tab';
+                 }
+             ?>
+
+
+                <div class="product-tabs">
+                    <a href="<?php if(!empty($projId)){ echo "/project/configuration/type/".$projInfoById['project_type']."/pid/".$projId;}else{ echo "/project/analysis";} ?>" class="pro-list-tab active">1. PROJECT SETUP</a>
+                    <a href="/product-config<?php if(!empty($projId)){ echo "/index/pid/".$projId;}?>" class="pro-list-tab">2. PRODUCT SETUP</a>
+                    <a href="/payback-analysis<?php if(!empty($projId)){ echo "/index/pid/".$projId;}?>" class="pro-list-tab ">3. PROJECT ANALYSIS</a>
+                </div>
+
+        <!-- Project Header >> -->
+        
+            <!--<div class="product-tabs">
+                <a href="product-configuration.html" class="pro-list-tab">PRODUCT CONFIGURATION</a>
+                <a href="project-configuration-commercial.html" class="pro-conf-tab active">PROJECT CONFIGURATION</a>
+                <a href="#" class="pay-anly-tab">PAYBACK ANALYSIS</a>
+            </div>-->
+            <form name="frm_configuration" action="/project/configuration/type/<?php echo $configurationType; ?><?php if(!empty($projInfoById)){ echo "/pid/".$projInfoById['project_id'];}?>" method="post" onsubmit="return isValidProject();">
+            <span style='padding-left:18px;'>
+                <a style="float:left;margin: 0 4px 0 0;"><img src="/images/back_inactive.png"/></a>
+                <a style="float:left;margin: 0 4px 0 0; text-decoration:none;" href=""><input class="topSaveBtn" type="submit" value="SAVE" name="submit"/></a>
+                <a style="float:left; text-decoration: none;" href=""><input class="topNextBtn1" type="submit" value="NEXT" name="submit"/></a>
+                <!--a href="/product-config/index/pid/<?php //echo $projInfoById['project_id']; ?>"><img src="/images/next_active.png"/></a-->
+                <?php 
+                /*    if(!empty($projInfoById)){?>
+                        <a href="/product-config/index/pid/<?php echo $projInfoById['project_id']; ?>"><img src="/images/next_active.png"/></a>
+                    <?php }else{?>
+                        <img src="/images/next_inactive.png"/>
+                    <?php }*/
+                ?>
+            </span>
+            <div class="residential">
+                <input type="hidden" name="hdnProjectType" value="<?php echo $configurationType; ?>"/> 
+                <?php 
+                    if(!empty($projInfoById)){?>
+                          <input type="hidden" name="hdnProjectId" value="<?php echo $projInfoById['project_id']; ?>"/> 
+                    <?php }
+                ?>
+                <h2><?php echo strtoupper($configurationType);?></h2>
+                <p>
+<!--                    <label><span>1</span>Project name<sup id="err_pname" style="">&ast;</sup></label>-->
+                    <label id="err_pname" style="color: #8c8c8c;"><span>1</span>Project name&ast;</label>
+                    <input type="text" name="project_name" value="<?php if(!empty($projInfoById)){echo $projInfoById['project_name'];}else if(!empty($productAnalysis->name)){echo $productAnalysis->name; } ?>" id="pname"/>
+                </p>
+               
+                <p class="check-block">
+                    <label id="err_scope" style="color: #8c8c8c;"><span style='height:21px;width:21px;'>2</span>Project scope&ast;</label>
+                    <label class="check-label">New construction</label>
+                    <span class="check"><input type="checkbox" class="myClass" value="New construction" id="chk_newConstruct" name="scope" <?php if(!empty($projInfoById)){ if($projInfoById['scope']== 'New construction'){ echo "checked=''checked";} }?>/></span>
+                    <span class="or-text">or</span>
+                    <label class="check-label">Renovation</label>
+                    <span class="check"><input type="checkbox" class="myClass" value="Renovation" id="chk_renovation" name="scope" <?php if(!empty($projInfoById)){ if($projInfoById['scope']== 'Renovation'){ echo "checked=''checked";} }?>/></span>
+                </p>
+                <?php
+                if($configurationType == 'residential'){?>
+                    <p class="household">
+                        <label id="err_residential_household_member" style="color: #8c8c8c;"><span>3</span>No. of household members&ast;</label>
+                        <input type="text" name="residential_household_member" value="<?php if(!empty($projInfoById)){ echo $projInfoById['residential_household_member'];}?>" id="residential_household_member"/>
+                    </p>
+                <?php }else{?>
+                    <p class="occupants">
+                        <label id="err_commertial_maleFemale_occupants" style="color: #8c8c8c;"><span>3</span>Number of occupants&ast;</label>
+                        <label class="male">Male</label><input type="text" class="male-input" placeholder="0" value="<?php if(!empty($projInfoById)){ echo $projInfoById['commertial_male_occupants'];}?>" name="commertial_male_occupants" id="commertial_male_occupants"/>
+                        <label class="female">Female</label><input type="text" class="female-input" placeholder="0" value="<?php if(!empty($projInfoById)){ echo $projInfoById['commertial_female_occupants'];}?>" name="commertial_female_occupants" id="commertial_female_occupants"/>
+                    </p>
+                     <p class="bike">
+                        <label id="err_bike_occupants" style="color: #8c8c8c;"><span>4</span>Percentage of Bicycling Occupants</label>
+                        <input type="text" class="bike-input" style="width: 94px !important;" value="<?php if(!empty($projInfoById)){ echo $projInfoById['Bike_occupants'];}else{ echo "5";}?>" name="bike_occupants" id="bike_occupants"/>
+                        
+                    </p>
+                    <p class="size">
+                        <label id="err_commertial_size" style="color: #8c8c8c;"><span>5</span>Project Size (Sq ft)&ast;</label>
+                        <input type="text" placeholder="0" value="<?php if(!empty($projInfoById)){ echo $projInfoById['commertial_size'];}?>" name="commertial_size" id="commertial_size"/>
+                    </p>
+                <?php }
+                ?>
+                <?php    
+                if($configurationType == 'residential'){   
+                    $no_Length_analysis = '4';
+                 }else{
+                     $no_Length_analysis = '6';
+                 }
+                ?>
+                <p class="length">
+                    <label  id="err_lengthOfAnalysis" style="color: #8c8c8c;width:auto;"><span><?php echo $no_Length_analysis; ?></span>Length of analysis (years)&ast;</label>
+                    <input type="text" style="margin: 0 0 0 9px;width: 60px;" value="<?php if(!empty($projInfoById)){echo $projInfoById['length_analysis']; }else{ echo "30";} ?>" name="length_analysis" id="length_analysis"/>
+                </p>
+               
+                <p class="required">
+                    <label>* Required fields</label>
+                </p>
+                <!--p class="submit1">
+                    <input type="submit" name="submit" class="submit" value=""/>
+                </p-->
+               
+                <p class="submit1" style='padding-left:18px;'>
+                    <span>
+                        <a style="float:left;margin: 0 0px 0 0;"><img src="/images/back_inactive.png" style='float:left'/></a>
+                        <a style="float:left;margin: 0 0px 0 0;"><input type="submit" name="submit" class="submit" value="SAVE" style="margin-left: 3px !important;"/></a>
+                        <a style="float:left;"><input type="submit" name="submit" class="topNextBtn2" value="NEXT" style="margin-left: 3px !important;"/></a>
+                       <!--a href="/product-config/index/pid/<?php //echo $projInfoById['project_id']; ?>"><img style="margin-left: 3px !important;" src="/images/next_active.png"/></a-->
+                       <?php 
+                           /* if(!empty($projInfoById)){?>
+                                <a href="/product-config/index/pid/<?php echo $projInfoById['project_id']; ?>"><img style="margin-left: 3px !important;" src="/images/next_active.png"/></a>
+                            <?php }else{?>
+                                <img src="/images/next_inactive.png" style="margin-left: 3px !important;"/>
+                            <?php }*/
+                        ?>
+                    </span>
+                </p>
+              
+                <p>
+                    <a class="advance"><span class="advance-text">Show Advanced</span> <span id="advance-icon" class=""></span></a>
+                </p>
+                <div class="advance-block">
+                <?php    
+                    if($configurationType == 'residential'){   
+                        $no_Project_location = '5';
+                        $no_Project_Category = '6';
+                     }else{
+                         $no_Project_location = '7';
+                         $no_Project_Category = '8';
+                     }
+                ?>
+                     <p>
+                    <label id="err_plocation" style="color: #8c8c8c;"><span style='background: #8c8c8c'><?php echo $no_Project_location; ?></span>Project location</label>
+                    <input type="text" placeholder="City" class="city" value="<?php if(!empty($projInfoById)){echo $projInfoById['city'];}?>" name="city"/>
+                    <span class="state">
+                        <select class="styled" id="state" name="state" style="width: 106px;height: 32px;">
+                            <option value="none">State</option>
+                            <?php
+                            foreach ($stateList as $key => $value) {?>
+                                <option value="<?php echo $value['state']; ?>" <?php if(!empty($projInfoById)){ if($projInfoById['state'] == $value['state']){ echo "selected='selected'";}} ?>><?php echo $value['state_code']; ?></option>
+                            <?php }
+                            ?>
+                        </select>
+                    </span>
+                    <input type="text" placeholder="or Zip Code" class="zip" value="<?php if(!empty($projInfoById)){echo $projInfoById['zip'];}?>" name="zip"/>
+                    
+                </p>
+                <p>
+                    <label class="international">International</label>
+                    <span class="country">
+                        <select class="styled" name="country" style="height: 33px; ">
+                             <?php
+                            foreach ($countryList as $key => $value) {?>
+                                <option value="<?php echo $value['country']; ?>" <?php if(!empty($projInfoById)){ if($projInfoById['country'] == $value['country']){ echo "selected='selected'";}}else if($value['country_id']== '230'){ echo  "selected='selected'";} ?>><?php echo $value['country']; ?></option>
+                            <?php }
+                            ?>
+                        </select>
+                    </span>
+                </p>
+                 <p class="category">
+                    <label style="color: #8c8c8c;"><span style='background: #8c8c8c'><?php echo $no_Project_Category; ?></span>Project Category</label>
+                    <span class="family">
+                        <select class="styled" name="project_category" style="height: 33px;">
+                            <?php
+                                if($configurationType == 'residential'){
+                                    $cat_res = array('Single Family','Apartment','Condo','Townhome');
+                                    foreach($cat_res as $key => $value ){?>
+                                          <option value="<?php echo $value; ?>" <?php if(!empty($projInfoById)){if ($projInfoById['project_category'] == $value){ echo "selected='selected'";}} ?>><?php echo $value; ?></option>
+                                     <?php }
+                                 }else{
+                                      $cat_commer = array('Commercial Office','Community Building','K-12','Higher Education','Entertainment','Government','Hospitality','Industrial','Health Care','Military','Religious','Multifamily','Sports','Transportation');
+                                      foreach($cat_commer as $key => $value ){ ?>
+                                          <option value="<?php echo $value; ?>" <?php if(!empty($projInfoById)){if ($projInfoById['project_category'] == $value){ echo "selected='selected'";}} ?>><?php echo $value; ?></option>
+                                      <?php }
+                                 }
+                            ?>
+                        </select>
+                    </span>
+                </p>
+                <?php
+                  if($configurationType == 'residential'){?>
+                        <p>
+                            <label style="color: #8c8c8c;"><span style='background: #8c8c8c'>7</span>Home Size</label>
+                            <label class="sqft" id="err_residential_sqft_space">Sq ft of Conditioned space&ast;</label><input type="text" placeholder="0" class="sqft-input" name="residential_sqft_space" id="residential_sqft_space" value="<?php if(!empty($projInfoById)){ echo $projInfoById['residential_sqft_space'];}?>"/>
+                            <label class="bedrooms">Number of Bedrooms</label><input type="text" placeholder="0" class="bedcount" name="residential_no_bedroom" value="<?php if(!empty($projInfoById)){ echo $projInfoById['residential_no_bedroom'];}?>"/>
+                            <label class="bedrooms2">Number of Bathrooms</label><input type="text" placeholder="0" class="bedcount" name="residential_no_bathroom" value="<?php if(!empty($projInfoById)){ echo $projInfoById['residential_no_bathroom'];}?>"/>
+                        </p>
+                        <p>
+                            <label style="color: #8c8c8c;"><span>8</span>Home Operations</label>
+                            <label class="hours">Hours a day</label><input type="text" class="hours-input" value="<?php if(!empty($projInfoById)){ echo $projInfoById['hrs_a_day']; }else{ echo "24";} ?>" name="hrs_a_day"/>
+                            <label class="years">Days a Year</label><input type="text" class="years-input" value="<?php if(!empty($projInfoById)){ echo $projInfoById['days_a_year']; }else{ echo "365";} ?>" name="days_a_year"/>
+                        </p>
+                  <?php }else{?>
+                      <p>
+                            <label style="color: #8c8c8c;"><span>9</span>Project Operations</label>
+                      <div style="display: block; margin-bottom: 15px;    float: left;    width: 100%;"> <label class="days">Hours a day</label><input type="text" class="days-input" value="<?php if(!empty($projInfoById)){echo $projInfoById['hrs_a_day']; }else{ echo "12";} ?>" name="hrs_a_day"/></div>
+                         <div style="display: block; margin-bottom: 15px;    float: left;    width: 100%;">   <label class="week">Days a week</label><input type="text" class="week-input" value="<?php if(!empty($projInfoById)){echo $projInfoById['days_a_week']; }else{ echo "7";} ?>" name="days_a_week"/></div>
+                         <div style="display: block;    float: left;    width: 100%;">   <label class="year">Days a Year</label><input type="text" class="year-input" value="<?php if(!empty($projInfoById)){echo $projInfoById['days_a_year']; }else{ echo "365";} ?>" name="days_a_year"/></div>
+                        </p>
+                  <?php }
+                ?>
+                <!--p class="length">
+                    <label style="color: #8c8c8c;"><span style='background: url("/images/frontPanel/green.jpg") no-repeat scroll 0 0 rgba(0, 0, 0, 0);'>8</span>Length of analysis (years)</label>
+                    <input type="text"  value="<?php if(!empty($projInfoById)){echo $projInfoById['length_analysis']; }else{ echo "30";} ?>" name="length_analysis"/>
+                </p-->
+                <?php    
+                    if($configurationType == 'residential'){   
+                        $no_Electricity_Costs = '9';
+                        $no_Water_Costs = '10';
+                        $calcs = '11';
+                     }else{
+                         $no_Electricity_Costs = '10';
+                         $no_Water_Costs = '11';
+                         $calcs = '12';
+                     }
+                ?>
+                <p>
+                    <label style="color: #8c8c8c;"><span style="padding: 0 4px;"><?php echo $no_Electricity_Costs; ?></span>Electricity Costs</label>
+                    <label class="rate" style='width:93px;'>Electricity rate ($/kWh)</label><input type="text" class="rate-input" name="electricity_rate" value="<?php if(!empty($projInfoById)){echo $projInfoById['electricity_rate']; }else{ echo '0.15';}?>"/>
+                    <label class="infl" style=" width: 79px;">Inflation (%)</label><input type="text" class="infl-input" name="electricity_inflation" value="<?php if(!empty($projInfoById)){echo $projInfoById['electricity_inflation']; }else{ echo '5';}?>"/>
+                </p>
+                <p>
+                    <label style="color: #8c8c8c;"><span style="padding: 0 4px;"><?php echo $no_Water_Costs; ?></span>Water Costs</label>
+                    <label class="water" style='width: 66px;'>Water rate ($/1000Gals)</label><input type="text" class="water-input" name="water_rate" value="<?php if(!empty($projInfoById)){echo $projInfoById['water_rate']; }else{ echo '1.75';}?>"/>
+                    <label class="infl" style=" width: 79px;">Inflation (%)</label><input type="text" class="infl-input" name="water_inflation" value="<?php if(!empty($projInfoById)){echo $projInfoById['water_inflation']; }else{ echo '5';}?>"/>
+                </p>
+                    <?php 
+                 $leedList = array();
+                 if(isset($projInfoById['leed_list']) && $projInfoById['leed_list'] != ""){                   
+                    $leedList = explode(',', $projInfoById['leed_list']);
+                }
+                
+                ?>
+
+                    <p>
+                    <label style="color: #fff;"><span style="padding: 0 4px;"><?php echo $calcs; ?> </span>Project Analysis Calculators
+                        <em class="sub-title-list" style="color: #fff;">Select Analysis Calculators you would like to use</em>
+                    </label>
+                    </p>
+                   <p> <label class="" style="width: 100%;"> Payback and ROI</label></p>
+                  <p>  <span class="payback-chk-box"><input <?php if(in_array('enery_carbon', $leedList)){ echo  "checked=checked"; } ?> checked type="checkbox" class="payback-chk" value="enery_carbon" name="leed_list[]" />  </span>
+                    <label class="energy" style="color: #fff;">Water, Lifecycle, Energy</label></p> 
+                  <p>  <label style="width: 100%;margin-top:20px;" class=""> LEED Rating Systems</label></p>
+                  
+                  <p>  <span class="payback-chk-box"><input <?php if(in_array('LEED NC 2009 - New Construction', $leedList)){ echo  "checked=checked"; } ?> type="checkbox" class="payback-chk" value="LEED NC 2009 - New Construction"  name="leed_list[]" />  </span>
+                    <label class="energy" style="color: #fff;">LEED NC 2009 - New Construction</label></p>
+                  
+                   <p> <span class="payback-chk-box"><input  <?php if(in_array('LEED CI 2009 - Commercial Interiors', $leedList)){ echo  "checked=checked"; } ?> type="checkbox" class="payback-chk" value="LEED CI 2009 - Commercial Interiors"  name="leed_list[]" />  </span>
+                    <label class="energy" style="color: #fff;">LEED CI 2009 - Commercial Interiors</label></p>
+                   
+                   <p> <span class="payback-chk-box"><input <?php if(in_array('LEED EBOM 2009 - Existing Building Operations', $leedList)){ echo  "checked=checked"; } ?>  type="checkbox" class="payback-chk" value="LEED EBOM 2009 - Existing Building Operations"  name="leed_list[]" />  </span>
+                    <label class="energy" style="color: #fff;">LEED EBOM 2009 - Existing Building Operations</label></p>
+                   
+                 <p>   <span class="payback-chk-box"><input <?php if(in_array('LEED CS 2009 - Core & Shell', $leedList)){ echo  "checked=checked"; } ?>  type="checkbox" class="payback-chk" value="LEED CS 2009 - Core & Shell"  name="leed_list[]" />  </span>
+                    <label class="energy" style="color: #fff;">LEED CS 2009 - Core & Shell</label></p>
+                 
+                   <p> <span class="payback-chk-box"><input <?php if(in_array('LEED Schools 2009 - Schools', $leedList)){ echo  "checked=checked"; } ?>  type="checkbox" class="payback-chk" value="LEED Schools 2009 - Schools"  name="leed_list[]" />  </span>
+                    <label class="energy" style="color: #fff;">LEED Schools 2009 - Schools</label></p>
+                   
+                    <p><span class="payback-chk-box"><input <?php if(in_array('LEED Healthcare 2009 - Healthcare', $leedList)){ echo  "checked=checked"; } ?>  type="checkbox" class="payback-chk" value="LEED Healthcare 2009 - Healthcare"  name="leed_list[]" />  </span>
+                    <label class="energy" style="color: #fff;">LEED Healthcare 2009 - Healthcare</label></p>
+                    
+                   <p> <span class="payback-chk-box"><input <?php if(in_array('LEED NC v4 - New Construction', $leedList)){ echo  "checked=checked"; } ?>  type="checkbox" class="payback-chk" value="LEED NC v4 - New Construction"  name="leed_list[]" />  </span>
+                    <label class="energy" style="color: #fff;">LEED NC v4 - New Construction</label></p>
+                   
+                   <p> <span class="payback-chk-box"><input <?php if(in_array('LEED CI v4 - Commercial Interiors', $leedList)){ echo  "checked=checked"; } ?>  type="checkbox" class="payback-chk" value="LEED CI v4 - Commercial Interiors"  name="leed_list[]" />  </span>
+                    <label class="energy" style="color: #fff;">LEED CI v4 - Commercial Interiors</label></p>
+                   
+                <p>    <span class="payback-chk-box"><input <?php if(in_array('LEED EBOM v4 - Existing Buildings', $leedList)){ echo  "checked=checked"; } ?>  type="checkbox" class="payback-chk" value="LEED EBOM v4 - Existing Buildings"  name="leed_list[]"/>  </span>
+                    <label class="energy" style="color: #fff;">LEED EBOM v4 - Existing Buildings</label></p>
+                
+                     <p> <label style="width: 100%;margin-top:20px;" class=""> Living Building Challenge (Coming Soon)</label></p>
+                    <span class="payback-chk-box"><input type="checkbox" class="payback-chk" disabled /></span>
+                   <label class="energy" style="color: #fff;">Living Building Challenge 3.0</label></p>
+<!--                   <label style="width: 100%;margin-top:20px;" class="">CHPS (Coming Soon)</label>
+                    <span class="payback-chk-box"><input type="checkbox" class="payback-chk" disabled /></span>
+                    <label class="energy" style="color: #fff;">Collaborative for High Performance Schools</label>-->
+                      
+                    
+                
+                <p class="submit2" style='padding-left:18px;'>
+                    <!--input type="submit" name="submit" class="submit" value=""/-->
+                    <span>
+                       <img src="/images/back_inactive.png" style='float:left'/>
+                       <input type="submit" name="submit" class="submit" value="SAVE" style="margin-left: 3px !important;"/>
+                       <input type="submit" name="submit" class="topNextBtn3" value="NEXT" style="margin-left: 3px !important;"/>
+                       <!--a href="/product-config/index/pid/<?php //echo $projInfoById['project_id']; ?>"><img style="margin-left: 3px !important;" src="/images/next_active.png"/></a-->
+                       <?php 
+                          /*  if(!empty($projInfoById)){?>
+                                <a href="/product-config/index/pid/<?php echo $projInfoById['project_id']; ?>"><img style="margin-left: 3px !important;" src="/images/next_active.png"/></a>
+                            <?php }else{?>
+                                <img src="/images/next_inactive.png" style="margin-left: 3px !important;"/>
+                            <?php } */
+                        ?>
+                    </span>
+                </p>        
+                </div>
+                
+            </div>
+            </form>  
+        </div>
+        <div class="desk-side-bar" style="margin: 0;">
+            <h2>Lorem <span>Ipsum</span></h2>
+            <div>
+                <a><img src="/images/frontPanel/sidebar-img1.jpg" alt="sidebar" class="img-responsive" /></a>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ullamcorper augue eget ante faucibus aliquam. Nam sit amet commodo mauris. Donec sapien ligula, interdum et cursus luctus, bibend um in felis. Fusce bibendum fringilla risus ut eleifend. Sed egestas quam at dolor aliquet eget porta sapien lacinia.</p>
+            </div>
+            <div>
+                <a><img src="/images/frontPanel/sidebar-img2.jpg" alt="sidebar" class="img-responsive" /></a>
+            </div>   
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $().ready(function(){
+        
+        $('.advance').click(function() {
+            $(".submit1").toggle();
+            $('.advance-block').fadeToggle('slow', function() {
+                if ($('.advance').hasClass('active')) {
+                    $('.advance-text').text('Show Advanced ');
+                    $('.advance').removeClass('active');
+                } else {
+                    $('.advance-text').text('Hide Advanced');
+                    $('.advance').addClass('active');
+                }
+            });
+            $(this).children('#advance-icon').toggleClass('d-active');
+        });
+        
+        $(".myClass").click(function() {
+            if ($(this).is(":checked")) {
+              //  var group = "input:checkbox[name='" + $(this).attr("name") + "']";
+                  var group = "input:checkbox[name='scope']";
+                $(group).attr("checked", false);
+                $(this).attr("checked", true);
+            } else {
+                $(this).attr("checked", false);
+            }
+        });
+        
+        $(".week-input").keyup(function() { 
+            if($(this).val() != ''){
+                //var days_yr = $(this).val()*4*12;
+                var days_yr = $(this).val()*52;
+                $('.year-input').val(days_yr);
+            }
+        });
+    });
+    function isValidProject(){ 
+        var errorCount  = 0;
+        var alphaExp    = /^[a-zA-Z\s]+$/;
+        var alphaNumExp = /^[a-zA-Z0-9\s]+$/;
+        var numExp      = /^[0-9]+$/; 
+        var projectType = '<?php echo $configurationType ?>'; 
+        
+        /************ Common << **********/
+        if(($('#pname').val() == '')){//pname
+            errorCount++;
+            $('#err_pname').attr('style','color:red');
+        }else{
+            $('#err_pname').attr('style','');
+        }
+        
+        if(($('#length_analysis').val() == '')){//pname
+            errorCount++;
+            $('#err_lengthOfAnalysis').attr('style','color:red;width:auto;');
+        }else{
+            $('#err_lengthOfAnalysis').attr('style','width:auto;');
+        }
+       
+       /*if($('.city').val() == '')  {//pcity
+            errorCount++;
+            $('#err_plocation').attr('style','color:red');
+        }else{ // pstate or pzip
+            if(  ($('#state').val() == 'none') && ($('.zip').val() == '') ) {
+                 errorCount++;
+                $('#err_plocation').attr('style','color:red');
+            }else{
+                $('#err_plocation').attr('style','');
+            }
+        }*/
+        
+        if ( !($('#chk_newConstruct').is(':checked')) &&  !($('#chk_renovation').is(':checked'))  ){//scope
+            errorCount++;
+            $('#err_scope').attr('style','color:red');
+        }else{
+            $('#err_scope').attr('style','');
+        }
+       /************ Common >> **********/
+        
+      
+      if(projectType == 'commercial'){
+            if( !($('#commertial_male_occupants').val().match(numExp)) || !($('#commertial_female_occupants').val().match(numExp)) ) {//commertial_maleFemale_occupants
+                 errorCount++;
+                $('#err_commertial_maleFemale_occupants').attr('style','color:red');
+            }else{
+                $('#err_commertial_maleFemale_occupants').attr('style','');
+            }
+
+            if( !($('#commertial_size').val().match(numExp)) ) {    //commertial_size
+                 errorCount++;
+                $('#err_commertial_size').attr('style','color:red');
+            }else{
+                $('#err_commertial_size').attr('style','');
+            }
+      }else{ //residential
+            if( !($('#residential_household_member').val().match(numExp)) ) {    //residential_household_member
+                 errorCount++;
+                $('#err_residential_household_member').attr('style','color:red');
+            }else{
+                $('#err_residential_household_member').attr('style','');
+            }
+
+           /* if( !($('#residential_sqft_space').val().match(numExp)) ) {    //residential_sqft_space
+                 errorCount++;
+                $('#err_residential_sqft_space').attr('style','color:red');
+            }else{
+                $('#err_residential_sqft_space').attr('style','');
+            }*/
+      }
+           
+        if(errorCount == 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+</script>

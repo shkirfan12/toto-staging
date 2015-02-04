@@ -1,0 +1,164 @@
+<?php //Path : product_advance-search_index
+$tier1List = $this->tier1List; 
+$tier2List = $this->tier2List; 
+$tag1List = $this->tag1List;
+$tag2List = $this->tag2List;
+$tierTagMasterName = $this->tierTagMasterName;  
+?>
+<style>
+#submit{
+    background-color: #8c8c8c;
+    border: medium none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    height: 24px;
+    width: 113px;
+    font-family: "Gotham SSm A","Gotham SSm B";
+}
+</style>
+<div class="container">
+    <div class="content">
+       
+       
+        <form class="frmAdvanceSearch" id="frmAdvanceSearch" action="/product/advance-search" method="post"> <!--onsubmit="return isValidSearch();"-->
+        <div class="advance-search">
+            <h3>ADVANCED SEARCH</h3>
+            <?php
+                if(!empty($this->errMsg)){
+                    echo "<span style='padding-left:14px;color:red'>".$this->errMsg."</span>";
+                }
+            ?>
+            <ul class="accordion">
+                <li><a><?php echo $tierTagMasterName['tier1_name'];?></a>
+                    <ul class="list" style="display: none;">
+                        <?php
+                        foreach ($tier1List as $key => $value) {?>
+                            <li>
+                                <a style="padding-left: 15px; float: left; width: 90%;" class="tier1_name" id="<?php echo $value['tier1_id']?>"><?php echo $value['tier1_name'];?></a>
+                                <input type="checkbox" class="tier1_name" value="<?php echo $value['tier1_id']?>" id="<?php echo 'tier1_'.$value['tier1_id']?>" name="tier1[]"/>
+                            </li>
+                        <?php }
+                        ?>
+                    </ul>
+                </li>
+                <li><a><?php echo $tierTagMasterName['tier2_name'];?></a>
+                    <ul class="list" style="display: none;" id="tier2_ul">
+                        <?php
+                        foreach ($tier2List as $key => $value) {?>
+                            <li>
+                                <a style="padding-left: 15px; float: left; width: 90%;" class="tier2_name" id="<?php echo $value['tier2_id']?>"><?php echo $value['tier2_name'];?></a>
+                                <input type="checkbox" class="myClass" value="<?php echo $value['tier2_id']?>" id="<?php echo 'tier2_'.$value['tier2_id']?>" name="tier2[]"/>
+                            </li>
+                        <?php }
+                        ?>
+                    </ul>
+                </li>
+                <li><a><?php echo $tierTagMasterName['tag1_name'];?></a>
+                    <ul class="list" style="display: none;">
+                         <?php
+                         foreach ($tag1List as $key => $value) {?>
+                            <li>
+                                <a style="padding-left: 15px; float: left; width: 90%;" class="tag1_name" id="<?php echo $value['tag1_id']?>"><?php echo $value['tag1_name'];?></a>
+                                <input type="checkbox" class="myClass" value="<?php echo $value['tag1_id']?>" id="<?php echo 'tag1_'.$value['tag1_id']?>" name="tag1[]"/>
+                            </li>
+                        <?php }
+                        ?>
+                    </ul>
+                </li>
+                <li><a><?php echo $tierTagMasterName['tag2_name'];?></a>
+                    <ul class="list" style="display: none;">
+                        <?php
+                         foreach ($tag2List as $key => $value) {?>
+                            <li>
+                                <a style="padding-left: 15px; float: left; width: 90%;" class="tag2_name" id="<?php echo $value['tag2_id']?>"><?php echo $value['tag2_name'];?></a>
+                                <input type="checkbox" class="myClass" value="<?php echo $value['tag2_id']?>" id="<?php echo 'tag2_'.$value['tag2_id']?>" name="tag2[]"/>
+                            </li>
+                        <?php }
+                        ?>
+                    </ul>
+                </li>
+            </ul>
+            <a class="search-btn"><input id="submit" type="submit" value="Search" name="submit"></a>
+        </div>
+        </form>
+    </div>
+</div>
+<script src="/js/jquery_002.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //$('.accordion').accordion();
+        $( ".accordion" ).accordion({
+            active: false,
+            collapsible: true,
+            icons: null 
+        });
+        /* checkbox */
+        $('.list li').click(function(){
+            $(this).children('a').children('span').children('.prettycheckbox').children('a').toggleClass('checked'); 
+        });
+        
+        
+//        $('input.myClass').prettyCheckable({
+//            color: 'red'
+//        });
+
+        /* Checkbox << */
+        $(".tier1_name").click(function(){
+           var id = $(this).attr('id');  
+           if ($('#tier1_'+id).is(":checked")) { 
+               $('#tier1_'+id).attr("checked", false);
+            } else {
+               $('#tier1_'+id).attr("checked", true);
+            }
+            //<<
+            var val = []; 
+            var selected = new Array();
+            $(':checkbox:checked').each(function(i){
+                val[i] = $(this).attr('value');
+                selected.push(val[i]);
+            });
+            var count = selected.length;//alert(selected+'>>>'+count); return false;
+            $.ajax({
+                type:"GET",
+                url: "/product/advance-search/fetch-tier2/fetch_tier2ByTier1Id/"+selected,
+                success: function(data) {  
+                     $('#tier2_ul').html(data);
+                },
+                error:function(event, request, settings){
+                    return false;
+                }
+            });
+            //>>
+        });
+        $(".tier2_name").click(function(){
+           var id = $(this).attr('id');  
+           if ($('#tier2_'+id).is(":checked")) { 
+               $('#tier2_'+id).attr("checked", false);
+            } else {
+               $('#tier2_'+id).attr("checked", true);
+            }
+        });
+         $(".tag1_name").click(function(){
+           var id = $(this).attr('id');  
+           if ($('#tag1_'+id).is(":checked")) { 
+               $('#tag1_'+id).attr("checked", false);
+            } else {
+               $('#tag1_'+id).attr("checked", true);
+            }
+        });
+        $(".tag2_name").click(function(){
+           var id = $(this).attr('id');  
+           if ($('#tag2_'+id).is(":checked")) { 
+               $('#tag2_'+id).attr("checked", false);
+            } else {
+               $('#tag2_'+id).attr("checked", true);
+            }
+        });
+        /* Checkbox >> */
+        
+    });	
+    function isValidSearch(){
+        alert('w');
+    }
+</script>

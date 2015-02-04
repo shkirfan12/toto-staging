@@ -1,0 +1,23 @@
+<?php
+$tier1List = $this->tier1List; 
+?>
+<div class="container">
+    <div class="content">
+        <div class="banner">
+            <img src="/images/frontPanel/banner.jpg" alt="banner" />
+        </div>
+        <h3><span>PRODUCT</span> CATEGORIES</h3>
+        <div class="thumb-block">
+            <?php
+            if(!empty($tier1List)){
+                foreach ($tier1List as $key => $value) {?>
+                    <div class="thumb">
+                        <a href="/product/search/result/tier1Id/<?php echo $value['tier1_id']; ?>"><img src="/tier1Images/<?php echo $value['tier1_image']; ?>" alt="<?php echo $value['tier1_name']; ?>" width="155" height="98"/></a>
+                        <span><?php echo $value['tier1_name']?></span>
+                    </div>
+                <?php }
+            }
+            ?>
+        </div>
+    </div>
+</div>

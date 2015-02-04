@@ -1,0 +1,155 @@
+<?php 
+$clientinfo= $this->clientinfo;
+
+?>
+<script>
+$(document).ready(function(){
+        $("#add_client").hide();
+       $("#trigger_id").click(function(){
+           $("#add_client").fadeIn();
+       }) ;
+       $(".modal_close").click(function(){
+            
+            $("#add_client").fadeOut();
+           $("#new_cname").val("");
+        $("#new_address").val("");
+        $("#payment").val("");
+       $("#launch").val("");
+       });
+       
+       $(".editclient").click(function(e){
+            e.preventDefault();
+            var id= $(this).parent().parent().attr('id');
+//            alert(id); 
+           
+            $.ajax({
+                type:"POST",
+                data: "id="+id,
+                url: '/admin/User-Management/editclient',
+                success: function(response){
+                    $("#formEdit").html(response);
+                    
+                    }
+                });
+           
+    });
+        });
+       </script>
+<div class="content-block">
+                        <p>User Management</p>
+                        <div class="button-block">
+                           <a href="/admin/user-management/index"><img src="<?php echo $this->baseUrl(); ?>/images/all-users-deselect.png" alt="all users" /></a>
+                            <a href="/admin/user-management/clientmanagement"><img src="<?php echo $this->baseUrl(); ?>/images/client-account.png" alt="client account" /></a>
+                        </div>
+                         <a href="#add_client" name="add_client" id="trigger_id" class="add-user">Add Client</a>
+                        <table class="user-management">
+                           
+                            <tr class="t-head">
+                                <td class="tdw-95">Client Name</td>
+                                <td class="tdw-95">Payment Status</td>
+                                <td class="tdw-95">Launch Status</td>
+                                <td class="tdw-55">#Products</td>
+                                <td class="tdw-55">#Reg Users</td>
+                                <td class="tdw-95"># of Uses YTD</td>
+                                <td class="tdw-195">Site Address</td>
+                                <td class="tdw-90">Login</td>
+                            </tr>
+                             <?php foreach($clientinfo as $val)
+                             { ?>
+                            <tr id="<?php echo $val['client_id']; ?>">
+                                <td><a href="#formEdit" class="editclient"><?php echo $val['client_name']; ?></a></td>
+                                <td><?php echo $val['payment_status']; ?></td>
+                                <td><?php echo $val['launch_status']; ?></td>
+                                <td>418</td>
+                                <td>500</td>
+                                <td><?php echo $val['of_uses_YTD']; ?></td>
+                                <td><?php echo $val['site_address']; ?></td>
+                                <td><?php echo $val['login']; ?></td>
+                            </tr>
+                           <?php  } ?>
+                        </table>
+                    </div>
+
+<div id="add_client">
+       <form id="addForm" name="addForm" method="post" action="/admin/UserManagement/saveclient" enctype="multipart/form-data"> 
+            <div class="overlay-block">
+                <p class="title">Client Account Management</p>
+                <a href="#" class="modal_close"></a>
+                <div>
+                    <p>
+                        <label>Client Name</label>
+                        <input type="text" id="new_cname" name="new_cname" />
+                    </p>
+                    <p>
+                        <label>Payment Status</label>
+                        <select class="styled" id="payment" name="payment">
+                             <option value="Select">Select</option>
+                            <option value="Paid">Paid</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Canceled">Canceled</option>
+                           
+                        </select>
+                    </p>
+                     
+                   <p>
+                        <label>Launch Status</label>
+                        <select class="styled" id="launch" name="launch">
+                             <option value="Select">Select</option>
+                            <option value="Live">Live</option>
+                            <option value="Staging">Staging</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </p>
+                    <p>
+                        <label>Site Address</label>
+                        <input type="text" id="new_address" name="new_address" />
+                    </p>
+                    
+                   
+                    
+                    <p>
+                        <a id="submitfrm" class="save-changes" href="#"><img src="<?php echo $this->baseUrl(); ?>/images/save.png" alt="save changes" /></a>
+                    </p>
+                </div>
+            </div>
+       </form>
+        </div>
+    <div id="formEdit">
+
+</div>
+       <script>
+       $("#submitfrm").click(function()
+    {
+        var name = $("#new_cname").val();
+        var address = $("#new_address").val();
+        var payment = $("#payment").val();
+        var status = $("#launch").val();
+         if(name=='')
+            {
+                alert("Please Enter Client Name");
+                return false;
+            }
+            else if(payment== 'Select')
+                {
+                    alert("Please Select Payment status");
+                return false; 
+                }
+                
+             else if(status== 'Select')
+                {
+                alert("Please Select Launch status");
+                return false; 
+                }
+            else if(address=='')
+            {
+                alert("Please Enter Site Address");
+                return false;
+            }
+            
+            else
+                {
+                     $("#addForm").submit(); 
+                }
+        
+    });
+   </script>

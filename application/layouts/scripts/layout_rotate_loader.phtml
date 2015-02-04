@@ -1,0 +1,309 @@
+<?php
+$sessUser = new Zend_Session_Namespace('user');
+//echo $sessUser->user_Id.'--'.$sessUser->email_Id.'--'.$sessUser->fname.'--'.$sessUser->lname;
+?>
+<?php //Path :  product/index/index
+$tier1List = $this->tier1List; 
+$objLanding = new Admin_Model_Landing();
+
+$themeInfo = $objLanding->fetchLandingInfo(); 
+$startSearchImage = $themeInfo['start_search_image'];
+$startSearchContent = $themeInfo['start_search_content'];
+$startSearchColor = $themeInfo['start_search_color'];
+$faviconImg=$themeInfo['favicon_image'];
+
+/*$superadmin =  $objLanding->fetchSuperadminLandingInfo('superadmin');  
+$infoSuperadmin = $objLanding->fetchLandingInfoByUserId($superadmin['user_id']);
+$clientadmin =  $objLanding->fetchClientadminLandingInfo('client admin'); 
+$infoAdmin   = $objLanding->fetchLandingInfoByUserId($clientadmin['user_id']);
+if(!empty($infoAdmin['start_search_image'])){ 
+     $startSearchImage = $infoAdmin['start_search_image'];
+     $startSearchContent = $infoAdmin['start_search_content'];
+     $startSearchColor = $infoAdmin['start_search_color'];
+}else if(!empty($infoSuperadmin['start_search_image'])){ 
+    $startSearchImage = $infoSuperadmin['start_search_image'];
+    $startSearchContent = $infoSuperadmin['start_search_content'];
+    $startSearchColor = $infoSuperadmin['start_search_color'];
+}*/
+?>
+<!--<style>
+    .ui-autocomplete ui-menu ui-widget ui-widget-content ui-corner-all{
+        top: 51px !important; left: 88px !important; display: block; width:165px !important; border:none !important;
+    }
+</style>-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MGP - <?php echo APP_TITLE; ?></title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <!-- Bootstrap -->
+        <link href="/css/frontPanel/bootstrap.min.css" rel="stylesheet">
+        <link href="/css/frontPanel/style.css" rel="stylesheet">
+        <link href="/font/font.css" rel="stylesheet">
+        <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow:700' rel='stylesheet' type='text/css'>
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+          <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+        
+        <!-- Google Analytic << -->
+           <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-56826391-1', 'auto');
+            ga('send', 'pageview');
+
+      </script>
+        <!-- Google Analytic >> -->
+        
+        <!-- Favicon Image << --->
+        <?php
+        /*$superadmin     = $objLanding->fetchSuperadminLandingInfo('superadmin');  
+        $infoSuperadmin = $objLanding->fetchLandingInfoByUserId($superadmin['user_id']);
+
+        $clientadmin = $objLanding->fetchClientadminLandingInfo('client admin'); 
+        $infoAdmin   = $objLanding->fetchLandingInfoByUserId($clientadmin['user_id']); 
+        
+        if(!empty($infoAdmin)){ //Admin
+            $faviconImg = $infoAdmin['favicon_image'];
+        }else{ //superadmin
+            $faviconImg = $infoSuperadmin['favicon_image'];
+        }*/
+        
+        if (!empty($faviconImg)) { ?>
+           <link rel="apple-touch-icon" href="/landingPageImages/favicon/<?php echo $faviconImg; ?>"/>
+        <?php }
+        
+       /* $objLanding = new Admin_Model_Landing();
+        $info = $objLanding->fetchLandingInfoByUserId('17');
+        if (!empty($info)) {
+            $faviconImg = $info['favicon_image'];
+            if(!empty($info['favicon_image'])){ ?>
+                <link rel="apple-touch-icon" href="/landingPageImages/favicon/<?php echo $faviconImg; ?>"/>
+            <?php }
+        }
+        */
+        ?>
+        <!-- Favicon Image >> --->
+        
+         <script src="/js/jquery-1.8.3.min.js"></script>
+<!--         <script id="loader" src="/js/loaderscript.js" type="text/javascript"></script>-->
+         <!-- rotate loader start-->
+          <script id="loader" src="/js/rotate.js" type="text/javascript"></script>
+             <script>
+            $( document ).ready(function() {
+            var rotation = function (){
+                $("#rotate").rotate({
+                    angle:0, 
+                    animateTo:-360, 
+                    callback: rotation,
+                    easing: function (x,t,b,c,d){        // t: current time, b: begInnIng value, c: change In value, d: duration
+                        return c*(t/d)+b;
+                    }
+                });
+             };
+             rotation();
+            });
+            
+        </script>
+          <style>
+            .mgp-rotate{background: url('/images/graph.png') center center no-repeat;width: 136px; height: 132px;position: fixed; left: 45%; top: 45%;}
+            #rotate{width: 136px; height: 132px;position: absolute;z-index: -9;}
+            .wrapper{position: relative;z-index: -99;opacity: 0.5;}
+        </style>
+          <!-- rotate loader end-->
+    </head>
+    <body>
+<!--        <div class="ajax_loader"></div>-->
+  <!-- rotate loader start-->
+        <div class="mgp-rotate">
+            <img src="/images/circle.png" alt="circle" id="rotate" />
+        </div>
+    <!-- rotate loader end-->
+        <div class="wrapper">
+            <div class="row">
+                 <?php echo $this->partial("header.phtml"); ?>
+            </div>
+            <div class="row">
+                <div class="container banner-search-block">
+                    <?php
+                        if (!empty($startSearchImage)) {
+                           $bg = "/landingPageImages/startSearch/".$startSearchImage;
+                         }else{
+                           $bg = "/images/frontPanel/banner-desk.jpg";
+                         }
+                    ?>
+                    <div class="banner mob-none" style="float: left;height: 48px;margin: 0;width: 209px;background: url('<?php echo $bg; ?>') no-repeat;">
+                        <?php
+                            if (!empty($startSearchContent)) {?>
+                                <h2 style="color: #FFFFFF;display: table-cell;font-family: PT Sans;font-weight: bold;margin: 0 auto;text-align: center;vertical-align: middle;<?php if(!empty($startSearchColor)){ echo "color:#".$startSearchColor ;}?>"><?php echo $startSearchContent; ?> </h2>
+                            <?php }
+                       ?>
+                    </div>
+                    <div class="nav-block">
+                        <a class="nav-icon">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </a>
+                        <span><img src="/images/frontPanel/divider.jpg" alt="divider" /></span>
+                        <span class="search-block">
+<!--                            <input type="text" placeholder="Search" id="productSearch" autocomplete="off"/>-->
+                             <input type="text" id="productSearch" name="productSearch" class=""  autocomplete="off"/>
+                            <span><img src="/images/frontPanel/divider.jpg" alt="divider" /></span>
+                            <a class="search-icon" href="/product/advance-search"><img src="/images/frontPanel/search-icon.png" alt="search" /></a>
+                        </span>
+                    </div>
+                    <div class="nav-list-block">
+                        <ul>
+                            <?php
+                            if(empty($sessUser->user_Id)){?>
+                                 <li><a href="/login/account">Login</a></li>
+                            <?php }else{?>
+                                 <li><a href="/login/account/logout">Logout</a></li>
+                            <?php }
+                            ?>
+                            <!--<li><a href="<?php //if(empty($sessUser->user_Id)){ echo '/login/account'; }else{ echo '/my-profile'; }?>">Login</a></li>-->
+                            <li><a href="<?php if(!empty($sessUser->user_Id)){ echo '/my-profile'; }else{ echo '/login/account'; }?>">Profile</a></li>
+                            <li><a href="<?php if(!empty($sessUser->user_Id)){ echo '/project'; }else{ echo '/login/account'; }?>">My Projects</a></li>
+                            <li><a href="<?php if(!empty($sessUser->user_Id)){ echo '/collection'; }else{ echo '/login/account'; }?>">My Collections</a></li>
+                         </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="container">
+                    <div class="page-title">
+                         <!-- Project Header <<  -->
+             <?php 
+                $query1 = explode("/", $_SERVER['REQUEST_URI']); 
+                if (in_array("configuration", $query1) || in_array("product-config", $query1) || in_array("payback-analysis", $query1)) { 
+                    if (in_array("pid", $query1)) { 
+                        $projId =  end($query1);
+                        $objProject = new Default_Model_Project();
+                        $projInfoById = $objProject->fetchProjectInfoById($projId);
+                       echo "<div style='font-size: 24px;font-family: PT Sans;text-align: center;margin: 20px 0;width: 100%;'><h2 style='font-size: 36px;margin: 0;display:inline;'>Project name&nbsp;</h2>". ucfirst($projInfoById['project_name'])."</div>"; 
+                    }
+                    //echo $this->partial("project_header.phtml");
+                }
+             ?>
+             <!-- Project Header >> -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                  <?php echo $this->layout()->content; ?>
+            </div>
+            
+            <div class="row">
+                  <?php echo $this->partial("footer.phtml"); ?>
+            </div>
+        </div>
+
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<!--        <script src="https://code.jquery.com/jquery.js"></script>-->
+
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+           
+        <script src="/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/js/jquery.customSelect.js"></script>
+        <script src="/js/script.js"></script>
+        <script src="/js/common.js"></script>
+        
+         <link rel="stylesheet" href="/js/checkbox/dist/prettyCheckable.css">
+        <script src="/js/checkbox/dev/prettyCheckable.js"></script>
+
+        <link href="/js/jquery-ui-1.10.4.custom/css/smoothness/jquery-ui-1.10.4.custom.css" rel="stylesheet"/>
+        <script src="/js/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.js"></script>
+        <script type="text/javascript" src="/js/jquery-ui-1.10.4.custom/js/joverlayscript.js"></script>
+        
+         <!--link rel="stylesheet" href="/js/jqueryUi/themes/base/jquery.ui.all.css">
+         <script src="/js/jqueryUi/ui/jquery.ui.core.js"></script>
+         <script src="/js/jqueryUi/ui/jquery.ui.widget.js"></script-->
+        <!-- <script src="/js/jqueryUi/ui/jquery.ui.position.js"></script>-->
+         <!-- <script src="/js/jqueryUi/ui/jquery.ui.autocomplete.js"></script-->
+
+        <script type="text/javascript">
+           $().ready(function(){
+                  
+           
+               
+                $('.nav-icon').click(function(){
+                    $('.nav-list-block').slideToggle();
+                });
+                $('select.styled').customSelect();
+//                $('input.myClass').prettyCheckable({
+//                  color: 'red'
+//                });
+
+                /* Product Search : Autocomplate, Search << */
+                $("#productSearch").autocomplete({
+                    source: function(request, response) {
+                        $.ajax({
+                            url: "/product/search/auto-search",
+                            type: "POST",
+                            dataType: "json",
+                            data: request,
+                            success: function(data) {
+                                response(data);
+                            }
+                        });
+                    },
+                    minLength: 1,
+                    select: function (a, b) { 
+                        if(b.item.value){ 
+                            if(b.item.value != 'Record Not Found'){
+                                var productName = b.item.value;  
+                                $.ajax({
+                                    url: "/product/search/product-number",
+                                    type: "POST",
+                                    data: {pname :productName},
+                                    success: function(productNumber) {
+                                        window.location.href = '/product/search/result/name/'+productNumber;
+                                    },
+                                    error: function(event, request, settings) {
+                                        return false;
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+                
+            /*$('#productSearch').keypress(function(event){
+                var keycode = (event.keyCode ? event.keyCode : event.which);
+                if(keycode == '13'){
+                    var productName = $("#productSearch").val();
+                    window.location.href = '/product/search/result/name/'+productName;
+                    /*$.ajax({
+                                        type:"GET",
+                                        url: "/product/search/fetch-search-productname/productName/"+productName,
+                                        success: function(data) {  
+                                            alert(data);
+                                        },
+                                        error:function(event, request, settings){
+                                            return false;
+                                        }
+                                    });*/
+                //}
+            //});*/
+                
+                 /* Product Search : Autocomplate, Search >> */
+            });
+        //      <!-- rotate loader Start-->
+            $(".mgp-rotate").hide();
+            $("#rotate").hide();
+            $(".wrapper").css('position' , 'unset');
+            $(".wrapper").css('opacity' , '1');
+         //  <!-- rotate loader end-->
+      
+        </script>
+    </body>
+</html>

@@ -1,0 +1,21 @@
+<?php
+ $loginSession = new Zend_Session_Namespace('login');
+        if(!empty($loginSession->userId)){
+            $objLanding = new Admin_Model_Landing();
+            $info = $objLanding->fetchLandingInfoByUserId($loginSession->userId);
+            if(!empty($info)){
+                $clientId = $info['client_id'];
+            }
+        }
+?>
+<?php
+$query = explode("/", $_SERVER['REQUEST_URI']); 
+?>
+<ul>
+    <li><a <?php if (in_array("landing-page", $query)) { echo 'class="active"';}?> href="<?php if(empty($clientId)){ echo '/admin/landing-page';}else{ echo '/admin/landing-page/index/id/'.$clientId;} ?>"><span>FRONT END MANAGEMENT</span></a></li>
+    <li><a <?php if (in_array("attribute-management", $query)) { echo 'class="active"';}?> href="/admin/attribute-management/"><span>DATABASE BUILDER</span></a></li>
+    <li><a <?php if (in_array("product-management", $query)) { echo 'class="active"';}?> href="/admin/product-management/category-setup"><span>DATABASE MANAGEMENT</span></a></li>
+    <!--li><a <?php if (in_array("mastergrid", $query)) { echo 'class="active"';}?> href="/admin/mastergrid/"><span>MASTER GRID</span></a></li-->
+    <li><a <?php if (in_array("import-management", $query)) { echo 'class="active"';}?> href="/admin/import-management/"><span>IMPORT MANAGEMENT</span></a></li>
+    <li><a href="#"><span>APP INTELLIGENCE</span></a></li>
+</ul>

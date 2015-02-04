@@ -1,0 +1,185 @@
+<?php
+$productDetail = $this->productDetail;  
+ if(isset($productDetail[0])){
+      $masterSubAtt1 = $productDetail[1]; 
+      $masterAtt1 = $productDetail[2];  
+ }
+foreach ($masterSubAtt1 as $key => $value) {
+     if($value['subatt_name'] != 'List Price Starting At ($)'){
+         $masterSubAtt[] = $value;
+     }
+}
+//Att <<
+foreach ($masterAtt1 as $key => $value) { 
+     foreach ($masterSubAtt as $k => $v) {
+          if($value[0] == $v['attribute_id']){
+              $masterAtt2[] = $value;
+          }
+     }
+}
+/*$masterAtt= array_map(
+    'unserialize',
+    array_unique(
+        array_map(
+            'serialize',
+            $masterAtt2
+        )
+    )
+);*/
+$masterAtt3= array_unique($masterAtt2, SORT_REGULAR);
+$masterAtt= array_values($masterAtt3);
+//Att >>
+
+
+
+
+//$pid = $this->pid;
+$projectId = $this->projectId;
+$productId = $this->productId;
+$baselineId = $this->baselineId;
+$price =  $this->price;
+?>
+<style>
+   #submit{
+         background: none repeat scroll 0 0 #8c8c8c;
+    border: medium none;
+    color: #fff;
+    cursor: pointer;
+    height: 28px;
+    margin-left: 50px;
+    width: 60px;
+    border-radius: 5px;
+    margin-top: 10px;
+    }
+/*    .product-desc-list-block{
+    background: none repeat scroll 0 0 #ffffff;
+    border-radius: 5px;
+    border-color: #8c8c8c;
+    border-style: solid none;
+    border-width: 40px 0;
+    left: 10px;
+    padding: 10px;
+    top: 70px;}*/
+</style>
+<link href="/css/frontPanel/bootstrap.min.css" rel="stylesheet">
+<link href="/css/frontPanel/style.css" rel="stylesheet">
+<div class="product-desc-list-block">
+    <div class="product-desc-list popup-detail">
+        <h4 class="baseline">Product Baseline Configuration</h4>
+        <p> Product Baseline data can be edited by users to more accurately compare existing conditions to the selected high performance products</p>
+        <div style="clear: both;"></div>
+        <form method="POST" action="/product-config/save"> 
+            <div class="detail-input-box">
+                <label class="detail-input-lbl">Price $</label>
+                <!--input type="text" class="detail-input-txt" name="price" id="<?php //if(!empty( $productDetail[0]['product_id'])){ echo $productDetail[0]['product_id'];}?>" value="<?php //if(!empty($productDetail[0]['purchase_price'])){echo $productDetail[0]['purchase_price']; }?>" style="background-color:#CCCCCC" /-->
+                 <input type="text" class="detail-input-txt" name="price" id="<?php if(!empty( $productDetail[0]['product_id'])){ echo $productDetail[0]['product_id'];}?>" value="<?php if(!empty($price)){echo $price; }?>" style="background-color:#CCCCCC" />
+            </div>
+       
+         <?php
+         if(isset($productDetail[0])){
+            foreach($masterAtt as $key  => $value){ ?>
+                <p><span><img src="/attributeImages/thumb/<?php echo $value[2]; ?>" alt="<?php echo $value[1]; ?>" class="img-responsive"/></span><span class="<?php if($value[1]=='Planet Health'){ echo "planetary";}else{echo strtolower($value[1]);}?>"><?php echo $value[1]; ?></span>
+                    <table border="0" cellpadding="0" cellspacing="0" class="product-desc-list-table-data">
+                    <?php
+                        foreach($masterSubAtt as $k => $v){
+                            if($value[0] == $v['attribute_id']){?>
+                                <tr>
+                                    <td width="70%"><?php echo $v['subatt_name']; ?></td>
+                                    <td width="30%" class="last-td-cell" style="background-color:#CCCCCC"><input type="text" class="subAttValue" name="value[]" value="<?php echo $v['value']; ?>" style="float: left; width: 65px;border: medium none;background-color:#CCCCCC;color: #737373;text-align: center;"/></td>
+                                </tr>
+                            <?php }
+                        }
+                    ?>
+
+                    </table>
+                </p>
+
+            <?php }
+
+         }
+         ?>
+        <!--p><span><img src="/images/frontPanel/energy-big.jpg" alt="energy" class="img-responsive"/></span><span class="energy">Energy</span>
+        <table border="0" cellpadding="0" cellspacing="0" class="product-desc-list-table-data">
+            <tr>
+                <td width="70%">Energy Consumtion</td>
+                <td width="30%" class="last-td-cell">0</td>
+            </tr>
+        </table>
+        </p>
+        <p><span><img src="/images/frontPanel/water-big.jpg" alt="water" class="img-responsive"/></span><span class="water">Water</span>
+        <table border="0" cellpadding="0" cellspacing="0" class="product-desc-list-table-data">
+            <tr>
+                <td width="70%">GPF (high)</td>
+                <td width="30%" class="last-td-cell">128</td>
+            </tr>
+            <tr>
+                <td width="70%">GPF (low)</td>
+                <td width="30%" class="last-td-cell">0.80</td>
+            </tr>
+            <tr>
+                <td width="70%">GPF</td>
+                <td width="30%" class="last-td-cell">0</td>
+            </tr>
+        </table>
+        </p>
+        <p><span><img src="/images/frontPanel/recycle-big.jpg" alt="recycle" class="img-responsive"/></span><span class="lifecycle">Lifecycle</span>
+        <table border="0" cellpadding="0" cellspacing="0" class="product-desc-list-table-data">
+            <tr>
+                <td width="70%">Purchase price</td>
+                <td width="30%" class="last-td-cell">$235</td>
+            </tr>
+            <tr>
+                <td width="70%">Warranty length price</td>
+                <td width="30%" class="last-td-cell">15 Years</td>
+            </tr>
+        </table>    
+        </p>
+        <p><span><img src="/images/frontPanel/man-big.jpg" alt="recycle" class="img-responsive"/></span><span class="human">Human Health</span>
+        <table border="0" cellpadding="0" cellspacing="0" class="product-desc-list-table-data">
+            <tr>
+                <td width="70%">Purchase price</td>
+                <td width="30%" class="last-td-cell">$235</td>
+            </tr>
+            <tr>
+                <td width="70%">Warranty length price</td>
+                <td width="30%" class="last-td-cell">15 Years</td>
+            </tr>
+        </table>    
+        </p>
+        <p><span><img src="/images/frontPanel/map-big.jpg" alt="recycle" class="img-responsive"/></span><span class="planetary">Planetary Health</span>
+        <table border="0" cellpadding="0" cellspacing="0" class="product-desc-list-table-data">
+            <tr>
+                <td width="70%">Purchase price</td>
+                <td width="30%" class="last-td-cell">$235</td>
+            </tr>
+
+        </table>    
+        </p-->
+        <p align="center">
+            <input type="hidden" name="hdnProjectId" value="<?php echo $projectId; ?>"/>
+            <input type="hidden" name="hdnProductId" value="<?php echo $productId; ?>"/>
+            <input type="hidden" name="hdnBaselineId" value="<?php echo $baselineId; ?>"/>
+            <input type="submit" id="submit" name="submit" value="Save"/>
+        </p> 
+    </form>
+    </div>
+</div>
+ <script src="/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript">
+   /* $().ready(function(){
+          $(".detail-input-txt").keyup(function() {
+               var productId = $(this).attr('id');
+               var price = $(this).val();
+                 $.ajax({
+                    type: "GET",
+                    url: "/Product-config/ajax-baseline-price/productId/"+productId+"/price/"+price,
+                    success: function(data) { 
+                       // alert(data); return false;
+                    },
+                    error: function(event, request, settings) {
+                        return false;
+                    }
+                });
+           });
+    });*/
+</script>

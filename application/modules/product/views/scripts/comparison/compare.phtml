@@ -1,0 +1,138 @@
+<?php //Path :Default_Collection_collect
+
+$productList  = $_POST['productId'];
+$comma = explode(',',$productList);
+//$countProduct =  count($comma);
+
+$sessCompare = new Zend_Session_Namespace('Sessioncomapare');
+if(!empty($sessCompare->productList)){
+    $tep = $sessCompare->productList.','.$productList;
+    $sessCompare->productList = $tep;
+}else{
+    $sessCompare->productList = $productList;
+}
+
+
+$tags = explode(',', $sessCompare->productList);
+$tags = array_values( array_unique($tags));
+
+//echo '<br/>session-'.$sessCompare->productList; //session-27,27,27,28,29,27,27,27,27,27,27
+
+//echo "<pre>"; print_r($tags); 
+$output = array_slice($tags, 0, 3);  // First 3 product
+$countProduct =  count($output);
+$finalCompare = implode(',',$output); //27,28,29
+
+?>
+
+<style>
+    .fancybox-wrap{width: 284px !important;}
+    .fancybox-skin {
+	position: relative;
+	padding: 0!important;
+	margin: 0;
+	background: #f9f9f9;
+	color: #444;
+	text-shadow: none;
+	-webkit-border-radius: 4px;
+	   -moz-border-radius: 4px;
+	        border-radius: 4px;
+                width: 280px !important;
+                height: 230px !important;
+}
+    .overlay-block input {
+        border: 1px solid #8c8c8c;
+        border-radius: 5px;
+        height: 30px;
+        width: 220px;
+    }
+     .overlay-block {
+        -moz-border-bottom-colors: none;
+        -moz-border-left-colors: none;
+        -moz-border-right-colors: none;
+        -moz-border-top-colors: none;
+        background: none repeat scroll 0 0 #FFFFFF;
+        border-color: #8c8c8c;
+        border-image: none;
+        border-style: solid none;
+        border-width: 40px 0;
+/*        display: table;*/
+        left: 10px;;
+        padding: 10px;
+/*        position: fixed;*/
+        top: 70px;
+        width: 280px;
+        height: 230px;
+    }
+    .overlay-block label {
+        font-weight: normal;
+        margin: 0 20px 0 0;
+        text-align: left;
+        width: 220px;
+    }
+    /* #ContinueBrowsing{
+        background:url(/images/continueBrowingBtn.png) no-repeat top left;
+        width:166px;
+        height:28px;
+        border:none !important;
+        cursor:pointer;
+        display: block;
+        margin: 0 auto;
+    }*/
+  
+    .fancybox-item.fancybox-close {
+        right: 2px !important;
+        top: 2px !important;
+    }
+    .customSelect styled .customSelectInner{
+        width : 205px !important;
+    }
+    .fancybox-inner{width: 300px !important;}
+    .fancybox-outer {height: 321px;width: 100% !important;}
+</style>
+<link href="/css/frontPanel/bootstrap.min.css" rel="stylesheet">
+<link href="/css/frontPanel/style.css" rel="stylesheet">
+<link href="/font/font.css" rel="stylesheet">
+<script src="/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox.css?v=2.1.4" media="all" />
+
+
+<div class='contact-content'>
+    
+    <form name="frm_collect" id="frm_collect" action="#" method="post"/>
+    <div id="collect">
+    <div class="overlay-block">
+      <p style="padding-left:5px;">
+        <?php 
+        if($countProduct > 3){
+             echo 'First 3 Products Added';
+        }else{
+            if($countProduct == '1'){
+                echo $countProduct. ' Product Added'; echo '<br/><br/>';
+            }else if($countProduct == '3'){
+                echo "The Max(3) Number of Products Added";
+                echo "<br/><br/><a style='background: none repeat scroll 0% 0% rgb(140, 140, 140); border-radius: 5px; text-decoration: none; color: rgb(255, 255, 255); padding: 5px 25px;' href='/product/comparison/index/ids/$finalCompare'>Compare</a>";
+            }else{
+                echo $countProduct. " Products Added";
+                echo "<br/><br/><a href='/product/comparison/index/ids/$finalCompare' style='background: none repeat scroll 0% 0% rgb(140, 140, 140); border-radius: 5px; text-decoration: none; color: rgb(255, 255, 255); padding: 5px 8px;'>Compare</a>";
+            } 
+           
+        }
+        ?>
+          <a id="ContinueBrowsing" style="background: none repeat scroll 0% 0% rgb(140, 140, 140); border-radius: 5px; text-decoration: none; color: rgb(255, 255, 255); padding: 5px 8px;">Continue Browsing</a>
+      </p>
+      
+       
+    </div>
+    </div>
+    </form>
+</div> 
+<script  type="text/javascript">
+  $(document).ready(function() {
+      $('#ContinueBrowsing').click(function(e){ 
+        location.reload();
+        parent.jQuery.fancybox.close();
+      });
+  });
+</script>

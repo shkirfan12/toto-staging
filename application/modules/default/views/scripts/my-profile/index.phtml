@@ -1,0 +1,157 @@
+<?php // my-profile index
+$sessUser = new Zend_Session_Namespace('user'); 
+//echo $sessUser->user_Id.'--'.$sessUser->email_Id.'--'.$sessUser->fname.'--'.$sessUser->lname; 
+$profileDetail = $this->profileDetail; 
+$userStats = $this->userStats; 
+?>
+
+<style>
+    .number-points {
+    float: left;
+    margin-right: 10px;
+    min-width: 15px;
+}
+</style>
+
+<style>
+    .fancybox-type-iframe{
+        
+        width: 280px !important;
+    }
+    .fancybox-skin{
+        padding: 0 !important;
+    }
+    .fancybox-type-iframe .fancybox-inner {
+        height: 370px !important;
+        width: 280px !important;
+    }
+    body{
+        margin: 0;
+    }
+    
+</style>
+<div id="dialog-form" title="Reset Password" style=""></div><!-- Change Password dialog box -->
+<div class="container">
+    <div class="content">
+        <div class="page-heading">
+              <h2>MY <span>PROFILE</span></h2>
+        </div>
+        <div class="my-profile-block">
+            <div class="my-profile">
+                <form action="/my-profile" name="frm_myProfile" id="frm_myProfile" method="POST" onsubmit="return validation();">
+                <p>
+                    <label>Email *</label>
+                    <input type="text" name="profile_email" id="profile_email" value="<?php if(!empty($profileDetail)){ echo $profileDetail['email_id'];}?>" style="border: 1px solid #8E8D8E;border-radius: 5px;height: 30px;width: 215px;padding-left:5px;color: #4D4D4D;"/>
+                    <span id="err" style="color:red;"></span>
+                </p>
+                <p>
+                     <a href="/my-profile/change-password" data-fancybox-type="iframe" class="various">Reset password</a>
+<!--                    <a href="javascript:void(0);" onclick="javascript:changePassword();" id="change-password">Reset password</a>-->
+                </p>
+                <p>
+                    <label>User type</label>
+                    <span class="user-option">
+                        <select class="styled" name="userType">
+                            <?php 
+                            $userType  =array('Consumer','Home Owner','Architect','Designer','Engineer - Mechanical','Engineer - Electrical','Engineer - Plumbing','Contractor - Residential','Contractor - Commercial','Contractor - Electrician','Contractor - Plumber','Contractor - HVAC','Contractor - Remodeler','Consultant','Facility Manager','Building Product Manufacture Sales Representative','Building Product Manufacture');
+                            foreach ($userType as $key => $value) { ?>
+                                 <option <?php if(!empty($profileDetail)){ if($profileDetail['profileType'] == $value){ echo "selected='selected'";} }?>value='<?php echo $value; ?>'><?php echo $value; ?></option>
+                            <?php }
+                            ?>
+                        </select>
+                    </span>
+                </p>
+                <p>
+                    <label>My Stats</label>
+<!--                    <span>__ of uses this month</span>
+                    <span>__ of uses YTD</span>-->
+                      <p><label class="number-points"><?php if(!empty($userStats)){ echo $userStats[0]['project_count'];} ?></label><span>Project<?php if(!empty($userStats)){ if($userStats[0]['project_count'] > 1) { echo "s"; } } ?></span><p>
+                    <p> <label class="number-points"><?php if(!empty($userStats)){ echo $userStats[0]['collection_count'];} ?></label><span>Collection<?php if(!empty($userStats)){ if($userStats[0]['collection_count'] > 1) { echo "s"; } } ?></span><p>
+                    <p> <label class="number-points"><?php if(!empty($userStats)){ echo $userStats[0]['product_count'];} ?></label><span>Product<?php if(!empty($userStats)){ if($userStats[0]['product_count'] > 1) { echo "s"; } } ?> in Collection</span><p>
+                    <!--span>__ of linked MGP Tribe members</span-->
+                </p>
+                <p>&nbsp;</p>
+                <p>* Required field</p>
+                <p class="save-changes">SAVE CHANGES</p>
+                </form>
+            </div>
+        </div>
+        <div class="desk-side-bar" style="margin:0;">
+            <h2>Lorem <span>Ipsum</span></h2>
+            <div>
+                  <input type="checkbox" style="display: none;" class="productCheckbox" />
+                <a><img src="/images/frontPanel/sidebar-img1.jpg" alt="sidebar" class="img-responsive" /></a>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ullamcorper augue eget ante faucibus aliquam. Nam sit amet commodo mauris. Donec sapien ligula, interdum et cursus luctus, bibend um in felis. Fusce bibendum fringilla risus ut eleifend. Sed egestas quam at dolor aliquet eget porta sapien lacinia.</p>
+            </div>
+            <div>
+                <a><img src="/images/frontPanel/sidebar-img2.jpg" alt="sidebar" class="img-responsive" /></a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Dialog box << -->
+<!--<link href="/js/jquery-ui-1.10.4.custom/css/smoothness/jquery-ui-1.10.4.custom.css" rel="stylesheet"/>
+<script src="/js/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.js"></script>
+<script type="text/javascript" src="/js/jquery-ui-1.10.4.custom/js/joverlayscript.js"></script>-->
+<!-- Dialog box >> -->
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.save-changes').click(function(e){
+            alert("Changes Saved");
+            $("#frm_myProfile").submit();
+        });
+      
+    });
+    function validation(){
+        var errorCount  = 0;
+        var alphaExp    = /^[a-zA-Z\s]+$/;
+        var alphaNumExp = /^[a-zA-Z0-9\s]+$/;
+        var numExp      = /^[0-9]+$/; 
+        var reEmail = /^(?:[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+\.)*[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+@(?:(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-](?!\.)){0,61}[a-zA-Z0-9]?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9\-](?!$)){0,61}[a-zA-Z0-9]?)|(?:\[(?:(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\]))$/;
+        var isEmail = $('#profile_email').val();
+        $('#err').html(''); 
+        if($('#profile_email').val()==''){
+            errorCount++;
+            $('#err').html('This field is required.');
+        }
+        if(!isEmail.match(reEmail)) {
+            errorCount++;
+            $('#err').html('Invalid email address.');
+        }
+        if(errorCount == 0){
+            return true; 
+        }else{
+            return false;
+        }
+    }
+    
+</script>
+        <script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+        <link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox1.css?v=2.1.4" media="all" />
+        <script type="text/javascript">
+            $(".various").fancybox({
+                // title           : 'Create Application',
+                maxWidth	: 900,
+                maxHeight	: 700,
+                fitToView	: false,
+                 width		: 280,
+                height		: 370,
+                autoSize	: false,
+                closeClick	: false,
+                openEffect	: 'none',
+                closeEffect	: 'none',
+                'scrolling'   : 'no',
+                'afterClose'  : function() {
+                    //     window.location="/admin/index/manage";
+                    window.location.reload();
+                }
+                /*'onComplete' : function(){  
+                          $('.apps_module').click(function(){
+                              parent.$.fancybox.close();
+                          });
+                      }*/
+            }); 
+        
+        </script>
+        
+<script type="text/javascript" src="/js/resetPwd.js"></script>

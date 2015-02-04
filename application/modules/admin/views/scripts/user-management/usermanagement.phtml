@@ -1,0 +1,327 @@
+<?php
+$pagination = $this->urlParam;
+$userinfo = $this->userinfo;
+$count = $this->usercount;
+$state = $this->state;
+//echo"<pre>";
+//print_r($userinfo); die;
+error_reporting(0);
+//echo "<pre>";
+//print_r($userinfo); 
+//$prjcount= $this->projectcount;
+//echo "<pre>";
+//print_r ($prjcount); die;
+//echo"<pre>";
+//print_r($userinfo); 
+?>
+<script type="text/javascript" src="<?php echo $this->baseUrl(); ?>/js/jquery.tablesorter.js"></script>
+<script>
+    $(document).ready(function(){
+        $(".user-management").tablesorter();
+//        $(".selectall").attr
+$('#all').click(function(event) {  //on click
+        if(this.checked) { // check select status
+            $('.myClass').each(function() { //loop through each checkbox
+                this.checked = true;  //select all checkboxes with class "checkbox1"              
+            });
+        }else{
+            $('.myClass').each(function() { //loop through each checkbox
+                this.checked = false; //deselect all checkboxes with class "checkbox1"                      
+            });        
+        }
+    });
+       
+           
+        $("#add_user").hide();
+        $("#trigger_id").click(function(){
+            $("#new_fname").val("");
+            $("#new_lname").val("");
+            $("#new_password").val("");
+            $("#email").val("");
+            $("#utype").val("");
+            $("#state").val("");
+            $("#add_user").fadeIn();
+        }) ;
+        $(".modal_close").click(function(){
+            $("#add_user").fadeOut();
+        });
+        
+        //       $(".myClass").live('click',function(){
+        //         var res = $(this).attr('id');
+        //         alert(res);
+        //       });
+        $("#resetpass").click(function(){
+            var val = []; 
+            var selected = new Array();
+            $(':checkbox:checked').each(function(i){
+                val[i] = $(this).parent().parent().attr('id');
+                selected.push(val[i]);
+            });
+            var count = selected.length;
+            //           alert(selected);
+            
+            $.ajax({
+                type:"POST",
+                data: "selected="+selected,
+                url: '/admin/user-management/sendmail',
+                success: function(response){
+                    //                    alert(response);
+                    alert("password has been reseted");
+                    
+                }
+            });
+            
+        });
+        $(".edituser").click(function(e){
+            e.preventDefault();
+            var id= $(this).parent().parent().attr('id');
+            //            alert(id); 
+            
+            $.ajax({
+                type:"POST",
+                data: "id="+id,
+                url: '/admin/user-management/edituser',
+                success: function(response){
+                    $("#formEdit").html(response);
+                    //                    
+                }
+            });
+            
+        });
+    });
+</script>
+<div class="content-block">
+    <p>User Management</p>
+    <div class="button-block">
+<!--        <a href="/admin/user-management/index"><img src="<?php echo $this->baseUrl(); ?>/images/all-users.png" alt="all users" /></a>
+        <a href="/admin/user-management/clientmanagement"><img src="<?php echo $this->baseUrl(); ?>/images/client-account-deselect.png" alt="client account" /></a>-->
+        <a id="resetpass" href="#">reset password</a>
+        <div>
+
+            <a href="#" class="reg-user">Registered Users</a> <span><?php echo $count; ?></span>
+            <a href="#">Google Analytics</a>
+        </div>
+    </div>
+    <a href="#add_user"  id="trigger_id" class="add-user">Add User</a>
+    <table class="user-management" class="tablesorter">
+
+        <thead class="t-head" >
+            <th class="tdw-130 tdleft">Name
+                <span class="sort">
+                                        <a href="#" class="up"><img src="/images/sort-up.png" alt="sort" /></a>
+                                        <a href="#"><img src="/images/sort-down.png" alt="sort" /></a>
+                                    </span>
+            </th>
+            <th class="tdw-195" >Email
+                <span class="sort">
+                                        <a href="#" class="up"><img src="/images/sort-up.png" alt="sort" /></a>
+                                        <a href="#"><img src="/images/sort-down.png" alt="sort" /></a>
+                                    </span>
+            </th>
+            <td style='background-color:#8CC63F;'>Reset Password &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" id="all" class="selectall" value="all" name="selectall" /></td>
+            <td style='background-color:#8CC63F;' class="tdw-55">App Origin</td>
+            <th class="tdw-105">User Type
+            <span class="sort">
+                                        <a href="#" class="up"><img src="/images/sort-up.png" alt="sort" /></a>
+                                        <a href="#"><img src="/images/sort-down.png" alt="sort" /></a>
+                                    </span></th>
+            <th class="tdw-45">State
+            <span class="sort">
+                                        <a href="#" class="up"><img src="/images/sort-up.png" alt="sort" /></a>
+                                        <a href="#"><img src="/images/sort-down.png" alt="sort" /></a>
+                                    </span></th>
+            <th class="tdw-75">#UsesYTD
+            <span class="sort">
+                                        <a href="#" class="up"><img src="/images/sort-up.png" alt="sort" /></a>
+                                        <a href="#"><img src="/images/sort-down.png" alt="sort" /></a>
+                                    </span></th>
+            <th class="tdw-75">#UsesMth
+            <span class="sort">
+                                        <a href="#" class="up"><img src="/images/sort-up.png" alt="sort" /></a>
+                                        <a href="#"><img src="/images/sort-down.png" alt="sort" /></a>
+                                    </span></th>
+            <th class="tdw-75">#Projects
+            <span class="sort">
+                                        <a href="#" class="up"><img src="/images/sort-up.png" alt="sort" /></a>
+                                        <a href="#"><img src="/images/sort-down.png" alt="sort" /></a>
+                                    </span></th>
+            <th class="tdw-90">#Collections
+            <span class="sort">
+                                        <a href="#" class="up"><img src="/images/sort-up.png" alt="sort" /></a>
+                                        <a href="#"><img src="/images/sort-down.png" alt="sort" /></a>
+                                    </span></th>
+            <th class="tdw-75 tdleft">#Collected Products
+            <span class="sort">
+                                        <a href="#" class="up"><img src="/images/sort-up.png" alt="sort" /></a>
+                                        <a href="#"><img src="/images/sort-down.png" alt="sort" /></a>
+                                    </span></th>
+            <td style='background-color:#8CC63F;' class="tdw-65">Last Login</td>
+        </thead>
+        <?php
+        foreach ($userinfo as $val) {
+            $originalDate = $val['datemodified'];
+            if ($originalDate != '0000-00-00 00:00:00') {
+                $newDate = date("m/d/y", strtotime($originalDate));
+            } else {
+                $newDate = '00/00/00';
+            }
+            ?>
+            <tr id="<?php echo $val['user_id']; ?>">
+                <td><a href="#formEdit" class="edituser"><?php echo $val['fname'] . " " . $val['lname']; ?></a></td>
+                <td><?php echo $val['email_id']; ?></td>
+                <td style='text-align: center;'><input type="checkbox" class="myClass answer" value="yes" name="answer" id="answer"/></td>
+                <td>TOTO</td>
+                <td><?php echo $val['profileType']; ?></td>
+                <td><?php echo $val['state_code']; ?></td>
+                <td><?php echo $val['usesYTD']; ?></td>
+                <td><?php echo $val['usesMth']; ?></td>
+                <td style='text-align: center;'><?php echo $val['project_count']; ?></td>
+                <td style='text-align: center;'><?php echo $val['collection_count']; ?></td>
+                <td style='text-align: center;'><?php echo $val['product_count']; ?></td>
+                <td><?php echo $newDate; ?></td>
+            </tr>
+            <?php
+        }
+        ?>
+
+    </table>
+</div>
+
+<div id="add_user">
+    <form id="addForm" name="addForm" method="post" action="/admin/user-management/saveuser" enctype="multipart/form-data"> 
+        <div class="overlay-block">
+            <p class="title">User Account Management</p>
+            <a href="#" class="modal_close"></a>
+            <div>
+                <p>
+                    <label>*First Name</label>
+                    <input type="text" id="new_fname" name="new_fname" />
+                </p>
+                <p>
+                    <label>*Last Name</label>
+                    <input type="text" id="new_lname" name="new_lname" />
+                </p>
+
+                <p>
+                    <label>*Email</label>
+                    <input type="text" id="email" name="email" />
+                </p>
+                <p>
+                    <label>*Password</label>
+                    <input type="password" id="new_password" name="new_password" />
+                </p>
+                <p>
+                    <label>*User type</label>
+                    <select class="styled" id="utype" name="utype">
+                        <option value="select">Select</option> 
+                        <?php
+                        $utype = array('Admin', 'Manager', 'Consumer', 'Home Owner', 'Architect', 'Designer', 'Engineer-Mechanical', 'Engineer-Electrical', 'Engineer-Plumbing', 'Contractor-Home Builder', 'Contractor-Commercial', 'Contractor-Electrician', 'Contractor-Plumber', 'Contractor-Remodeler', 'Consultant', 'Facility Manager', 'Building Product Manufacturer Representative');
+                        foreach ($utype as $key => $value) {
+                            ?>
+                            <option value="<?php echo $value; ?>"><?php echo $value; ?></option>
+                        <?php }
+                        ?>         
+                    </select>
+                </p>
+                <p>
+                    <label>*State</label>
+                   <select id="state" name="state">
+                        <option value="select">Select</option> 
+                       <?php
+                       foreach($state as $val)
+                       {
+                       echo "<option value='".$val['state_id']."'>".$val['state']."</option>";
+                       
+                           
+                       }
+                       ?>
+                                              </select>
+                </p>
+                <p>
+                    <a id="submitfrm" class="save-changes" href="#"><img src="<?php echo $this->baseUrl(); ?>/images/save.png" alt="save changes" /></a>
+                </p>
+                <p>* Required Fields</p>
+            </div>
+        </div>
+    </form>
+</div>
+ <span style="float: right;padding-top: 10px;">
+                    <?php echo $this->paginationControl($userinfo, 'Sliding', 'pagination.phtml', $pagination); ?>
+                </span>
+<div id="formEdit">
+
+</div>
+<script>
+    $("#submitfrm").click(function() {
+        var fname = $("#new_fname").val();
+        var lname = $("#new_lname").val();
+        var password = $("#new_password").val();
+        var mail = $("#email").val();
+        var type = $("#utype").val();
+        var state = $("#state").val();
+        var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+            
+        if(fname==''){
+            alert("Please Enter First name");
+            return false;
+        }else if(lname==''){
+            alert("Please Enter Last name");
+            return false;
+        } else if(mail=='') {
+            alert("Please Enter Your Email");
+            return false;  
+        }else if(reg.test(mail) == false)  {
+            alert('Invalid Email');
+            return false;    
+        }
+        else if(password==''){
+            alert("Please Enter Password");
+            return false;  
+        }else if(type=='select') {
+            alert("Please select User Type");
+            return false;  
+            
+        }
+        else if(state=='select') {
+            alert("Please select State");
+            return false;  
+            
+        }else if (mail !=''){
+            $.ajax({
+                type:"POST",
+                data: "mail="+mail,
+                url: '/admin/user-management/checkmail',
+                success: function(response){
+                    if(response == 1){
+                        alert("Email already exist");
+                        return false;
+                    } else{
+                        $("#addForm").submit(); 
+                    }
+                }
+            });
+                
+        } 
+            
+    });
+    
+   
+</script>
+<!--<script type="text/javascript">
+    $(function(){
+
+    $('select.styled').customSelect();
+
+    });
+</script>
+<script>
+    $().ready(function(){
+        $('input.myClass').prettyCheckable({
+          color: 'red'
+        });
+          $( "tr:odd" ).css( "background-color", "#f2f2f2" );
+      
+      $("#trigger_id").leanModal({ top : 200, overlay : 0.4, closeButton: ".modal_close" });
+      });
+    
+</script>-->

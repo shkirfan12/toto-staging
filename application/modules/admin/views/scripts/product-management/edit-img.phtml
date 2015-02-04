@@ -1,0 +1,71 @@
+<script src="/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox.css?v=2.1.4" media="all" />
+<?php
+$attInfo = $this->attInfo; 
+?>
+<?php
+    if(!empty($this->succMesg)){?>
+    <script language="JavaScript" type="text/javascript">
+    $(document).ready(function() { 
+        parent.jQuery.fancybox.close();
+    });
+    </script>
+    <?php }
+?>
+<div class="errors" id="errors"></div>
+<div class='contact-content'>
+    <form name="frm_createApp" id="frm_createApp" action="/admin/product-management/edit-img<?php if(!empty($attInfo)){ echo '/pImgId/'.$attInfo['product_img_id']; }?>" method="post" enctype="multipart/form-data" onsubmit="return validation();"/>
+        <?php
+         if (!empty($attInfo)) {
+            if (!empty($attInfo['product_img_name'])) {?>
+                 <p>
+                     <label style="font-family: verdana; font-size: 14px; color: #7F7F7F; font-weight: bold; display: block;">Image:</label>
+                     <img src="<?php echo "/batchUpload/thumb/".$attInfo['product_img_name']; ?>"/>
+                 </p>
+            <?php }
+        }
+        ?>
+      
+        <p>
+            <label style="font-family: verdana; font-size: 14px; color: #7F7F7F; font-weight: bold;">Thumbnail Image:</label>
+            <input type="file" id="imgfile" name="imgfile" style="margin-left:21px;border-radius: 3px 3px 3px 3px;color: #7F7F7F;"/><br/>
+            
+        </p>
+        
+        <p style="margin-bottom: 10px;">
+             <input type="hidden" name="hdnImgName" value="<?php if(!empty($attInfo['product_img_name'])){ echo $attInfo['product_img_name'];}?>"/>
+             <input type="submit" name="submit" value="Submit" />
+        </p>
+    </form>
+</div> 
+
+<script type="text/javascript">
+
+      function validation(){
+            var errorCount  = 0;
+            var alphaExp    = /^[a-zA-Z\s]+$/;
+            var alphaNumExp = /^[a-zA-Z0-9\s]+$/;
+            var numExp      = /^[0-9]+$/;
+
+            $('#errors').html('');
+           
+           if(($('#imgfile').val() != '')){
+                var rootPath  = '<?php echo $_SERVER['DOCUMENT_ROOT']; ?>'; 
+                var fileName  = document.getElementById('imgfile').value;
+                var imgPath   = "file:///"+rootPath+"batchUpload/thumb/"+ fileName; 
+                var extension = fileName.split('.');
+                var ext       = extension['1'].toLowerCase();
+                if( (ext != 'jpeg') && (ext != 'jpg') && (ext != 'png') && (ext != 'gif') && (ext !='bmp')){
+                    errorCount++;
+                    $('<font color="red" style="font-family: verdana; font-size: 12px;">Invalid File Format.<br>Please select .jpeg, .jpg, .png, .gif, .bmp file</font><br>').appendTo('#errors');
+                }
+            }
+       
+            if(errorCount == 0){ 
+                return true; //parent.$.fancybox.close();
+            }else{
+                return false;
+            }
+    }
+</script>

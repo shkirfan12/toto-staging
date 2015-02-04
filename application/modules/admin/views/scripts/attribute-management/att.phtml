@@ -1,0 +1,125 @@
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/style.css" rel="stylesheet">
+<link href="/font/font.css" rel="stylesheet">
+<style>
+    .overlay-block input {
+        border: 1px solid #8E8D8E;
+        border-radius: 5px;
+        height: 30px;
+        width: 200px;
+    }
+    .overlay-block {
+        -moz-border-bottom-colors: none;
+        -moz-border-left-colors: none;
+        -moz-border-right-colors: none;
+        -moz-border-top-colors: none;
+        background: none repeat scroll 0 0 #FFFFFF;
+        border-color: #8CC63F -moz-use-text-color;
+        border-image: none;
+        border-style: solid none;
+        border-width: 40px 0;
+/*        display: table;*/
+        left: 0px;;
+        padding: 20px;
+        position: fixed;
+        top: 0px;
+        width: 444px;
+        height: 321px;
+    }
+    .overlay-block label {
+        font-weight: normal;
+        margin: 0 20px 0 0;
+        text-align: left;
+        width: 120px;
+    }
+    #submit{
+        background:url(/images/save.png) no-repeat top left;
+        width:60px;
+        height:28px;
+        border:none;
+        cursor:pointer;
+    }
+</style>
+
+<script src="/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox.css?v=2.1.4" media="all" />
+<?php
+$attInfo = $this->attInfo; 
+?>
+<?php
+    if(!empty($this->succMesg)){?>
+    <script language="JavaScript" type="text/javascript">
+    $(document).ready(function() { 
+        parent.jQuery.fancybox.close();
+    });
+    </script>
+    <?php }
+?>
+
+<div class='contact-content'><div class="overlay-block"><div class="errors" id="errors"></div><br/>
+    <!--h3 style="padding-left:65px;">Create Application</h3><br-->
+    <form name="frm_createApp" id="frm_createApp" action="/admin/attribute-management/att/<?php if(!empty($attInfo)){ echo '/id/'.$attInfo['attribute_id']; }?>" method="post" enctype="multipart/form-data" onsubmit="return validation();"/>
+        <p>
+            <label>Attribute Name:</label>
+            <input type="text" id="attribute_title" name="attribute_title" value="<?php if(!empty($attInfo)){ echo $attInfo['attribute_name']; }?>" style='padding-left:3px;'/>
+        </p>
+        <?php
+         if (!empty($attInfo)) {
+            if (!empty($attInfo['attribute_image'])) {?>
+                 <p>
+                     <label>Attribute Image:</label>
+                     <img src="<?php echo "/attributeImages/thumb/".$attInfo['attribute_image']; ?>"/>
+                 </p>
+            <?php }
+        }
+        ?>
+      
+        <p>
+            <label style='float:left;'>Thumbnail Image:</label>
+            <input type="file" id="imgfile" name="imgfile" style="border:none;float:left;"/><br/>
+            
+        </p>
+        
+        <p>
+             <input type="hidden" name="hdnattId" value="<?php if(!empty($attInfo)){ echo $attInfo['attribute_id'];}?>"/>
+             <input type="submit" name="submit" value="" id="submit"/>
+        </p>
+    </form>
+</div></div> 
+
+<script type="text/javascript">
+
+      function validation(){
+            var errorCount  = 0;
+            var alphaExp    = /^[a-zA-Z\s]+$/;
+            var alphaNumExp = /^[a-zA-Z0-9\s]+$/;
+            var numExp      = /^[0-9]+$/;
+
+            $('#errors').html('');
+            if(($('#attribute_title').val() == '')){
+                errorCount++;
+                $('<font color="red" style="font-family: verdana; font-size: 12px;">Attribute Name cannot be blank.</font><br>').appendTo('#errors');
+            }
+           if(($('#imgfile').val() != '')){
+                var rootPath  = '<?php echo $_SERVER['DOCUMENT_ROOT']; ?>'; 
+                var fileName  = document.getElementById('imgfile').value;
+                var imgPath   = "file:///"+rootPath+"attributeImages/thumb/th_"+ fileName; 
+                var extension = fileName.split('.');
+                var ext       = extension['1'].toLowerCase();
+                if( (ext != 'jpeg') && (ext != 'jpg') && (ext != 'png') && (ext != 'gif') && (ext !='bmp')){
+                    errorCount++;
+                    $('<font color="red" style="font-family: verdana; font-size: 12px;">Invalid File Format.<br>Please select .jpeg, .jpg, .png, .gif, .bmp file</font><br>').appendTo('#errors');
+                }
+            }
+       
+            if(errorCount == 0){ 
+                return true; //parent.$.fancybox.close();
+            }else{
+                return false;
+            }
+    }
+</script>
+
+
+

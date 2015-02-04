@@ -1,0 +1,123 @@
+<?php //echo "Path : Default_payback-analysis_index";
+//User
+$sessUser = new Zend_Session_Namespace('user');
+// GET PROJECT AND ITS PRODUCTS ARRAY OF VALUES
+$objField = new Product_Model_Product();
+$ProdGPM ="";
+$costSaving ="";
+$projInfo = $this->projInfo;  
+if(!empty($projInfo)){
+    $projectDetail = $projInfo[0];
+    $productDetail = $projInfo[1];
+    
+}else{
+    //echo "<div class='container' style='text-align:center;'>No product found under this project</div>";
+}
+$prev_url = $_SERVER['HTTP_REFERER'];
+
+?>
+<div class="container">
+<div class="content">
+<div class="analysis-block">
+       <!-- Projrct Header << --->
+            <?php
+                $objProject = new Default_Model_Project();
+
+                $query1 = explode("/", $_SERVER['REQUEST_URI']); 
+
+                 if (in_array("product-config", $query1)) { 
+                     $c1 = 'pro-list-tab active';
+                     if (in_array("pid", $query1)) { 
+                           $projId =  end($query1);
+                           $projInfoById = $objProject->fetchProjectInfoById($projId);
+                           $projInfoById['project_type'];
+                      }
+                 }else{ 
+                     $c1 = 'pro-list-tab';
+                 }
+
+                 if (in_array("configuration", $query1)) { 
+                     $c2 = 'pro-conf-tab active'; 
+                      if (in_array("pid", $query1)) { 
+                           $projId =  end($query1);
+                           $projInfoById = $objProject->fetchProjectInfoById($projId);
+                      }
+                 }else{ 
+                     $c2 = 'pro-conf-tab';
+                 } 
+
+                 if (in_array("payback-analysis", $query1)) { 
+                     $c3 = 'pay-anly-tab active';
+                     if (in_array("pid", $query1)) { 
+                           $projId =  end($query1);
+                           $projInfoById = $objProject->fetchProjectInfoById($projId);
+                           $projInfoById['project_type'];
+                      }
+                 }else{ 
+                     $c3 = 'pay-anly-tab';
+                 }
+             ?>
+
+
+                <div class="product-tabs">
+                    <a href="<?php if(!empty($projId)){ echo "/project/configuration/type/".$projInfoById['project_type']."/pid/".$projId;}else{ echo "/project/analysis";} ?>" class="pro-list-tab ">1. PROJECT SETUP</a>
+                    <a href="/product-config<?php if(!empty($projId)){ echo "/index/pid/".$projId;}?>" class="pro-list-tab">2. PRODUCT SETUP</a>
+                    <a href="/payback-analysis<?php if(!empty($projId)){ echo "/index/pid/".$projId;}?>" class="pro-list-tab active">3. PROJECT ANALYSIS</a>
+                </div>
+<!-- Project Header >> -->
+
+             <span style='display: table;margin: 20px auto;width: 46%;'>
+                 <a  style="margin: 0 4px 0 0; float: left;" href="<?php echo $prev_url; ?>"><img src="/images/back_active.png"/></a>
+                <?php
+                if($sessUser->fname == 'Dummy'){?>
+                    <a style="margin: 0 4px 0 0; float: left;" href="javascript:void(0);"><img src="/images/save_inactive.png"/></a>
+                <?php }else{?>
+                    <a style="margin: 0 4px 0 0; float: left;" href="javascript:void(0);">
+                        <img src="/images/save_inactive.png"/>
+                    </a>
+                <?php }
+                ?>
+                    <a href="javascript:void(0);"><img src="/images/next_inactive.png"/></a>
+            </span>
+    
+    <div class="analysis-area-block">
+        
+        <div class="analysis-area">
+            <div id="container" style="min-width: 260px; height: 400px; margin: 0 auto">
+			<p style="text-align: center; font-size: 18px; padding-top: 100px;">
+                                An error has occurred, please review the Project Setup and Product Setup data<br/>
+				OR <br> 
+                                One or more of your products are missing values to complete your payback analysis
+			</p>
+			
+			</div>
+        </div>
+        
+            
+   <span style='display: table;margin: 20px auto;width: 46%;'>
+                <a  style="margin: 0 4px 0 0; float: left;" href="<?php echo $prev_url; ?>"><img src="/images/back_active.png"/></a>
+                <?php
+                if($sessUser->fname == 'Dummy'){?>
+                    <a style="margin: 0 4px 0 0; float: left;" href="javascript:void(0);"><img src="/images/save_inactive.png"/></a>
+                <?php }else{?>
+                    <a style="margin: 0 4px 0 0; float: left;" href="javascript:void(0);">
+                        <img src="/images/save_inactive.png"/>
+                    </a>
+                <?php }
+                ?>
+                    <a href="javascript:void(0);"><img src="/images/next_inactive.png"/></a>
+            </span>
+</div>
+
+</div>
+    <div class="desk-side-bar" style="margin: 0;">
+    <h2>Lorem <span>Ipsum</span></h2>
+    <div>
+        <a><img src="/images/frontPanel/sidebar-img1.jpg" alt="sidebar" class="img-responsive" /></a>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ullamcorper augue eget ante faucibus aliquam. Nam sit amet commodo mauris. Donec sapien ligula, interdum et cursus luctus, bibend um in felis. Fusce bibendum fringilla risus ut eleifend. Sed egestas quam at dolor aliquet eget porta sapien lacinia.</p>
+    </div>
+    <div>
+        <a><img src="/images/frontPanel/sidebar-img2.jpg" alt="sidebar" class="img-responsive" /></a>
+    </div>
+</div>
+</div>

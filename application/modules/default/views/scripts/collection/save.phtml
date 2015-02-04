@@ -1,0 +1,206 @@
+<style>
+    
+    
+/*    .fancybox-skin {
+	position: relative;
+	padding: 0!important;
+	margin: 0;
+	background: #f9f9f9;
+	color: #444;
+	text-shadow: none;
+	-webkit-border-radius: 4px;
+	   -moz-border-radius: 4px;
+	        border-radius: 4px;
+                width: 280px !important;
+                height: 321px;
+}
+    .overlay-block input {
+        border: 1px solid #8E8D8E;
+        border-radius: 5px;
+        height: 30px;
+        width: 220px;
+    }
+     .overlay-block {
+        -moz-border-bottom-colors: none;
+        -moz-border-left-colors: none;
+        -moz-border-right-colors: none;
+        -moz-border-top-colors: none;
+        background: none repeat scroll 0 0 #FFFFFF;
+        border-color: #8CC63F;
+        border-image: none;
+        border-style: solid none;
+        border-width: 40px 0;
+        display: table;
+        left: 0;;
+        padding: 10px;
+        position: fixed;
+        top: 70px;
+        width: 280px;
+        height: 220px;
+    }
+    .overlay-block label {
+        font-weight: normal;
+        margin: 0 20px 0 0;
+        text-align: left;
+        width: 220px;
+    }
+     .fancybox-item.fancybox-close {
+        right: 2px !important;
+        top: 2px !important;
+    }
+    .customSelect styled .customSelectInner{
+        width : 205px !important;
+    }
+    .fancybox-type-iframe .fancybox-inner{width: 200px !important;left: -8% !important;}
+    #submit{
+        background:url(/images/save.png) no-repeat top left;
+        width:60px;
+        height:28px;
+        border:none;
+        cursor:pointer;
+    } */
+.fancybox-skin {
+	position: relative;
+	padding: 0!important;
+	margin: 0;
+	background: #f9f9f9;
+	color: #444;
+	text-shadow: none;
+	-webkit-border-radius: 4px;
+	   -moz-border-radius: 4px;
+	        border-radius: 4px;
+                width: 280px !important;
+                height: 321px;
+}
+    .overlay-block input {
+        border: 1px solid #8E8D8E;
+        border-radius: 5px;
+        height: 30px;
+        width: 260px;
+    }
+     .overlay-block {
+        -moz-border-bottom-colors: none;
+        -moz-border-left-colors: none;
+        -moz-border-right-colors: none;
+        -moz-border-top-colors: none;
+        background: none repeat scroll 0 0 #FFFFFF;
+        border-color: #8c8c8c;
+        border-image: none;
+        border-style: solid none;
+        border-width: 40px 0;
+/*        display: table;*/
+        left: 10px;;
+        padding: 10px;
+/*        position: fixed;*/
+        top: 70px;
+        width: 280px;
+        height: 210px;
+    }
+    .overlay-block label {
+        font-weight: normal;
+        margin: 0 20px 0 0;
+        text-align: left;
+        width: 220px;
+    }
+     #btn1{
+        background:url(/images/frontPanel/save-view-btn.jpg) no-repeat top left;
+        width:166px;
+        height:24px;
+        border:none;
+        cursor:pointer;
+        display: block;
+        margin: 0 auto;
+    }
+     #btn2{
+        background:url(/images/frontPanel/save-return-btn.jpg) no-repeat top left;
+        width:166px;
+        height:24px;
+        border:none;
+        cursor:pointer;
+         display: block;
+        margin: 0 auto;
+    }
+    .fancybox-item.fancybox-close {
+        right: 2px !important;
+        top: 2px !important;
+    }
+    .customSelect styled .customSelectInner{
+        width : 205px !important;
+    }
+    .fancybox-inner{width: 300px !important;}
+    #submit{
+       
+         background: none repeat scroll 0 0 #8c8c8c;
+    border: medium none;
+    color: #fff;
+    cursor: pointer;
+    font-family: "Gotham SSm A","Gotham SSm B";
+    font-size: 18px;
+    height: 28px;
+    width: 60px;
+    } 
+</style>
+<link href="/css/frontPanel/bootstrap.min.css" rel="stylesheet">
+<link href="/css/frontPanel/style.css" rel="stylesheet">
+<link href="/font/font.css" rel="stylesheet">
+<script src="/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox-1.css?v=2.1.4" media="all" />
+
+
+<div class='contact-content'>
+<form name="frm_collection" id="frm_collection" action="/collection/save/<?php if(!empty($collectionInfo)){ echo '/id/'.$collectionInfo['collection_id']; }?>" method="post" onsubmit="return isValidCollection();"/>
+    <div id="collect">
+    <div class="overlay-block">
+       <div class="errors" id="errors"></div>
+        
+            <?php
+                if(!empty($collectionInfo)){
+                    if(!empty($collectionInfo['collection_id'])){?>
+                            <input type="hidden" name="hdnCollectionId" value="<?php if(!empty($collectionInfo)){ echo $collectionInfo['collection_id'];}?>"/>
+                    <?php }
+                }
+            ?>
+            <p>
+                <label id="err_cname">Collection Name:&ast;</label>
+                <input type="text" id="cname" name="collection_name" value="<?php if(!empty($collectionInfo)){ echo $collectionInfo['collection_name']; }?>" style='padding-left:3px;'/>
+            </p>
+            <p>
+                 <input type="submit" name="submit" value="SAVE" id="submit" class="editSubmit"/>
+            </p>
+       
+    </div>
+    </div>
+</form>
+</div> 
+<?php
+$collectionInfo = $this->collectionInfo; 
+
+    if(!empty($this->succMesg)){?>
+    <script language="JavaScript" type="text/javascript">
+    $(document).ready(function() { 
+        parent.jQuery.fancybox.close();
+    });
+    </script>
+    <?php }
+?>
+<script type="text/javascript">
+    function isValidCollection(){ 
+        var errorCount  = 0;
+        var alphaExp    = /^[a-zA-Z\s]+$/;
+        var alphaNumExp = /^[a-zA-Z0-9\s]+$/;
+        var numExp      = /^[0-9]+$/; 
+        
+        if(($('#cname').val() == '')){//pname
+            errorCount++;
+            $('#err_cname').attr('style','color:red');
+        }else{
+            $('#err_cname').attr('style','');
+        }
+         if(errorCount == 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+</script>

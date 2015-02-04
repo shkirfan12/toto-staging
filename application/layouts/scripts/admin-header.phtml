@@ -1,0 +1,38 @@
+<?php
+  $query = explode("/", $_SERVER['REQUEST_URI']); 
+  if (in_array("import-management", $query)) {
+      $style1 = 'width: 57%';
+      $style2 = 'width: 38%';
+  }else{
+      $style1 = 'width: 53%';
+      $style2 = '';
+  }
+?>
+<div class="container">
+    <div class="col-md-6" style="width:auto;">
+        <!--a href="#" class="logo"><img src="/images/toto-logo.png" alt="toto" class="img-responsive" /></a-->
+        <a href="#" class="logo"><img src="/images/frontPanel/mgp-logo.png" alt="toto" class="img-responsive" /></a>
+        <span class="separator">-</span>
+        <span class="admin-text" style="color: #4D4D4D;"><?php echo APP_TITLE; ?></span>
+        <span class="separator">|</span>
+        <?php 
+            $loginSession = new Zend_Session_Namespace("login"); 
+            if($loginSession->userType =='superadmin'){?>
+                <span class="admin-text">Superadmin</span>
+            <?php }else{?>
+                <span class="admin-text">Admin</span>
+            <?php } 
+        ?>
+    </div>
+    <div class="col-md-6" style="width:auto; float: right;">
+        <div class="logout-block">
+            <a href="/admin/user-management" class="user-icon"><img src="/images/user-management-icon.jpg" alt="user management"/></a>
+            <a href="/admin/index/logout" class="logout">
+                <span>Logout</span>
+                <img src="/images/logout-icon.png" alt="logout" class="img-responsive" />
+            </a>
+        </div>
+
+    </div>
+</div>
+

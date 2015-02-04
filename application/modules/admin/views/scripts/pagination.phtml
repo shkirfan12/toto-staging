@@ -1,0 +1,107 @@
+
+<?php
+if ($this->pageCount) {
+	if((!empty($this->controller)) || (!empty($this->action))){
+		$urlParam['controller']=$this->controller;
+		$urlParam['action'] = $this->action;
+        $urlParam['module'] = $this->module;
+        if (!empty($this->sortBy))
+            $urlParam['sortBy'] = $this->sortBy;
+        if (!empty($this->sortOrder))
+            $urlParam['sortOrder'] = $this->sortOrder;
+        if (!empty($this->txtsearch))
+            $urlParam['txtsearch'] = $this->txtsearch;
+        if (!empty($this->slctOptionStatus))
+            $urlParam['slctOptionStatus'] = $this->slctOptionStatus;
+        /*comment list */
+        
+    }
+?>
+<div style="margin:0px; padding:0px;" class="paginationControl">
+<?php
+	$showFirst = true;
+	$showLast = true;
+	$showPageSelect = false;
+
+	if(!in_array($this->first, $this->pagesInRange))
+		$showFirst = true;
+	if(!in_array($this->last, $this->pagesInRange))
+		$showLast = true;
+	if($showFirst==true || $showLast == true){
+		$showPageSelect = true;
+		$pageSelectUrl = $this->url($urlParam,null,true).'/page/';
+	}
+?>
+
+<?php
+	/*if($urlParam['controller'] != 'message') {
+		echo "<i>(".$this->firstItemNumber." to ".$this->lastItemNumber." of ".$this->totalItemCount.")</i> | ";
+	}*/
+?>
+
+<!-- First page link -->
+<?php	if ($showFirst==true) {
+			$urlParam['page']=$this->first;
+?>
+<!--			<a href="<?php echo  $this->url($urlParam,null,true); ?>">First</a>&nbsp;&nbsp;-->
+<?php	} else {?>
+			<!-- <span class="disabled"><img src="<?php echo $this->baseUrl();?>/images/firstarrow.jpg" align="absmiddle" /></span> -->
+<?php	}?>
+
+<!-- Previous page link -->
+<?php	if (isset($this->previous)) {
+			$urlParam['page']=$this->previous;
+?>
+			<a href="<?php echo  $this->url($urlParam,null,true); ?>">Previous</a>&nbsp;&nbsp;|
+<?php	} else {?>
+			<!-- <span class="disabled"><img src="<?php echo $this->baseUrl();?>/images/leftarrow.jpg" align="absmiddle" /></span> | -->
+<?php	}?>
+
+<!-- Numbered page links -->
+<?php //echo'<pre>'; echo($this->pageCount); echo'</pre>'; ?>
+<?php	foreach ($this->pagesInRange as $page) {?>
+<?php		if ($page != $this->current) {
+				$urlParam['page']=$page;
+?>
+				<a href="<?php echo  $this->url($urlParam,null,true); ?>"><?php echo  $page; ?></a> |
+<?php		} else {?>
+				<!-- Modified By Lalit onThursday, May 13, 2010 for resolving 3842 bug added <b>-->
+				<font color='#176494' size="2px;"><b><?php echo  $page; ?></b></font><?php echo (($this->current==$this->last)?'':' |'); ?>
+				<!-- End Of Modification-->
+<?php		}
+		}?>
+
+<!-- Next page link -->
+<?php	if (isset($this->next)) {
+			$urlParam['page']=$this->next;
+?>
+			<a href="<?php echo  $this->url($urlParam,null,true); ?>">Next</a>&nbsp;&nbsp;
+<?php	} else {?>
+			<!-- <span class="disabled"><img src="<?php echo $this->baseUrl();?>/images/rightarrow.jpg" align="absmiddle" /></span> -->
+<?php	}?>
+
+<!-- Last page link -->
+<?php	if ($showLast == true) {
+			$urlParam['page']=$this->last;
+?>
+<!--			<a href="<?php echo  $this->url($urlParam,null,true); ?>">Last</a>&nbsp;-->
+<?php	} else {?>
+			<!-- <span class="disabled"><img src="<?php echo $this->baseUrl();?>/images/lastarrow.jpg" align="absmiddle" /></span> -->
+<?php	}?>
+
+<!-- Select page dropdown -->
+<?php /*if ($showPageSelect == true) {
+?>
+			|Page: <select style="height:20px; margin:0px; padding:0px;" name="listPage" id="listPage" onchange="javascript: window.location = '<?php echo  $pageSelectUrl; ?>' + this.options[this.selectedIndex].value;">
+<?php
+			for($i=$this->first; $i<=$this->last; $i++){
+				echo '<option value="'.$i.'" '.(($i==$this->current)?'selected':'').'>'.$i.'</option>';
+
+			}
+		}*/
+?>
+			</select>
+			<br clear="all" >
+	</div>
+<?php
+}?>

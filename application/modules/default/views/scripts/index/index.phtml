@@ -1,0 +1,462 @@
+
+
+
+
+    
+<?php
+$sessUser = new Zend_Session_Namespace('user');
+$objLanding = new Admin_Model_Landing();
+
+$themeInfo = $objLanding->fetchLandingInfo(); 
+$mainImg = $themeInfo['main_image'];
+$logoImg = $themeInfo['logo_image'];
+$faviconImg = $themeInfo['favicon_image'];
+$copy1_content = $themeInfo['copy1_content'];
+$copy2_content = $themeInfo['copy2_content'];
+$copy1_color = $themeInfo['copy1_color'];
+$copy2_color = $themeInfo['copy2_color'];
+$passcode = $themeInfo['passcode'];
+
+/*$superadmin =  $objLanding->fetchSuperadminLandingInfo('superadmin');  
+$infoSuperadmin = $objLanding->fetchLandingInfoByUserId($superadmin['user_id']);
+
+$clientadmin =  $objLanding->fetchClientadminLandingInfo('client admin'); 
+$infoAdmin   = $objLanding->fetchLandingInfoByUserId($clientadmin['user_id']); 
+
+if(!empty($infoAdmin)){ //Admin
+    $mainImg = $infoAdmin['main_image'];
+    $logoImg = $infoAdmin['logo_image'];
+    $faviconImg = $infoAdmin['favicon_image'];
+    $copy1_content = $infoAdmin['copy1_content'];
+    $copy2_content = $infoAdmin['copy2_content'];
+    $copy1_color =  $infoAdmin['copy1_color'];
+    $copy2_color =  $infoAdmin['copy2_color'];
+}else{ //superadmin
+    $mainImg = $infoSuperadmin['main_image'];
+    $logoImg = $infoSuperadmin['logo_image'];
+    $faviconImg = $infoSuperadmin['favicon_image'];
+    $copy1_content = $infoSuperadmin['copy1_content'];
+    $copy2_content = $infoSuperadmin['copy2_content'];
+    $copy1_color =  $infoSuperadmin['copy1_color'];
+    $copy2_color =  $infoSuperadmin['copy2_color'];
+} */
+
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title><?php echo APP_TITLE; ?></title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <!-- Bootstrap -->
+        <link href="/css/frontPanel/bootstrap.min.css" rel="stylesheet">
+        <link href="/css/frontPanel/style.css" rel="stylesheet">
+        <link href="/font/font.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="//cloud.typography.com/7172712/703186/css/fonts.css" />
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+          <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+        
+        <!-- Google Analytic << -->
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+            
+            ga('create', 'UA-52641496-1', 'auto');
+            ga('send', 'pageview');
+            
+        </script>
+        <!-- Google Analytic >> -->
+        
+        <?php
+       
+            if(!empty($faviconImg)){ ?>
+                <link rel="apple-touch-icon" href="/landingPageImages/favicon/<?php echo $faviconImg; ?>"/>
+            <?php }
+       
+        ?>
+    </head>
+    <body>
+        
+ <?php  
+ $sessPasscode = new Zend_Session_Namespace('passcode'); 
+ $sessPasscode->validPasscode = true; 
+  if(!isset($sessPasscode->validPasscode) ||  $sessPasscode->validPasscode == false){
+ ?>  
+      
+<style>
+    .login-block{
+    display: table;
+    margin: 0 auto;
+}
+.login-block form{
+    display: table;
+    margin: 0 auto;
+}
+.login-block p{
+    margin: 5px 0;
+}
+.login-block label{
+    display: block;
+    font-family: "PT Sans",sans-serif;
+    color: #808080;
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: 700;
+}
+.login-block input{
+    border: 1px solid #d8d8d8;
+    font-family: "PT Sans",sans-serif;
+    color: #808080;
+    padding: 2px 5px;
+    font-size: 14px;
+     width: auto;
+}
+.login-block .login-btn{
+    display: table;
+    margin: 0 auto;
+    color: #fff;
+    background: #808080;
+    padding: 2px 15px;
+    font-size: 14px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 20px;
+    font-family: "PT Sans",sans-serif;
+}
+.error{ font-size: 14px; color: #FF0000!important; margin-top: 10px;}
+  body {
+    background: none repeat scroll 0 0 #fff;
+}
+@media only screen  and (max-width: 320px){
+     .login-block h1 img {width: 80%;  margin: 0 auto;}
+}
+</style>
+
+<!--<div id="divPreview" class='contact-content'>-->
+    
+<div class="login-block">
+    <h1><img src="images/logo_front.png" class="img-responsive" alt="mygreenpayback" /></h1>
+        <p style="width: 100%; text-align: center;"><label  class="error"  id="errMesg"></label></p>
+        <form class="loginAccountFrm" id="loginAccountFrm" action="" method="post" onsubmit="return isValidUser();">
+            <p>
+                <label>Enter email</label>
+               <input style="width: 200px;" type="text" name="email" id="email" value="" class="input" maxlength="100"/>
+                 <label style="display:none;" generated="true" id="emailError" class="error"></label>
+            </p>
+            <p>
+                <label>Password</label>
+               <input style="width: 200px;" type="password" name="password" id="password" value="" class="input"/>
+                 <label style="display:none;"  generated="true" id="emapasswordError" class="error"></label>
+            </p>
+            <p>
+                <a class="login-btn"><input style="background :#808080;border: medium none !important;color: #fff;" type="submit" name="submit" id="submit" value="Login"/></a>
+<!--                <a class="login-btn" href="#">login</a>-->
+            </p>
+          
+        </form>
+    </div>
+   
+<!--</div>--> 
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script>
+        jQuery.fn.center = function ()
+        {
+            this.css("position","fixed");
+            this.css("top", ($(window).height() / 2) - (this.outerHeight() / 2));
+            this.css("left", ($(window).width() / 2) - (this.outerWidth() / 2));
+            return this;
+        }
+       $(window).resize(function(){
+            $('.login-block').center();
+        });
+        $(window).load(function(){
+            $('.login-block').center();
+        });
+    </script>
+  <?php }  else {?>
+        <div class="wrapper">
+            
+            <div class="row header-bg mob-none">
+                <div class="topgray-bg">
+                    <div class="container">
+                        <div class="social-icon">
+                            <span><a target="_blank" class="align-top" href="https://twitter.com/mygreenpayback"><img src="/images/frontPanel/twitter.png" alt="twitter" class="img-responsive" /></a></span>
+                            <span><a target="_blank" class="align-top" href="https://www.facebook.com/mygreenpayback"><img src="/images/frontPanel/facebook.png" alt="facebook" class="img-responsive" /></a></span>
+<!--                            <span><a target="_blank" class="align-right align-top" href="#"><img src="/images/frontPanel/linkedin.png" alt="linkedin" class="img-responsive" /></a></span>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <header>
+                        <div class="main-logo col-md-3 col-sm-3 col-xs-12">
+                             <?php
+                                if(!empty($logoImg)){?>
+                                     <img src="/landingPageImages/logo/<?php echo $logoImg; ?>" alt="toto" class="img-responsive" />
+                                <?php }else{?>
+                                     <img src="/images/frontPanel/mgp-logo.png" alt="toto" class="img-responsive" />
+                                <?php }
+                            ?>
+                        <!--<a href="/"><img src="/images/frontPanel/mgp-logo.png" alt="insite" class="img-responsive" /></a>-->
+                        </div>
+                        <div class="navigation col-md-9 col-sm-9 col-xs-12">
+                            <div class="navbar navbar-default" role="navigation">
+                                <div class="navbar-collapse collapse main-nav">
+                                    <ul class="nav navbar-nav">
+                                         <?php
+                                            if(empty($sessUser->user_Id)){?>
+                                                <li><a href="/login/account"><img src="/images/frontPanel/login.png" alt="login" class="img-responsive" /></a></li>
+                                            <?php }else{?>
+                                                <li><a href="/my-profile">PROFILE</a></li>
+                                                <li class="separator"><a href="/project">MY PROJECTS</a></li>
+                                                <li class="separator"><a class="pad-r-0" href="/collection">MY COLLECTIONS</a></li>
+                                                <li><a href="/login/account/logout"><img src="/images/frontPanel/logout.png" alt="logout" class="img-responsive" /></a></li>
+                                            <?php }
+                                         ?>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                </div>
+            </div>
+            <div class="row green-strip"></div>
+            
+            <!--div class="iphone-bg" style="<?php //if(!empty($info)){ if(!empty($info['main_image'])){ echo "height: 480px;background:url('/landingPageImages/main/$mainImg') no-repeat scroll 0 0 rgba(0, 0, 0, 0)";}}?>"-->
+            <div class="iphone-bg" style="<?php if(!empty($mainImg)){ echo "display: block;height: 768px;margin: 0 auto;width: 1024px;background:url('/landingPageImages/main/$mainImg') no-repeat scroll 0 0 rgba(0, 0, 0, 0)";}?>">
+                <div class="row">
+                    <div class="container">
+                        <div class="logo-block">
+                                
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="container get-start-container">
+                        <div class="get-start-block" style="margin:0;padding: 0;">
+                            <div class="top-logo"><img src="/images/frontPanel/inner-logo.png" alt="toto-logo" class="img-responsive" /></div>
+                            <?php 
+                                
+                                    if(!empty($copy1_content)){?>
+                                        <h2 style="<?php if(!empty($copy1_color)){ echo "color:#".$copy1_color ;}?>"><?php echo $copy1_content; ?></h2>
+                                    <?php }else{
+                                        echo "<h2>editable & customizable text</h2>";
+                                    }
+                                
+                            ?>
+                             <?php 
+                                
+                                    if(!empty($copy2_content)){?>
+                                        <p style="<?php if(!empty($copy2_color)){ echo "color:#".$copy2_color ;}?>"><?php echo $copy2_content; ?></p>
+                                    <?php }else{
+                                        echo "<p>LOREM IPSUM DOLOR<br> NAM SIT AMET COMMODO<br> PORTA ADIPISCING</p>";
+                                    }
+                               
+                            ?>
+                            
+<!--                                        <div style="width: 100%;float: right;"><img style="float: right;" class="map" alt="atlanta" src="/landingPageImages/favicon/MGP favicon.png"> </div>-->
+<!--                            <span >Powered by Mygreenpayback</span> -->
+                                        <section><a href="/product" class="get-started">GET STARTED</a></section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!--            <div class="row gray-bg">
+                <div class="container">
+                    <div class="col-md-4 col-sm-4 col-xs-12 address-block">
+                        <h2>COMPANY INFO</h2>
+                        <div class="address">
+                            <img src="/images/frontPanel/phone.png" alt="atlanta" class="img-responsive map" />
+                            <div class="address-text">
+                                <p>239-633-6508</p>
+                            </div>
+                        </div>
+                        <div class="address">
+                            <img src="/images/frontPanel/email.png" alt="bogota" class="img-responsive map" />
+                            <div class="address-text">
+                                <p><a href="mailto:info@mygreenpayback.com">info@mygreenpayback.com</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-12 contact-us">
+                        <h2>CONTACT US</h2>
+                        <div class="address">
+                            <a target="_blank" href="https://www.facebook.com/mygreenpayback"><img src="/images/frontPanel/footer-facebook.png" alt="facebook" class="img-responsive map" /> LIKE</a>
+                        </div>
+                        <div class="address">
+                            <a target="_blank" href="https://twitter.com/mygreenpayback"><img src="/images/frontPanel/footer-twitter.png" alt="twitter" class="img-responsive map" />FOLLOW</a>
+                        </div>
+                        <div class="address">
+                            <a target="_blank" href="#"><img src="/images/frontPanel/footer-linkedin.png" alt="linkedin" class="img-responsive map" />CONNECT</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <h2>SEND US A MESSAGE</h2>
+                        <div class="address">
+                            <a href="mailto:info@mygreenpayback.com" class="click-here"><img src="/images/frontPanel/footer-click-here.png" alt="facebook" class="img-responsive" /></a>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
+            <div class="row green">
+                <div class="container">
+                    <p>Powered by: <a href="http://www.mygreenpayback.com" style="color:#8cc63f">MyGreenPayback</a> &copy All Rights Reserved</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="/js/jquery-1.8.3.min.js"></script>
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="/js/bootstrap.min.js"></script>
+        <script src="/js/script.js"></script>
+    </body>
+</html>
+<script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox1.css?v=2.1.4" media="all" />
+
+<style>
+    .fancybox-wrap{width: 284px !important;}
+    .fancybox-skin {
+	position: relative;
+	padding: 0!important;
+	margin: 0;
+	background: #f9f9f9;
+	color: #444;
+	text-shadow: none;
+	-webkit-border-radius: 4px;
+	   -moz-border-radius: 4px;
+	        border-radius: 4px;
+                width: 280px !important;
+                height: 321px;
+}
+    .overlay-block input {
+        border: 1px solid #8c8c8c;
+        border-radius: 5px;
+        height: 30px;
+        width: 220px;
+        padding: 4px
+    }
+     .overlay-block {
+        -moz-border-bottom-colors: none;
+        -moz-border-left-colors: none;
+        -moz-border-right-colors: none;
+        -moz-border-top-colors: none;
+        background: none repeat scroll 0 0 #FFFFFF;
+        border-color: #8c8c8c;
+        border-image: none;
+        border-style: solid none;
+        border-width: 40px 0;
+/*        display: table;*/
+        left: 10px;;
+        padding: 10px;
+/*        position: fixed;*/
+        top: 70px;
+        width: 280px;
+        height: 322px;
+    }
+    .overlay-block label {
+        font-weight: normal;
+        margin: 0 20px 0 0;
+        text-align: left;
+        width: 220px;
+    }
+     #btn1{
+        background:url(/images/frontPanel/save-view-btn.jpg) no-repeat top left;
+        width:166px;
+        height:24px;
+        border:none;
+        cursor:pointer;
+        display: block;
+        margin: 0 auto;
+    }
+     #btn2{
+        background:url(/images/frontPanel/save-return-btn.jpg) no-repeat top left;
+        width:166px;
+        height:24px;
+        border:none;
+        cursor:pointer;
+         display: block;
+        margin: 0 auto;
+    }
+    .fancybox-item.fancybox-close {
+        display: none;
+    }
+    .customSelect styled .customSelectInner{
+        width : 205px !important;
+    }
+    .fancybox-inner{width: 300px !important;}
+    .fancybox-outer {height: 321px;width: 100% !important;}
+    @media only screen  and (max-width: 320px){
+     .login-block h1 img {width: 80%;}
+    }
+</style>
+
+ <?php  
+  }
+// $sessPasscode = new Zend_Session_Namespace('passcode'); 
+  
+ ?>
+
+ <script type="text/javascript" src="/js/common.js"></script>
+  <script type="text/javascript">
+         
+            function isValidUser(){ 
+              
+                $("#emailError").text("").hide();
+                $("#emapasswordError").text("").hide();
+                var email    = $('#email').val(); 
+                var password = $('#password').val(); 
+                var emailReg = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+                var valid = emailReg.test(email);
+
+	
+                if(email == ""){
+                    $("#emailError").text("Please Enter Email").show();
+                    $("#emailError").delay(4000).hide( 400 );
+                    return false;
+                }else if(!valid) {
+                     $("#emailError").text("Please Enter Valid Email").show();
+                     $("#emailError").delay(4000).hide( 400 );
+                    return false;
+                }else if(password == ""){
+                    $("#emapasswordError").text("Please Enter Password").show();
+                    $("#emapasswordError").delay(4000).hide( 400 );
+                    return false;
+                } 
+                 
+                if((email !='') && (password !='')){
+                    
+                    var action = '/login/account/ajax-chk-valid-user/email/'+email+'/pwd/'+password;  
+                    var data = '';
+                    var response =  getajaxResponse(action,data);
+                    //alert(response); return false;
+                    if(response == "error" ){
+                        $("#errMesg").text("Incorrect Email, Password OR Inactive User");
+                        return false;
+                    }else{
+                        window.reload();
+                      //  alert("login success fule");
+//                       var page = "<?php //echo $_SERVER['HTTP_REFERER'];?>";  
+//                       $("#loginAccountFrm").attr("action",page);
+                     }
+                    /*else if(response == "changeme" ){ 
+                        $("#loginAccountFrm").attr("action","/my-profile"); 
+                    }else if(response == "project" ){ 
+                        $("#loginAccountFrm").attr("action","/project"); 
+                    }else{ 
+                        $("#loginAccountFrm").attr("action","/product/search"); 
+                    }*/
+                    
+                }
+            }
+        </script>
+<?php
+die;
+?>

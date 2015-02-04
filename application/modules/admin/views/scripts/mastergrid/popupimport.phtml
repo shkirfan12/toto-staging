@@ -1,0 +1,37 @@
+
+<style>
+    iframe{
+   border: 0px;
+    height: 2px;
+    width: 2px;
+}
+.ajax_loader{z-index: 99999999;}
+</style>
+<div class="ajax_loader" style="margin: 0 auto; width: auto; float: none;"></div>
+<form id="epitaphform" name="epitaphform"  method="post" enctype="multipart/form-data" action="<?php echo $this->baseUrl(); ?>/admin/mastergrid/importdata" onsubmit=" $('#mask').hide();
+        $('.window').hide();">
+    <iframe name="frame"></iframe>
+    <span style="margin-left:65x;font-weight: bold;font-size: 16px;margin-bottom: 10px;">Import Master Grid</span><br>
+    <!--b>NOTE - Please use excelsheet of standard format. </b>
+<br>If you don't have the format, Please download it from here ->
+  <a href="/admin/mastergrid/download-template" >DOWNLOAD</a>
+<br-->
+<input type="file" name="importfile" id="importfile" style="margin-top: 10px;"/><br>
+<img src="/images/save-btn.png" id="submitpass" class="imgClass" style="float:right;margin-right:20px;" />
+</form>
+<script>
+    
+    
+    $('#mask').click(function () {
+		$(this).hide();
+		$('.window').hide();
+	});
+ $('#submitpass').live('click', function(e) { 
+    if( $('#importfile').val() == ''){
+        alert('Please upload your excelsheet.');
+        return false;
+    }//alert(photovideo);return false;
+     $(".ajax_loader").show();
+   document.forms["epitaphform"].submit();
+});
+</script>

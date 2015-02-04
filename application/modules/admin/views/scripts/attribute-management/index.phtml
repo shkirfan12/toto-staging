@@ -1,0 +1,210 @@
+<?php 
+$loginSession = new Zend_Session_Namespace('login'); 
+//echo $loginSession->userId.'--'.$loginSession->fname.'--'.$loginSession->lname.'--'.$loginSession->email_id.'--'.$loginSession->userType;
+$attList = $this->attList; 
+$subAttList = $this->subAttList; 
+
+//Update Att SubAtt Name << 
+$objAtt  = new Admin_Model_Attribute();
+$attSubAttMasterName = $objAtt->fetchAttSubAttMasterName(); 
+//Update Att SubAtt Name >> 
+?>
+<style>
+ .fancybox-inner{ height: 321px !important; } 
+ #save1 {
+    background: url("/images/save.png") no-repeat scroll left top rgba(0, 0, 0, 0);
+    border: medium none;
+    cursor: pointer;
+    height: 30px;
+    width: 62px;
+    float: right;
+}
+</style>
+
+<div class="content-block">
+    <div class="content-table">
+        <p class="add-attr-btn">
+        <?php
+            if($loginSession->userType == 'superadmin'){?>
+                 <a href="/admin/attribute-management/att" data-fancybox-type="iframe" class="addAtt"><img src="/images/plus.png" alt="plus" class="img-responsive"/></a>Add <input typr="text" style="border:none;cursor:pointer;color: #4D4D4D;" name="masterAttName" id="masterAttName" value="<?php echo $attSubAttMasterName['att_name'];?>" title="Edit"/>
+            <?php }else{
+                echo "<img src='/images/plus.png' alt='plus' class='img-responsive'/>Attribute";
+            }
+        ?>
+        <input type="button" value="" id="save1" class="save" name="submit"/>
+       </p>
+        <table id="attTable" class="tablesorter">
+            <thead class="t-head">
+<!--            <tr class="t-head">-->
+            <th class="tdw-130 tdleft"  style="cursor: pointer;"><?php echo $attSubAttMasterName['att_name'];?>
+                    <span class="sort">
+                        <a href="#" class="up"><img src="/images/sort-up.png" alt="sort" /></a>
+                        <a href="#"><img src="/images/sort-down.png" alt="sort" /></a>
+                    </span>
+                </th>
+                <th class="tdw-60">Activate</th>
+                <?php
+                    if($loginSession->userType == 'superadmin') { ?>
+                        <th class="tdw-40">Edit</th>
+                        <th class="tdw-52">Delete</th>
+                    <?php }
+                ?>
+              
+<!--            </tr>-->
+            </thead>
+             <tbody>
+            <?php
+            if(!empty($attList)){
+                foreach ($attList as $key => $value) {?>
+                <tr id="allcat-<?php echo $key; ?>">
+                    <td class="tdleft"><span><img style="border-radius : 30px;" src="/attributeImages/thumb/<?php echo $value['attribute_image']; ?>" alt="<?php echo $value['attribute_image']; ?>" /></span><a href="javascript:void(0);" itemID="<?php echo $value['attribute_id']; ?>" id="<?php echo $value['attribute_id']; ?>" onclick="javascript:fnFetchSubAtt('<?php echo $value['attribute_id']; ?>')"><?php echo $value['attribute_name']; ?></a></td>
+                    <td><input type="checkbox" class="attClass" <?php if($value['display'] == 'y'){ echo 'checked="checked"';} ?> value="<?php echo $value['display'];?>" id="<?php echo $value['attribute_id']; ?>" name="answer"/></td>
+                    <?php
+                        if($loginSession->userType == 'superadmin') { ?>
+                            <td><a href="/admin/attribute-management/att/id/<?php echo $value['attribute_id']; ?>" data-fancybox-type="iframe" class="addAtt"><img src="/images/edit-icon.png" alt="edit" /></a></td>
+                            <td><a href="javascript:void(0);" onclick="javascript:fnDelSubAtt('<?php echo $value['attribute_id']; ?>','att')"><img src="/images/delete-icon.png" alt="delete" /></a></td>
+                        <?php }
+                    ?>
+                </tr>
+                <?php }
+            }else{ ?>
+                <tr><td colspan="4">No Record found.</td></tr>
+            <?php }
+            ?>
+             </tbody>
+        </table>
+    </div>
+    <div class="content-table">
+        <p class="add-attr-btn">
+        <?php
+            if($loginSession->userType == 'superadmin'){?>
+                <a href="/admin/attribute-management/subatt" data-fancybox-type="iframe" class="addSubatt"><img src="/images/plus.png" alt="plus" class="img-responsive"/></a>Add <input typr="text" style="border:none;cursor:pointer;color: #4D4D4D;" name="masterSubAttName" id="masterSubAttName" value="<?php echo $attSubAttMasterName['subAtt_name'];?>" title="Edit"/>
+            <?php }else{
+                echo "<img src='/images/plus.png' alt='plus' class='img-responsive'/>Sub Attribute";
+            }
+        ?>
+        <input type="button" value="" id="save1" class="save1" name="submit"/>
+        </p>
+        <table id="subattTable" class="tablesorter">
+            <thead class="t-head">
+<!--            <tr class="t-head">-->
+                <th class="tdw-130 tdleft"><?php echo $attSubAttMasterName['subAtt_name'];?>
+                    <span class="sort">
+                        <a href="#" class="up"><img src="/images/sort-up.png" alt="sort" /></a>
+                        <a href="#"><img src="/images/sort-down.png" alt="sort" /></a>
+                    </span>
+                </th>
+                <th class="tdw-60">Activate</th>
+                <?php
+                    if($loginSession->userType == 'superadmin') { ?>
+                        <th class="tdw-40">Edit</th>
+                        <th class="tdw-52">Delete</th>
+                        <th class="tdw-52">Activate Calculator</th>
+                    <?php }
+                ?>
+<!--            </tr>-->
+        </thead>
+          <tbody>
+             <?php
+            if(!empty($subAttList)){
+                foreach ($subAttList as $key1 => $value1) {?>
+                <tr id="allSubcat-<?php echo $key1; ?>">
+                    <td class="tdleft"><a itemID="<?php echo $value1['subatt_id']; ?>" id="<?php echo $value1['subatt_id']; ?>"><?php echo $value1['attribute_name'].' - '.$value1['subatt_name']; ?></a></td>
+                    <td><input type="checkbox" class="subattClass" <?php if($value1['display'] == 'y'){ echo 'checked="checked"';} ?> value="<?php echo $value1['display'];?>" id="<?php echo $value1['subatt_id']; ?>"  name="answer"/></td>
+                    <?php
+                    if($loginSession->userType == 'superadmin') { ?>
+                        <td><a href="/admin/attribute-management/subatt/id/<?php echo $value1['subatt_id']; ?>" data-fancybox-type="iframe" class="addSubatt"><img src="/images/edit-icon.png" alt="edit" /></a></td>
+                        <td><a href="javascript:void(0);" onclick="javascript:fnDelSubAtt('<?php echo $value1['subatt_id']; ?>','subAtt')"><img src="/images/delete-icon.png" alt="delete" /></a></td>
+                        <td><input type="checkbox" class="calciSubAtt" <?php if($value1['calci_subatt'] == 'y'){ echo 'checked="checked"';} ?> value="<?php echo $value1['calci_subatt'];?>" id="<?php echo $value1['subatt_id']; ?>"  name="answer"/></td>
+                    <?php }
+                    ?>
+                </tr>
+                <?php }
+            }else{ ?>
+                <tr><td colspan="4">No Record found.</td></tr>
+            <?php }
+            ?>
+          </tbody>
+        </table>
+    </div>
+</div>
+<script type="text/javascript" src="/js/jquery.tablesorter.js"></script>
+<script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox.css?v=2.1.4" media="all" />
+<script type="text/javascript" src="/js/att-subatt.js"></script>
+<script type="text/javascript" src="/js/jquery.tablednd.js"></script>
+<script language="JavaScript" type="text/javascript">
+    $(document).ready(function() { 
+        $('#save1').click(function(){
+            location.reload(); 
+        });
+        $('.save1').click(function(){
+            location.reload(); 
+        });
+        $("#masterAttName").click(function() {
+            $("#masterAttName").attr('style','color: #4D4D4D;');
+            $("#masterAttName").keyup(function() {
+                var masterAttName = $(this).val();
+                $.ajax({
+                    type: "GET",
+                    url: "/admin/attribute-management/ajax-update-master-names/masterAttName/"+masterAttName,
+                    success: function(data) { 
+                        //location.reload(); 
+                    },
+                    error: function(event, request, settings) {
+                        return false;
+                    }
+                });
+            });
+        });
+        
+         $("#masterSubAttName").click(function() {
+                $("#masterSubAttName").attr('style','color: #4D4D4D;');
+                $("#masterSubAttName").keyup(function() {
+                var masterSubAttName = $(this).val();
+                 $.ajax({
+                    type: "GET",
+                    url: "/admin/attribute-management/ajax-update-master-names/masterSubAttName/"+masterSubAttName,
+                    success: function(data) { 
+                       // location.reload(); 
+                    },
+                    error: function(event, request, settings) {
+                        return false;
+                    }
+                });
+            });
+         });
+          // Table Drag Drop <<
+         $("#attTable").tableDnD({
+            onDrop: function(table, row) {
+            var result = new Array();
+            var rank;
+            $('#attTable tr').each(function(i) { 
+                result[i] = new Object();
+                result[i].typeid = $(this).find("a").attr('id');
+                result[i].rank = i;
+            });
+            var jsonString_result = JSON.stringify(result);
+            var action = "/admin/attribute-management/saverank";
+            var senddata ="jsonString_result="+jsonString_result;
+            var response = getajaxResponse(action, senddata); 
+            }
+        });
+         $("#subattTable").tableDnD({
+            onDrop: function(table, row) {
+            var result = new Array();
+            var rank;
+            $('#subattTable tr').each(function(i) { 
+                result[i] = new Object();
+                result[i].typeid = $(this).find("a").attr('id');
+                result[i].rank = i;
+            });
+            var jsonString_result = JSON.stringify(result);
+            var action = "/admin/attribute-management/saveranksubatt";
+            var senddata ="jsonString_result="+jsonString_result;
+            var response = getajaxResponse(action, senddata); 
+            }
+        });
+        //Table Drag Drop >>
+    });
+</script>

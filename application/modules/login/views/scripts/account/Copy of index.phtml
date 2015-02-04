@@ -1,0 +1,114 @@
+<?php 
+$sessUser = new Zend_Session_Namespace('user');
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>::Login::</title>
+<!--     <link rel="stylesheet" href="/css/style.css" />-->
+        <link href="/css/formValidation/formValidation.css" rel="stylesheet"/>
+        <!--[if IE]>
+            <link rel="stylesheet" type="text/css" href="css/ie.css" />
+        <![endif]-->
+
+<!--        <script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>-->
+    </head>
+    <body>
+        <div id="langingLogin">
+<!--        <form class="loginAccountFrm" id="loginAccountFrm" action="" method="post" enctype="application/x-www-form-urlencoded" onsubmit="return isValidUser();">-->
+        <form class="loginAccountFrm" id="loginAccountFrm" action="" method="post" onsubmit="return isValidUser();">
+            <div class="login1" style="padding-left: 30px;">
+                <div class="col300">
+                    <div class='errors' id="errMesg"></div><br/>
+                    <p>
+                        <li>
+                            <label for="email" class="required">Email</label>
+                            <input type="text" name="email" id="email" value="" class="input" maxlength="100" style="width: 196px;"/>
+                        </li>
+                    </p>
+                    <span>&nbsp;</span><div class="clear"></div>
+                    <p>
+                        <li class="basic-modal">
+                            <label for="password" class="required">Password</label>
+                            <input type="password" name="password" id="password" value="" class="input" style="width: 196px;"/>
+                        </li>
+                    </p>
+                    <span>&nbsp;</span><div class="clear"></div>
+                    <!--span style="padding-left : 153px;cursor: pointer;"><a href="/login/account/forgot-password">Forgot Your Password ?</a></span><br/-->
+                    
+                    <!--div class="col105">
+                        <li>
+                            <input type="hidden" name="chkremember" value="0" /><input type="checkbox" name="chkremember" id="chkremember" value="1" />
+                            <label for="chkremember" style="float:none;" class="optional">Remember Me</label>
+                        </li>
+                    </div-->
+                    <div class="col52">
+                        <li class="login_btn clearfix">
+                            <input type="submit" name="submit" id="submit" value="Submit" class="loginbtn1" />
+                        </li>
+                    </div>
+                    <div><a href="/login/account/forgot-password" data-fancybox-type="iframe" class="various">Forgot Password</a></div>
+                </div>
+            </div>
+        </form> 
+        </div>
+    
+        
+            
+            
+            
+        <script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>
+        <script src="/js/formValidation/jquery.validate.min.js"></script>
+        <script src="/js/formValidation/login_script.js"></script>
+        <script type="text/javascript" src="/js/common.js"></script>
+        <script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+        <link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox.css?v=2.1.4" media="all" />
+        <script type="text/javascript">
+            $(".various").fancybox({
+                // title           : 'Create Application',
+                maxWidth	: 900,
+                maxHeight	: 700,
+                fitToView	: false,
+                width		: '35%',
+                height		: '56%',
+                autoSize	: false,
+                closeClick	: false,
+                openEffect	: 'none',
+                closeEffect	: 'none',
+                'afterClose'  : function() {
+                    //     window.location="/admin/index/manage";
+                    window.location.reload();
+                }
+                /*'onComplete' : function(){  
+                          $('.apps_module').click(function(){
+                              parent.$.fancybox.close();
+                          });
+                      }*/
+            }); 
+            function isValidUser(){ 
+                var email    = $('#email').val(); 
+                var password = $('#password').val(); 
+                
+                if((email !='') && (password !='')){
+                    var action = '/login/account/ajax-chk-valid-user/email/'+email+'/pwd/'+password;  
+                    var data = '';
+                    var response =  getajaxResponse(action,data);
+                    
+                    if(response == "error" ){
+                        $("#errMesg").text("Incorrect Email, Password OR Inactive User");
+                        return false;
+                    }else{ 
+                        $("#loginAccountFrm").attr("action","/product/search"); 
+                    }
+                    
+                }
+            }
+        </script>
+            
+            
+    </body>
+</html>
+    
+    

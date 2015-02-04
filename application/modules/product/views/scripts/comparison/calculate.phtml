@@ -1,0 +1,212 @@
+<?php 
+$projectList = $this->projectList; 
+
+
+$productList  = $_POST['productId'];
+$comma = explode(',',$productList);
+//$countProduct =  count($comma);
+
+$sessCalculate = new Zend_Session_Namespace('Sessioncalculate');
+if(!empty($sessCalculate->productList)){
+    $tep = $sessCalculate->productList.','.$productList;
+    $sessCalculate->productList = $tep;
+}else{
+    $sessCalculate->productList = $productList;
+}
+
+
+$tags = explode(',', $sessCalculate->productList);
+$tags = array_values( array_unique($tags));
+
+//echo '<br/>session-'.$sessCompare->productList; //session-27,27,27,28,29,27,27,27,27,27,27
+
+//echo "<pre>"; print_r($tags); 
+
+$countProduct =  count($tags);
+$finalCompare = implode(',',$tags); //27,28,29
+
+?>
+<style>
+    .fancybox-wrap{width: 284px !important;}
+    .fancybox-skin {
+	position: relative;
+	padding: 0!important;
+	margin: 0;
+	background: #f9f9f9;
+	color: #444;
+	text-shadow: none;
+	-webkit-border-radius: 4px;
+	   -moz-border-radius: 4px;
+	        border-radius: 4px;
+                width: 280px !important;
+                height: 321px;
+}
+    .overlay-block input {
+        border: 1px solid #8E8D8E;
+        border-radius: 5px;
+        height: 30px;
+        width: 220px;
+    }
+     .overlay-block {
+        -moz-border-bottom-colors: none;
+        -moz-border-left-colors: none;
+        -moz-border-right-colors: none;
+        -moz-border-top-colors: none;
+        background: none repeat scroll 0 0 #FFFFFF;
+        border-color: #8C8C8C;
+        border-image: none;
+        border-style: solid none;
+        border-width: 40px 0;
+/*        display: table;*/
+        left: 10px;;
+        padding: 10px;
+/*        position: fixed;*/
+        top: 70px;
+        width: 280px;
+        height: 322px;
+    }
+    .overlay-block label {
+        font-weight: normal;
+        margin: 0 20px 0 0;
+        text-align: left;
+        width: 220px;
+    }
+     #btn1{
+        background:url(/images/frontPanel/save-view-btn.jpg) no-repeat top left;
+        width:166px;
+        height:24px;
+        border:none;
+        cursor:pointer;
+        display: block;
+        margin: 0 auto;
+    }
+     #btn2{
+        background:url(/images/frontPanel/save-return-btn.jpg) no-repeat top left;
+        width:166px;
+        height:24px;
+        border:none;
+        cursor:pointer;
+         display: block;
+        margin: 0 auto;
+    }
+    .fancybox-item.fancybox-close {
+        right: 2px !important;
+        top: 2px !important;
+    }
+    .customSelect styled .customSelectInner{
+        width : 205px !important;
+    }
+    .fancybox-inner{width: 300px !important;}
+    .fancybox-outer {height: 321px;width: 100% !important;}
+</style>
+<link href="/css/frontPanel/bootstrap.min.css" rel="stylesheet">
+<link href="/css/frontPanel/style.css" rel="stylesheet">
+<link href="/font/font.css" rel="stylesheet">
+<script src="/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox.css?v=2.1.4" media="all" />
+
+
+<div class='contact-content'>
+    
+    <form name="frm_collect" id="frm_collect" action="#" method="post"/>
+    <div id="collect">
+    <div class="overlay-block">
+    <p style="padding-left:40px;">
+        
+            <p>
+                <?php
+                if($countProduct == '1'){
+                    $msgCalculate = $countProduct . " Product Added";
+                }else{
+                     $msgCalculate = $countProduct . " Products Added";
+                }
+                
+                ?>
+                <label style='padding-left:60px;'><b><?php echo $msgCalculate ;?></b></label>
+            </p>
+    <?php
+    if(!empty($projectList)){?>
+            <p>
+                <label>Add to Existing Project:</label>
+                <select name="projectList" class="styled" id="projectList" style="border: 1px solid #8E8D8E;border-radius: 5px;height: 30px;width: 220px;padding: 5px 0;">
+                    <option value="none"> Select Project </option>
+                    <?php
+                    foreach ($projectList as $key => $value) {?>
+                        <option value="<?php echo $value['project_id'];?>"><?php echo $value['project_name'];?></option>
+                    <?php }
+                    ?>
+                </select>
+            </p>
+         <?php }
+     ?>
+        <?php
+            if(!empty($projectList)){?>
+                <p>
+                    <input type="checkbox" value="" class="chkAddCueerntProject" name="chkAddCueerntProject" style="width:auto;height:auto;float:left;"/><span style="padding-left:5px;"><?php if(!empty($projectList)){}?> Add to new project</span>
+                </p>
+            <?php }
+        ?>
+        
+        <p>
+             <a class="calculateBtn" id="<?php if(empty($projectList)){ echo "newProj";}?>" style="background: none repeat scroll 0% 0% rgb(140, 140, 140); border-radius: 5px; cursor: pointer; text-decoration: none; color: rgb(255, 255, 255); padding: 5px 8px;">Calculate</a>
+             
+              <a id="ContinueBrowsing" style="background: none repeat scroll 0% 0% rgb(140, 140, 140); border-radius: 5px; text-decoration: none; color: rgb(255, 255, 255); cursor: pointer; padding: 5px 8px;">Continue Browsing</a>
+              
+              
+<!--            <img style="cursor:pointer;width:110px;float:left;" id="<?php if(empty($projectList)){ echo "newProj";}?>" class="calculateBtn" src='/images/calculateBtn.png'/></a>
+            <img id="ContinueBrowsing" src='/images/continueBrowingBtn.png' style="cursor:pointer;width:135px;padding-left:5px;"/>-->
+        </p>
+     </p>
+      
+       
+    </div>
+    </div>
+    </form>
+</div> 
+<script  type="text/javascript">
+  $(document).ready(function() {
+      
+      $('#ContinueBrowsing').click(function(e){ 
+        location.reload();
+        parent.jQuery.fancybox.close();
+      });
+      
+      $('#projectList').change(function() {
+            var projectId = $(this).val();
+            var finalCalculate = '<?php echo $finalCompare; ?>';
+            $('.calculateBtn').attr('id',projectId);
+             $.ajax({
+                type: "GET",
+                url: "/product/comparison/calculate-save/projectId/" + projectId + "/finalCalculate/" + finalCalculate,
+                success: function(data) { //alert(data); return false;
+                    
+                },
+                error: function(event, request, settings) {
+                    return false;
+                }
+            });
+            
+      });
+      
+      $('.calculateBtn').click(function(e){ 
+           var id = $(this).attr('id'); 
+           
+           if(id == ''){
+               alert("Please indicate where you want to save your product")
+           }else if(id == 'newProj'){
+                var finalCalculate = '<?php echo $finalCompare; ?>';
+                window.location = '/project/analysis/calculatePid/'+finalCalculate;;
+           }else{
+                window.location = '/product-config/index/pid/'+id;
+           }
+      });
+      $('.chkAddCueerntProject').click(function(e){
+        if($(".chkAddCueerntProject").is(':checked')){
+          $('.calculateBtn').attr('id','newProj');
+        }else{
+            $('.calculateBtn').attr('id','');
+        }
+      });
+  });
+</script>

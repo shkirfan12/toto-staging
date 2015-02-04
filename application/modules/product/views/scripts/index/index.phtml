@@ -1,0 +1,61 @@
+<?php //Path :  product/index/index
+$tier1List = $this->tier1List; 
+$objLanding = new Admin_Model_Landing();
+
+//$infoSuperadmin = $objLanding->fetchLandingInfoByUserId('1');  // Superadmin
+//$infoAdmin = $objLanding->fetchLandingInfoByUserId('17');   // admin@dev.com
+
+$superadmin =  $objLanding->fetchSuperadminLandingInfo('superadmin');  
+$infoSuperadmin = $objLanding->fetchLandingInfoByUserId($superadmin['user_id']);
+
+$clientadmin =  $objLanding->fetchClientadminLandingInfo('client admin'); 
+$infoAdmin   = $objLanding->fetchLandingInfoByUserId($clientadmin['user_id']);
+
+if(!empty($infoAdmin['start_search_image'])){ 
+     $startSearchImage = $infoAdmin['start_search_image'];
+     $startSearchContent = $infoAdmin['start_search_content'];
+}else if(!empty($infoSuperadmin['start_search_image'])){ 
+    $startSearchImage = $infoSuperadmin['start_search_image'];
+    $startSearchContent = $infoSuperadmin['start_search_content'];
+}
+?>
+<div class="container">
+    <div class="content">
+        <?php
+            if (!empty($startSearchImage)) {
+               $bg = "/landingPageImages/startSearch/".$startSearchImage;
+             }else{
+               $bg = "/images/frontPanel/banner.jpg";
+             }
+        ?>
+<!--        <div class="banner mob-block" style="height: 72px;width: 315px;background: url('<?php echo $bg; ?>') no-repeat; margin:0 auto; ">
+            <?php
+                if (!empty($startSearchContent)) {?>
+                    <h2 style="color: #FFFFFF;display: table-cell;font-family: PT Sans;font-weight: bold;margin: 0 auto;text-align: center;vertical-align: middle;"><?php echo $startSearchContent; ?> </h2>
+                <?php }
+           ?>
+            <h2 style="display: table;left: 5%;margin: 20px auto;position: absolute;top: 0;color: #fff;font-family: PT Sans;font-weight: bold;">Start your Search123</h2>
+          
+        </div>-->
+        <h3>SEARCH BY PRODUCT CATEGORIES</h3>
+        <div class="thumb-block">
+            <?php
+            if(!empty($tier1List)){
+                foreach ($tier1List as $key => $value) {?>
+                    <div class="thumb">
+                        <?php 
+                            if(!empty($value['tier1_image'])){
+                                $src = "/tier1Images/".$value['tier1_image'];
+                            }else{
+                                 $src = "/images/tier_blank_img.jpg";
+                            }
+                        ?>
+                        <a href="/product/search/result/tier1Id/<?php echo $value['tier1_id']; ?>"><img src="<?php echo $src; ?>" alt="<?php echo $value['tier1_name']; ?>" width="" height="" class="img-responsive"/></a>
+                        <span><?php echo $value['tier1_name']?></span>
+                    </div>
+                <?php }
+            }
+            ?>
+        </div>
+    </div>
+</div>

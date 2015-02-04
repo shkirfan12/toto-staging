@@ -1,0 +1,82 @@
+<?php //Path : Default_Project_analysis  ?>
+<div class="container">
+    <div class="content">
+        <div class="page-heading">
+            <h2 style="color: #4d4d4d;">Start MyGreenPayback Analysis</h2>
+        </div>
+        <div class="project-start-block">
+            
+            <input type="text" placeholder="Name your project" id="analysisPname"/>
+            <div class="project-start">
+                <p>What kind of project is this?</p>
+                <div class="buttons">
+                    <a class="img-responsive" style="background: none repeat scroll 0% 0% rgb(140, 140, 140); border-radius: 5px; text-decoration: none; color: rgb(255, 255, 255); display: inline-block; width: 40%; padding: 5px 10px;" id="commercial" href="javascript:void(0);">COMMERCIAL</a>
+                    <span>or</span>
+                    <a class="img-responsive" style="background: none repeat scroll 0% 0% rgb(140, 140, 140); border-radius: 5px; text-decoration: none; color: rgb(255, 255, 255); display: inline-block; width: 40%; padding: 5px 10px;" id="residential" href="javascript:void(0);">RESIDENTIAL</a>
+                </div>
+                <div class="proj-list-start">
+                     <p>You will now be taken through the following steps:</p>
+                    <div>
+                        <h4>Step 1: Project Setup</h4>
+                        <p>Configure : Scope, Location, Occupants, Utility Pricing, etc</p>
+                    </div>
+                </div>
+                <div class="proj-list-start">
+                    <div>
+                        <h4>Step 2: Product Setup</h4>
+                        <p>Configure: Qty, Price, Usage, Baseline, etc</p>
+                    </div>
+                </div>
+                <div class="proj-list-start">
+                    <div>
+                        <h4>Step 3: Payback Analysis</h4>
+                        <p>Review your project's payback potential</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="desk-side-bar" style="margin: 0;">
+            <h2>Lorem <span>Ipsum</span></h2>
+            <div>
+                <a><img src="/images/frontPanel/sidebar-img1.jpg" alt="sidebar" class="img-responsive" /></a>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ullamcorper augue eget ante faucibus aliquam. Nam sit amet commodo mauris. Donec sapien ligula, interdum et cursus luctus, bibend um in felis. Fusce bibendum fringilla risus ut eleifend. Sed egestas quam at dolor aliquet eget porta sapien lacinia.</p>
+    </div>
+            <div>
+                <a><img src="/images/frontPanel/sidebar-img2.jpg" alt="sidebar" class="img-responsive" /></a>
+</div>
+        </div>
+    </div>
+</div>
+<script language="JavaScript" type="text/javascript">
+    $(document).ready(function() { 
+        $( ".img-responsive" ).click(function() {
+            var name = $('#analysisPname').val(); 
+            var type = $(this).attr('id'); 
+            if(name != ''){ 
+                 $.ajax({
+                    type:"GET",
+                    url: "/default/project/ajax-session-project-name", 
+                      data : { type : type , name : name},
+                    success: function(data) {  
+                        location.href = data;
+                    },
+                    error:function(event, request, settings){
+                        return false;
+                    }
+                });
+            }else{ 
+                 $.ajax({
+                    type:"GET",
+                    url: "/default/project/ajax-session-project-name",
+                     data : { type : type , name : "empty"},
+                    success: function(data) {  
+                      location.href = data;
+                    },
+                    error:function(event, request, settings){
+                        return false;
+                    }
+                });
+            }
+        });
+    });
+</script>

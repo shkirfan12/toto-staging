@@ -1,0 +1,921 @@
+<?php  // Path : Product/search/result
+ $productDetail = $this->productDetail; //echo "<pre>"; print_R($productDetail); 
+ if(isset($productDetail[0])){
+      $masterSubAtt1 = $productDetail[1]; 
+      $masterAtt1 = $productDetail[2];  
+ } 
+foreach ($masterSubAtt1 as $key => $value) {
+     if($value['subatt_name'] != 'List Price Starting At ($)'){
+         $masterSubAtt[] = $value;
+     }
+}
+//Att <<
+foreach ($masterAtt1 as $key => $value) { 
+     foreach ($masterSubAtt as $k => $v) {
+          if($value[0] == $v['attribute_id']){
+              $masterAtt2[] = $value;
+          }
+     }
+}
+/*$masterAtt= array_map(
+    'unserialize',
+    array_unique(
+        array_map(
+            'serialize',
+            $masterAtt2
+        )
+    )
+);*/
+$masterAtt3= array_unique($masterAtt2, SORT_REGULAR);
+$masterAtt= array_values($masterAtt3);
+//Att >>
+//echo "<pre>"; print_r($masterSubAtt);
+
+
+ $tier1List     = $this->tier1List; //echo "<pre>"; print_R($tier1List); die;
+ $advanceSearch = $this->advanceSearch; //echo "<pre>"; print_R($advanceSearch); die;
+ $sessUser = new Zend_Session_Namespace('user');
+ 
+ $collectionId = $this->collectionId; 
+ $collectionName = $this->collectionName; 
+ $collectionProductCount = $this->collectionProductCount; 
+   
+ $producViewMesg = $this->producViewMesg;  //viewProduct
+ if(!empty($producViewMesg)){ 
+       $productSession = new Zend_Session_Namespace('productSession1');
+       $sessCount = $productSession->count;
+       $sessSelectedPid = $productSession->selectedPid;
+       //echo  'view-'.$producViewMesg.'--'.$productSession->count.'--'.$productSession->selectedPid;
+ }else{ 
+     $productSession->count='';
+     $productSession->selectedPid='';
+     $sessCount = '';
+     $sessSelectedPid = '';
+ } 
+ 
+ $collectionDeleteIcon = $this->collectionDeleteIcon;  
+?>
+<style>
+    .fancybox-type-iframe{
+        left:7px !important;
+        top : 100px !important;
+        width: 295px !important;
+    }
+    .fancybox-skin{
+        padding: 5px !important;
+    }
+    .fancybox-type-iframe .fancybox-inner {
+        height: 300px !important;
+        width: 275px !important;
+    }
+    .search-list .search-thumb-desc {
+        float: right;
+    width: 62% !important;
+    }
+</style>
+<div class="container">
+    <div class="content">
+        <div class="page-heading">
+            <?php
+                if(!empty($productDetail)){?>
+                    <h2>PRODUCT DETAILS</h2>
+                <?php }elseif(!empty($collectionId)){?>
+                    <h2><?php echo $collectionName; ?></h2>
+                    <p class="search-click">
+                        <span style="color: #333333;display: table;font-family: 'PT Sans';font-size: 20px;margin: 0 auto;">
+                            <?php
+                            if($collectionProductCount == '0'){
+                                echo "Please search the product to add in the collection";
+                            }else{
+                                  echo "Product count : ".   $collectionProductCount; 
+                            }
+                            ?>
+                          
+                        </span>
+                    </p>
+                <?php }else{?>
+                     <h3>SEARCH RESULTS</h3>
+                <?php }
+            ?>
+        </div>
+        <div class="search-result-block" style="border: none; width: 100%;">
+            <p class="search-click">
+                <?php
+                 if(!empty($collectionId)){
+                    if($collectionProductCount != '0'){?>
+                        <a href="javascript:void(0);" id="<?php if(!empty($producViewMesg)){ echo "viewComapre";}else{ echo "compare";} ?>">
+                        
+                        COMPARE
+                        
+                        </a>
+                    <?php }
+                 }else{?>
+                        <a href="javascript:void(0);" id="<?php if(!empty($producViewMesg)){ echo "viewComapre";}else{ echo "compare";} ?>">
+                       
+                        COMPARE
+                       
+                        </a>
+                <?php }
+                ?>
+                <!--a href="javascript:void(0);" id="<?php //if(!empty($producViewMesg)){ echo "viewComapre";}else{ echo "compare";} ?>">
+                    <span><img src="/images/frontPanel/left-bracket.png" alt="bracket" /></span>
+                    COMPARE
+                    <span><img src="/images/frontPanel/right-bracket.png" alt="bracket" /></span>
+                </a-->
+                
+                <?php
+                    if(!empty($sessUser->user_Id)){ //LoggedIn User 
+
+                        if(empty($collectionId)){?>
+                            <a href="/collection/collect/" data-fancybox-type="iframe" class="<?php if(!empty($producViewMesg)){ echo "viewAddCollect";}else{ echo "addCollect";} ?>">
+                                <!--<a href="javascript:void(0);"  class="addCollect">-->
+                                
+                                COLLECT
+                                
+                            </a>
+                        <?php }
+                        
+                        ?>
+                        <?php
+                        if(!empty($collectionId)){
+                            if($collectionProductCount != '0'){?>
+                                <a href = "javascript:void(0);" id ="<?php if(!empty($producViewMesg)){ echo "cal";}else{ echo "viewCalculate";} ?>">
+                               
+                                CALCULATE
+                              
+                                </a>
+                            <?php }
+                        }else{?>
+                                <!--a href = "javascript:void(0);" id = "viewCalculate"-->
+                               <a href = "javascript:void(0);" id ="<?php if(!empty($producViewMesg)){ echo "cal";}else{ echo "viewCalculate";} ?>">
+                                CALCULATE
+                               
+                                </a>
+                        <?php }
+                        ?>
+                        <!--a href="javascript:void(0);" id="viewCalculate">
+                            <span><img src="/images/frontPanel/left-bracket.png" alt="bracket" /></span>
+                            CALCULATE
+                            <span><img src="/images/frontPanel/right-bracket.png" alt="bracket" /></span>
+                        </a-->
+                        <?php
+                        
+                    }else{ // Public User ?>
+                        <a href="/login/account"> 
+<!--                            <span><img src="/images/frontPanel/left-bracket.png" alt="bracket" /></span>-->
+                            COLLECT
+<!--                            <span><img src="/images/frontPanel/right-bracket.png" alt="bracket" /></span>-->
+                        </a>
+                        <a id="loginCalculate" style="cursor:pointer;"> <!-- href="/login/account"  -->
+<!--                            <span><img src="/images/frontPanel/left-bracket.png" alt="bracket" /></span>-->
+                            CALCULATE
+<!--                            <span><img src="/images/frontPanel/right-bracket.png" alt="bracket" /></span>-->
+                        </a>
+                    <?php }
+                ?>
+                
+               
+                
+                
+            </p>
+             <?php  if(empty($productDetail)){?>
+            <h3 class="click-img">Click on image to see product details</h3>
+             <?php } ?>
+        </div>
+        <div class="search-result-block" style="border: none;">
+            <?php
+                /*if(!empty($productDetail)){?>
+                    <h2>PRODUCT <span>DETAILS</span></h2>
+                <?php }elseif(!empty($collectionId)){?>
+                    <h2><?php echo $collectionName; ?></h2>
+                    <p class="search-click">
+                        <span>
+                            <?php
+                            if($collectionProductCount == '0'){
+                                echo "Please search the product to add in the collection";
+                            }else{
+                                  echo "Product count : ".   $collectionProductCount; 
+                            }
+                            ?>
+                          
+                        </span>
+                    </p>
+                <?php }else{?>
+                      <h2>SEARCH <span>RESULTS</span></h2>
+                <?php }*/
+            ?>
+            
+
+            
+            <div class="banner-alert" style="display:none;">
+                <span id="productAdded"></span>
+                <a href="" class="comparison">
+                    
+                    <!--COLLECT-->COMPARE
+                    
+                </a>
+            </div>
+            <div id="banner-alert" style="display:none;">
+                <span class="productAdded"></span>
+                <a href="" id="comparison">
+                   
+                    CALCULATE
+                    
+                </a>
+            </div>
+            <?php 
+            if(!empty($productDetail)){?>
+                <div class="product-details">
+                    <?php
+                         if(isset($productDetail[0])){
+                              if(!empty($productDetail[0]['product_img'])){
+                                    if (strpos($productDetail[0]['product_img'],'http://') !== false) {
+                                       //http://stackoverflow.com/questions/15477232/how-to-check-url-image-is-exist-or-not-in-php
+                                        $url = $productDetail[0]['product_img'];
+                                        $ch = curl_init();
+                                        curl_setopt($ch, CURLOPT_URL,$url);
+                                        // don't download content
+                                        curl_setopt($ch, CURLOPT_NOBODY, 1);
+                                        curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+                                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                        if(curl_exec($ch)!==FALSE){
+                                             $mainImgSrc = $productDetail[0]['product_img'];
+                                        }else{
+                                             $mainImgSrc = "/images/img_unavailable.png";
+                                        }
+                                    }else{
+                                       $mainImgSrc = "/batchUpload/main/".$productDetail[0]['product_img'];
+                                    }
+                                }else{
+                                     $mainImgSrc = "/images/img_unavailable.png";
+                                }
+                             ?>
+
+                    <div class="product-img"><img src="<?php echo $mainImgSrc;?>" alt="product" class="img-responsive"/></div>
+
+                            <div class="product-desc">
+                                <h4><?php if(!empty($productDetail[0]['product_brand'])){ echo $productDetail[0]['product_brand']; }else{ echo "TOTO";}?><!--span style="font-family: PT Sans; color: #808080; font-size: 15px; font-weight: normal;">.USA</span--></h4>
+                                <h4><?php echo htmlentities($productDetail[0]['product_name'], ISO8559-1);?></h4>
+                                <span><?php echo 'Model No: '.$productDetail[0]['product_num'];?></span>
+                                <h5><?php echo $productDetail[0]['product_details'];?></h5>
+                                <span><?php echo 'List price: $'.$productDetail[0]['purchase_price'];?></span>
+                                <p>
+                                    <?php 
+                                        foreach($masterAtt as $key  => $value){ ?>
+                                    <a >
+                                            <img src="/attributeImages/thumb/<?php echo $value[2]; ?>" alt="<?php echo $value[1];?>" class="img-responsive" />
+                                    </a>
+ <?php }
+                                    ?>
+                                </p>
+                            </div>
+                         <?php }else{ 
+                              if(!empty($productDetail['product_img'])){
+                                 if (strpos($productDetail['product_img'],'http://') !== false) {
+                                        $mainImgSrc1 = $productDetail['product_img'];
+                                  }else{
+                                       $mainImgSrc1 = "/batchUpload/main/".$productDetail['product_img'];
+                                  }
+                             }else{
+                                  $mainImgSrc1 = "/images/img_unavailable.png";
+                             }
+                             ?>
+                            <div class="product-img"><img src="<?php echo $mainImgSrc1;?>" alt="product"  width="155" height="170" class="img-responsive"/></div>
+                            <div class="product-desc">
+                                <h4><?php if(!empty($productDetail['product_brand'])){ echo $productDetail['product_brand']; }else{ echo "TOTO";}?> </h4>
+                                <h4><?php echo htmlentities($productDetail['product_name'], ISO8559-1);?></h4>
+                                <span><?php echo 'Model No: '.$productDetail['product_num'];?></span>
+                                <h5><?php echo $productDetail['product_details'];?></h5>
+                                <span><?php echo 'List price: $'.$productDetail['purchase_price'];?></span>
+                                <!--p>
+                                    <a href="#"><img src="/images/frontPanel/energy.jpg" alt="energy" class="img-reponsive" /></a>
+                                    <a href="#"><img src="/images/frontPanel/water.jpg" alt="water" class="img-reponsive" /></a>
+                                    <a href="#"><img src="/images/frontPanel/recycle.jpg" alt="recycle" class="img-reponsive" /></a>
+                                    <a href="#"><img src="/images/frontPanel/man.jpg" alt="man" class="img-reponsive" /></a>
+                                    <a href="#"><img src="/images/frontPanel/map.jpg" alt="map" class="img-reponsive" /></a>
+                                </p-->
+                            </div>
+                         <?php }
+                    ?>
+                    
+                     <div class="product-desc-list-block">
+                        <div class="product-desc-list">
+                            <?php
+                             if(isset($productDetail[0])){
+//                                 print_r("<pre>");
+//                                 print_r($masterAtt);
+//                                 print_r("</pre>");
+//                                 die;
+                                foreach($masterAtt as $key  => $value){ ?>
+                                    <p>
+                                        <span>
+                                            <img src="/attributeImages/thumb/<?php echo $value[2]; ?>" alt="<?php echo $value[1]; ?>" class="img-responsive"/>
+                                        </span>
+                                        <span class="<?php echo "class".strtolower($value[0]); ?> icon-text">
+                                            <?php echo $value[1]; ?>
+                                        </span>
+                                        <table border="0" cellpadding="0" cellspacing="0" class="product-desc-list-table-data">
+                                        <?php //echo "<pre>"; print_r($masterSubAtt); die;
+                                            foreach($masterSubAtt as $k => $v){ 
+                                                if($value[0] == $v['attribute_id']){?>
+                                                    <tr>
+                                                        <td width="70%"><?php echo $v['subatt_name']; ?></td>
+                                                        <?php
+                                                            if($v['short_code'] == 'SM_LINK'){?>
+                                                                <td width="30%" class="last-td-cell" style="text-align:right;"><a target="_blank" href="<?php if(isset($v['value'])){echo $v['value'];}else{"#";} ?>">Link</a></td>
+                                                            <?php }else{?>
+                                                                <td width="30%" class="last-td-cell"><?php if(isset($v['value'])){echo $v['value'];} ?></td>
+                                                            <?php }
+                                                       ?>
+                                                        <!--<td width="30%" class="last-td-cell"><?php //if(isset($v['value'])){echo $v['value'];} ?></td>-->
+                                                    </tr>
+                                                <?php }
+                                            }
+                                        ?>
+                                            
+                                        </table>
+                                    </p>
+                                    
+                                <?php }
+                                 
+                             }else{ echo "No details found."; ?>
+                                    <!--p><span><img src="/images/frontPanel/energy-big.jpg" alt="energy" class="img-responsive"/></span><span class="energy">Energy</span>
+                                        <table border="0" cellpadding="0" cellspacing="0" class="product-desc-list-table-data">
+                                            <tr>
+                                                <td width="70%">Energy Consumtion</td>
+                                                <td width="30%" class="last-td-cell">0</td>
+                                            </tr>
+                                        </table>
+                                    </p>
+                                    <p><span><img src="/images/frontPanel/water-big.jpg" alt="water" class="img-responsive"/></span><span class="water">Water</span>
+                                        <table border="0" cellpadding="0" cellspacing="0" class="product-desc-list-table-data">
+                                            <tr>
+                                                <td width="70%">GPF (high)</td>
+                                                <td width="30%" class="last-td-cell">128</td>
+                                            </tr>
+                                            <tr>
+                                                <td width="70%">GPF (low)</td>
+                                                <td width="30%" class="last-td-cell">0.80</td>
+                                            </tr>
+                                            <tr>
+                                                <td width="70%">GPF</td>
+                                                <td width="30%" class="last-td-cell">0</td>
+                                            </tr>
+                                        </table>
+                                    </p>
+                                    <p><span><img src="/images/frontPanel/recycle-big.jpg" alt="recycle" class="img-responsive"/></span><span class="lifecycle">Lifecycle</span>
+                                        <table border="0" cellpadding="0" cellspacing="0" class="product-desc-list-table-data">
+                                            <tr>
+                                                <td width="70%">Purchase price</td>
+                                                <td width="30%" class="last-td-cell">$235</td>
+                                            </tr>
+                                            <tr>
+                                                <td width="70%">Warranty length price</td>
+                                                <td width="30%" class="last-td-cell">15 Years</td>
+                                            </tr>
+                                        </table>    
+                                    </p>
+                                    <p><span><img src="/images/frontPanel/man-big.jpg" alt="recycle" class="img-responsive"/></span><span class="human">Human Health</span>
+                                        <table border="0" cellpadding="0" cellspacing="0" class="product-desc-list-table-data">
+                                            <tr>
+                                                <td width="70%">Purchase price</td>
+                                                <td width="30%" class="last-td-cell">$235</td>
+                                            </tr>
+                                            <tr>
+                                                <td width="70%">Warranty length price</td>
+                                                <td width="30%" class="last-td-cell">15 Years</td>
+                                            </tr>
+                                        </table>    
+                                    </p>
+                                    <p><span><img src="/images/frontPanel/map-big.jpg" alt="recycle" class="img-responsive"/></span><span class="planetary">Planetary Health</span>
+                                        <table border="0" cellpadding="0" cellspacing="0" class="product-desc-list-table-data">
+                                            <tr>
+                                                <td width="70%">Purchase price</td>
+                                                <td width="30%" class="last-td-cell">$235</td>
+                                            </tr>
+                                        </table>    
+                                    </p-->
+                             <?php }
+                            ?>
+                            
+                        </div>
+                    </div>
+                </div>
+            <?php }
+            ?>
+            
+            <div class="search-list-block">
+                <?php
+                   if(!empty($tier1List)){
+                         foreach ($tier1List as $key => $value) {?>
+                            <div class="search-list">
+                                <div class="search-thumb">
+                                    <a href="/product/search/result/productId/<?php echo $value['product_id']; ?>">
+                                        <?php 
+                                        if(!empty($value['product_img'])){
+                                            if (strpos($value['product_img'],'http://') !== false) {
+                                               //http://stackoverflow.com/questions/15477232/how-to-check-url-image-is-exist-or-not-in-php
+                                                $url = $value['product_img'];
+                                                $ch = curl_init();
+                                                curl_setopt($ch, CURLOPT_URL,$url);
+                                                // don't download content
+                                                curl_setopt($ch, CURLOPT_NOBODY, 1);
+                                                curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+                                                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                                if(curl_exec($ch)!==FALSE){
+                                                     $mainImgSrc2 = $value['product_img'];
+                                                }else{
+                                                     $mainImgSrc2 = "/images/img_unavailable.png";
+                                                }
+                                            }else{
+                                               $mainImgSrc2 = "/batchUpload/main/".$value['product_img'];
+                                            }
+                                        }else{
+                                             $mainImgSrc2 = "/images/img_unavailable.png";
+                                        }
+                                        ?>
+                                         <img class="img-responsive" src="<?php echo $mainImgSrc2;?>" alt="toilet" width="" height=""/>
+                                    </a>
+                                    
+                                    
+                                </div>
+                                <div class="search-thumb-desc">
+                                    <h4><?php if(!empty($value['product_brand'])){ echo $value['product_brand']; }else{ echo "TOTO";}?><!--span style="font-family: PT Sans; color: #808080; font-size: 15px; font-weight: normal;">.USA</span--> </h4>
+                                    <h4><?php echo htmlentities($value['product_name'], ISO8559-1);?></h4>
+                                    <span><?php echo 'Model No: '.$value['product_num'];?></span>
+                                    <h5><?php echo $value['product_details'];?></h5>
+                                    <span><?php echo 'List price: $'.$value['purchase_price'];?></span>
+                                    <p>  
+                                        <?php
+                                        if($value['subatt_id']!=''){
+                                            foreach ($value['subatt_id'] as $ke => $va) {?>
+                                        <a href="#"><img class="img-responsive" src="/attributeImages/thumb/<?php echo $va['attribute_image']?>" alt="<?php echo $va['attribute_name']?>" /></a>
+                                            <?php }
+                                        }
+                                        else{
+                                            echo "No Attributes Associated!";
+                                        }
+                                        ?>
+                                        <!--span><input type="checkbox" class="myClass" value="yes" id="<?php //echo $value['product_id'];?>" name="answer"/></span-->
+                                    <span style="float:right;">
+                                                <span style="float:left;margin: 0;"><input type="checkbox" class="myClass productCheckbox" value="yes" id="<?php echo $value['product_id'];?>" name="answer"/></span>
+                                                <?php
+                                        if(!empty($collectionDeleteIcon)){?>
+                                            <a href="javascript:void(0);" id="<?php echo $value['product_id'];?>" class="delCollectionProduct"><img src="/images/frontPanel/delete-large.png" alt="delete" title="Delete" style=""/></a>
+                                        <?php }
+                                    ?>
+                                    </span>
+                                    </p>
+                                    
+                                </div>
+                            </div>
+                         <?php }
+                    }else{?>
+<!--                        <span style='color:red;padding-left:35px;'>Record not found</span>-->
+                    <?php }
+                ?>
+           
+            <!-- Advance search << -->
+                <?php 
+                   if(!empty($advanceSearch)){ // echo "view<pre>"; print_r($advanceSearch); die; //$value->product_id;
+                         foreach ($advanceSearch as $key => $value) {?>
+                            <div class="search-list">
+                                <div class="search-thumb">
+                                    <a href="/product/search/result/productId/<?php echo $value['product_id']; ?>">
+                                          <?php 
+                                         /* if(!empty($value->product_img)){
+                                            if (strpos($value->product_img,'http://') !== false) {
+                                                $mainImgSrc3 = $value->product_img;
+                                            }else{
+                                               $mainImgSrc3 = "/batchUpload/main/".$value->product_img;
+                                            }
+                                         }else{
+                                             $mainImgSrc3 = "/images/img_unavailable.png";
+                                         }*/
+                                         
+                                          if (!empty($value['product_img'])) {
+                                                if (strpos($value['product_img'], 'http://') !== false) {
+                                                    //http://stackoverflow.com/questions/15477232/how-to-check-url-image-is-exist-or-not-in-php
+                                                    $url = $value['product_img'];
+                                                    $ch = curl_init();
+                                                    curl_setopt($ch, CURLOPT_URL, $url);
+                                                    // don't download content
+                                                    curl_setopt($ch, CURLOPT_NOBODY, 1);
+                                                    curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+                                                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                                    if (curl_exec($ch) !== FALSE) {
+                                                        $mainImgSrc3 = $value['product_img'];
+                                                    } else {
+                                                        $mainImgSrc3 = "/images/img_unavailable.png";
+                                                    }
+                                                } else {
+                                                    $mainImgSrc3 = "/batchUpload/main/" . $value['product_img'];
+                                                }
+                                        } else {
+                                            $mainImgSrc3 = "/images/img_unavailable.png";
+                                        }
+                                         
+                                         
+                                        ?>
+                                        <img class="img-responsive" src="<?php echo $mainImgSrc3;?>" alt="toilet" width="" height=""/>
+                                    </a>
+                                     
+                                   
+                                </div>
+                                <div class="search-thumb-desc">
+                                    <h4><?php if(!empty($value['product_brand'])){ echo $value['product_brand']; }else{ echo "TOTO";}?><!--span style="font-family: PT Sans; color: #808080; font-size: 15px; font-weight: normal;">.USA</span--> </h4>
+                                    <h4><?php echo htmlentities($value['product_name'], ISO8559-1);?></h4>
+                                    <span><?php echo 'Model No: '.$value['product_num'];?></span>
+                                    <h5><?php echo $value['product_details'];?></h5>
+                                    <span><?php echo 'List price: $'.$value['purchase_price'];?></span>
+                                    <p>
+                                        <?php
+                                        if(isset($value['subatt_id'])){
+                                            foreach ($value['subatt_id'] as $ke => $va) {?>
+                                                <a href="#"><img src="/attributeImages/thumb/<?php echo $va['attribute_image']; ?>" alt="<?php echo $va['attribute_name'];?>" /></a>
+                                            <?php }
+                                        }
+                                        ?>
+                                        <!--span><input type="checkbox" class="myClass" value="yes" id="<?php //echo $value->product_id;?>" name="answer"/></span-->
+                                                  <span style="float:right;"> <span style="float:left;margin: 0;"><input type="checkbox" class="myClass productCheckbox" value="yes" id="<?php echo $value['product_id'];?>" name="answer"/></span></span>
+                                    </p>
+                                  
+                                </div>
+                            </div>
+                         <?php }
+                    }
+                ?>
+            <!-- Advance search >> -->
+            </div>
+          
+            
+           <!--div class="banner-alert" style="display:none;">
+                <span id="productAdded"></span>
+                <a href="" class="comparison">
+                    <span><img src="/images/frontPanel/bracket-left-black.jpg" alt="bracket" /></span>
+                    COMPARE
+                    <span><img src="/images/frontPanel/bracket-right-black.jpg" alt="bracket" /></span>
+                </a>
+            </div-->
+            <?php  if(empty($productDetail)){?>
+        <h3 class="click-img">Click on image to see product details</h3>
+            <?php } ?>
+        </div>
+        
+        <div class="desk-side-bar" style="margin: 0px;">
+            <h2>Lorem <span>Ipsum</span></h2>
+            <div>
+                <a><img src="/images/frontPanel/sidebar-img1.jpg" alt="sidebar" class="img-responsive" /></a>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ullamcorper augue eget ante faucibus aliquam. Nam sit amet commodo mauris. Donec sapien ligula, interdum et cursus luctus, bibend um in felis. Fusce bibendum fringilla risus ut eleifend. Sed egestas quam at dolor aliquet eget porta sapien lacinia.</p>
+            </div>
+            <div>
+                <a><img src="/images/frontPanel/sidebar-img2.jpg" alt="sidebar" class="img-responsive" /></a>
+            </div>   
+        </div>
+        
+    </div>
+    
+</div>   
+<script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox1.css?v=2.1.4" media="all" />
+<script  type="text/javascript">
+    $(document).ready(function() {
+        //compare <<
+        
+      /*  $('#compare').click(function(e){
+            var val = []; var selected = new Array();
+            $(':checkbox:checked').each(function(i){
+                val[i] = $(this).attr('id');
+                selected.push(val[i]);
+            });
+            var count = selected.length;
+            if(count == '0' || count == '1'){
+                $(".banner-alert").attr('style','display:none;');
+                alert('Please select at least two products.');
+                return false;
+            }else{
+                if(count > '3'){
+                    $(".banner-alert").attr('style','display:none;');
+                    alert('You can only compare three products at a time.');
+                    return false;
+                }else{
+                    $(".banner-alert").attr('style','display:block;');
+                    $('#productAdded').text(count+' Products Added');
+                    $('.comparison').attr('href','/product/comparison/index/ids/'+selected);
+                }
+            }
+        });*/
+    
+       $('#compare').click(function(e){ 
+            var val = []; 
+            var selected = new Array();
+            $(':checkbox:checked').each(function(i){
+                val[i] = $(this).attr('id');
+                selected.push(val[i]);
+            });
+            var count = selected.length;
+            if(count == '0'){
+                $(".banner-alert").attr('style','display:none;');
+                alert('Plesae select atleast one product');
+                return false;
+            }else{ 
+                $.fancybox.showLoading();
+                 $.ajax({
+                    type : "POST",
+                    cache : false,
+                    url : "/product/Comparison/compare",
+                    data  : 'productId=' + selected,
+                    success : function(selected) {
+                      $.fancybox(selected);
+                    }
+                  });
+                  return false;
+            }//end else
+       });
+        //compare >>
+        
+        //collect <<
+        $('.addCollect').click(function(e){
+            var val = []; 
+            var selected = new Array();
+            $(':checkbox:checked').each(function(i){
+                val[i] = $(this).attr('id');
+                selected.push(val[i]);
+            });
+            var count = selected.length;
+            
+            if(count == '0'){
+                $(".banner-alert").attr('style','display:none;');
+                alert('Plesae select atleast one product');
+                return false;
+            }else{ 
+                $.fancybox.showLoading();
+                 $.ajax({
+                    type : "POST",
+                    cache : false,
+                    url : "/collection/collect/",
+                    data  : 'productId=' + selected,
+                    success : function(selected) {
+                      $.fancybox(selected);
+                    }
+                  });
+                  return false;
+            }//end else
+        });
+        //collect >>
+        
+        // product detail + Collect << 
+        $('.viewAddCollect').click(function(e){
+            var selected = "<?php echo $producViewMesg; ?>";
+            $.fancybox.showLoading();
+            $.ajax({
+                type : "POST",
+                cache : false,
+                url : "/collection/collect/",
+                data  : 'productId=' + selected,
+                success : function(selected) {
+                    $.fancybox(selected);
+                }
+            });
+            return false;
+        });
+        // product detail + Collect >>
+        
+        //Product Detail + Comapre click << 
+        $('.myClass').click(function(e){
+            var val = []; 
+            var selected = new Array();
+            $(':checkbox:checked').each(function(i){
+                val[i] = $(this).attr('id');
+                selected.push(val[i]);
+            });
+            var count = selected.length;
+            if(count != '0'){ //alert(selected+'--'+count); 
+                /************/
+                 $.ajax({
+                    type:"GET",
+                    url: "/product/search/ajax-product-session/count/"+count+"/selected/"+selected,
+                    success: function(data) {  
+                        //alert(data); return false;
+                    },
+                    error:function(event, request, settings){
+                        return false;
+                    }
+                });
+                /************/
+            }else{
+                /************/
+                count = 'empty';
+                 $.ajax({
+                    type:"GET",
+                    url: "/product/search/ajax-product-session/count/"+count,
+                    success: function(data) {  
+                       // alert(data); return false;
+                    },
+                    error:function(event, request, settings){
+                        return false;
+                    }
+                });
+                /************/
+            }
+        });
+        $('#viewComapre').click(function(e){
+            e.preventDefault();
+            var count1 ='<?php echo $sessCount ?>';
+            var selected ="<?php echo $sessSelectedPid; ?>";
+            var producViewMesg ="<?php echo $producViewMesg; ?>";
+          
+            if(count1 != ''){
+                if(selected == producViewMesg){
+                     var finalPid = producViewMesg;
+                     var finalcount = count1;
+                }else{
+                     var finalPid = selected+','+producViewMesg;
+                     var finalcount = parseInt(count1)+1;
+                }
+            }else{
+                var finalPid = producViewMesg;
+                var finalcount = '';
+            }
+           // alert(finalcount+'--'+finalPid);
+            if(finalcount == '0' || finalcount == '1' || finalcount == ''){
+                $(".banner-alert").attr('style','display:none;');
+                alert('Please select at least two products.');
+                return false;
+            }else{
+                if(finalcount > '3'){
+                    $(".banner-alert").attr('style','display:none;');
+                    alert('You can only compare three products at a time.');
+                    return false;
+                }else {
+                    var count1 ='<?php echo $sessCount; ?>';
+                    var selected ="<?php echo $sessSelectedPid; ?>";
+                    var producViewMesg ="<?php echo $producViewMesg; ?>";
+                    $(".banner-alert").attr('style','display:block;');
+                    $('#productAdded').text(finalcount+' Products Added');
+                    $('.comparison').attr('href','/product/comparison/index/ids/'+finalPid);
+                }
+            }
+            //return false;
+        });
+        //Product Detail + Comapre click >>
+        
+        //Calculate <<
+       /*  $('#viewCalculate').click(function(e){
+            var val = []; 
+            var selected1 = new Array(); 
+            $(':checkbox:checked').each(function(i){
+                val[i] = $(this).attr('id');
+                selected1.push(val[i]);
+            });
+            var producViewMesg ="<?php echo $producViewMesg; ?>";
+            var count1 = selected1.length;
+        
+            if(selected1==''){
+                if(producViewMesg == ''){
+                    alert('Plesae select atleast one product');
+                }else{
+                     //location.href = '/project/analysis/calculatePid/'+producViewMesg;
+                    $("#banner-alert").attr('style','display:block;');
+                    $('.productAdded').text('1 Products Added');
+                    $('#comparison').attr('href','/project/analysis/calculatePid/'+producViewMesg);
+                }
+                
+            }else{
+                 //location.href = '/project/analysis/calculatePid/'+selected1;
+                 
+                  $("#banner-alert").attr('style','display:block;');
+                  $('.productAdded').text(count1+' Products Added');
+                  $('#comparison').attr('href','/project/analysis/calculatePid/'+selected1);
+            }
+            
+            //Clear compare session <<
+            $.ajax({
+                type:"GET",
+                url: "/product/search/ajax-product-session/count/empty",
+                success: function(data) {  
+                    // alert(data); return false;
+                },
+                error:function(event, request, settings){
+                    return false;
+                }
+            });
+            //Clear compare session >>
+           
+         }); */
+        $('#viewCalculate').click(function(e){
+              var val = []; 
+            var selected = new Array();
+            $(':checkbox:checked').each(function(i){
+                val[i] = $(this).attr('id');
+                selected.push(val[i]);
+            });
+            var count = selected.length;
+            if(count == '0'){
+                $(".banner-alert").attr('style','display:none;');
+                alert('Plesae select atleast one product');
+                return false;
+            }else{ 
+                $.fancybox.showLoading();
+                 $.ajax({
+                    type : "POST",
+                    cache : false,
+                    url : "/product/Comparison/calculate",
+                    data  : 'productId=' + selected,
+                    success : function(selected) {
+                      $.fancybox(selected);
+                    }
+                  });
+                  return false;
+            }//end else
+        });
+        //Calculate >>
+        
+        // product detail + Calculate << 
+        $('#cal').click(function(e){
+            var selected = "<?php echo $producViewMesg; ?>";
+            $.fancybox.showLoading();
+            $.ajax({
+                type : "POST",
+                cache : false,
+                url : "/product/Comparison/calculate",
+                data  : 'productId=' + selected,
+                success : function(selected) {
+                    $.fancybox(selected);
+                }
+            });
+            return false;
+        });
+      
+
+//  $('.myClass').prettyCheckable({
+//   
+//  });
+
+
+        // product detail + Calculate >>
+        
+        // Dummy User << 
+        $('#loginCalculate').click(function(e){
+             $.ajax({
+                type:"GET",
+                url: "/product/search/ajax-dummy-session/",
+                success: function(data) {  
+                      // viewCalculate << 
+                        var val = []; 
+                        var selected = new Array();
+                        $(':checkbox:checked').each(function(i){
+                            val[i] = $(this).attr('id');
+                            selected.push(val[i]);
+                        });
+                        var count = selected.length;
+                        if(count == '0'){
+                            $(".banner-alert").attr('style','display:none;');
+                            alert('Plesae select atleast one product');
+                            return false;
+                        }else{ 
+                            $.fancybox.showLoading();
+                            $.ajax({
+                                type : "POST",
+                                cache : false,
+                                url : "/product/Comparison/calculate",
+                                data  : 'productId=' + selected,
+                                success : function(selected) {
+                                    $.fancybox(selected);
+                                }
+                            });
+                            return false;
+                        }//end else
+                     // viewCalculte >> 
+                },
+                error:function(event, request, settings){
+                    return false;
+                }
+            });
+        });
+        // Dummy User >> 
+        
+        // Delete collection Product <<
+       $('.delCollectionProduct').click(function() {
+            var productId = $(this).attr('id'); 
+            var collectionId = "<?php echo $collectionId ?>";  
+           
+            if(confirm("Are you sure you want to delete this product?")) {
+                $.ajax({
+                    type: "GET",
+                    url: "/product/search/ajax-product-del/collectionId/"+collectionId+"/productId/"+productId,
+                    success: function(data) {  
+                        if (data == 'success') {
+                            location.reload();
+                        }
+                    },
+                    error: function(event, request, settings) {
+                        return false;
+                    }
+                });
+            }
+        });
+        //  Delete collection Product >>
+    });
+    
+</script>

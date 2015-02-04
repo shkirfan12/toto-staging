@@ -1,0 +1,108 @@
+<?php // Path : Default_collection_index
+$collectionList = $this->collectionList; 
+?>
+<!--<style>
+    .fancybox-type-iframe .fancybox-inner {
+    height: 125px !important;
+    }
+</style>-->
+<div class="container">
+    <div class="content">
+        <div class="page-heading">
+            <h2>MY Collections</h2>
+        </div>
+        <div class="my-profile-block">
+            <div class="add-project-block">
+                <a href="/collection/save" data-fancybox-type="iframe" class="addCollection">Add New Collection <img src="/images/frontPanel/plus.png" alt="plus" /></a>
+                <table>
+                    <tr class="tb-head">
+                        <td class="alg-left">Collection Name</td>
+                        <td class="w-75">Date Created</td>
+                        <td class="w-75"></td>
+                    </tr>
+                    <?php
+                    if(!empty ($collectionList)){
+                        foreach ($collectionList as $key => $value) {
+                            $dateArr = explode(' ', $value['created_date']); 
+                            if(isset($dateArr[0])){
+                                $date = explode('-', $dateArr[0]); 
+                                if (isset($date[1])) {
+                                    $date[0] = substr($date[0], -2); 
+                                    $dataFormat = $date[1] . "-" . $date[2] . "-" . $date[0];
+                                }
+                            }?>
+                            <tr>
+                                <!--td class="alg-left"><a style='float:left;' data-fancybox-type="iframe" class="addCollection" href="/collection/save/id/<?php //echo $value['collection_id']?>"><?php //echo $value['collection_name'] ?></a></td-->
+                                <td class="alg-left"><a style='float:left;' href="/product/search/result/collectionId/<?php echo $value['collection_id']?>"><?php echo $value['collection_name'] ?></a></td>
+                                <td><?php echo $dataFormat; ?></td>
+                                <td><a href="javascript:void(0);" id="<?php echo $value['collection_id'];?>" class="delcollection"><img src="/images/frontPanel/delete.jpg" alt="delete" /></a></td>
+                            </tr>
+                        <?php }
+                    }else{?>
+                         <tr><td colspan="3">No Record Found.</td></tr>
+                    <?php }
+                    ?>
+                </table>
+            </div>
+        </div>
+        <div class="desk-side-bar" style="margin: 0;">
+            <h2>Lorem <span>Ipsum</span></h2>
+            <div>
+                <a><img src="/images/frontPanel/sidebar-img1.jpg" alt="sidebar" class="img-responsive" /></a>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ullamcorper augue eget ante faucibus aliquam. Nam sit amet commodo mauris. Donec sapien ligula, interdum et cursus luctus, bibend um in felis. Fusce bibendum fringilla risus ut eleifend. Sed egestas quam at dolor aliquet eget porta sapien lacinia.</p>
+            </div>
+            <div>
+                <a><img src="/images/frontPanel/sidebar-img2.jpg" alt="sidebar" class="img-responsive" /></a>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox-1.css?v=2.1.4" media="all" />
+<script type="text/javascript">
+    $().ready(function(){
+        $('.delcollection').click(function() {
+            var collectionId = $(this).attr('id'); 
+            if(confirm("Are you sure you want to delete this Collection?")) {
+                $.ajax({
+                    type: "GET",
+                    url: "/collection/ajax-collection-del/collectionId/" + collectionId,
+                    success: function(data) {
+                        if (data == 'success') {
+                            location.reload();
+                        }
+                    },
+                    error: function(event, request, settings) {
+                        return false;
+                    }
+                });
+            }
+        });
+        
+        /*$(".addCollection").fancybox({
+            'autoDimensions': false,
+            'width': 25,
+            'height': 'auto',
+            'transitionIn': 'none',
+            'transitionOut': 'none',
+            'afterClose'  : function() {
+                window.location.reload();
+            }
+        });*/ 
+         $(".addCollection").fancybox({
+//            	maxWidth	: 500,
+//		maxHeight	: 600,
+//		fitToView	: false,
+//		width		: '80%',
+//		height		: '100%',
+//                autoSize	: 'false',
+//		closeClick	: false,
+//		openEffect	: 'none',
+//		closeEffect	: 'none',
+                 'afterClose'  : function() {
+                     window.location.reload();
+                 }
+        }); 
+         /*** Popup >> ***/ 
+    });
+</script>

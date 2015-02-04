@@ -1,0 +1,576 @@
+<?php // Path : Default_product-config_index
+$productInfo = $this->productInfo; //echo "<pre>"; print_r($productInfo);  die;
+$qtyUsesWKInfo = $this->qty_usesWK_Info; //echo "<pre>"; print_r($qtyUsesWKInfo); 
+$projectId = $this->projectId;
+$projectType = $this->projectType;
+
+$sessCalculate = new Zend_Session_Namespace('Sessioncalculate');
+$sessCalculate->productList = '';
+
+/*foreach ($productInfo as $key => $value) {
+    $flag = false;
+    if(!empty($qtyUsesWKInfo)){
+        foreach ($qtyUsesWKInfo as $k => $v) {
+            if ($v['product_id'] == $value['product_id']) {
+                    echo '<br/>B-' . $v['product_id'] . '--' . $v['price'];
+                    $flag = false;
+                    break;
+             } else {
+                    $flag = true;             
+             }
+        }
+    }else{
+         echo '<br/>A-' . $value['product_id'] . '--' . $value['purchase_price'];
+    }
+    if($flag) {
+        echo '<br/>A-' . $value['product_id'] . '--' . $value['purchase_price'];
+    }
+}*/
+
+?>
+<style>
+    .fancybox-type-iframe{
+        top : 40px !important;
+        width: 340px !important;
+    }
+    .fancybox-skin{
+        padding: 5px !important;
+    }
+    .fancybox-type-iframe .fancybox-inner {
+        height: 500px !important;
+        width: 330px !important;
+    }
+    .gray-button{
+            background:none repeat scroll 0 0 #8c8c8c;
+    cursor:pointer;  
+    border:none !important;
+    height: 26px;
+    width: 92px !important;
+    border-radius: 0 !important;
+    color : #fff;   
+    font-family: "Gotham SSm A","Gotham SSm B";
+    font-size: 18px;
+    text-align: center;
+    }
+@media only screen  and (max-width: 320px){
+    .fancybox-type-iframe{
+        left:7px !important;
+        top : 40px !important;
+        width: 295px !important;
+    }
+    .fancybox-skin{
+        padding: 5px !important;
+    }
+    .fancybox-type-iframe .fancybox-inner {
+        height: 500px !important;
+        width: 275px !important;
+    }
+}
+</style>
+<?php
+    if(!empty($this->msgBaselinePopup)){?>
+    <script language="JavaScript" type="text/javascript">
+    $(document).ready(function() { 
+        parent.jQuery.fancybox.close();
+    });
+    </script>
+    <?php }
+?>
+    
+<div class="container">
+   
+    <div class="content"><!--input type="button" class="next_btn" name="next" value="Next" style="float:right;margin-right:9px;"/-->
+         <div  class="add-product"><a href="/product/advance-search" >Add Product</a></div>
+    <div class="clearfix"></div>
+        <div class="search-result-block">
+<!--            <div class="project-config-block">-->
+  <!-- Projrct Header << --->
+            <?php
+                $objProject = new Default_Model_Project();
+
+                $query1 = explode("/", $_SERVER['REQUEST_URI']); 
+
+                 if (in_array("product-config", $query1)) { 
+                     $c1 = 'pro-list-tab active';
+                     if (in_array("pid", $query1)) { 
+                           $projId =  end($query1);
+                           $projInfoById = $objProject->fetchProjectInfoById($projId);
+                           $projInfoById['project_type'];
+                      }
+                 }else{ 
+                     $c1 = 'pro-list-tab';
+                 }
+
+                 if (in_array("configuration", $query1)) { 
+                     $c2 = 'pro-conf-tab active'; 
+                      if (in_array("pid", $query1)) { 
+                           $projId =  end($query1);
+                           $projInfoById = $objProject->fetchProjectInfoById($projId);
+                      }
+                 }else{ 
+                     $c2 = 'pro-conf-tab';
+                 } 
+
+                 if (in_array("payback-analysis", $query1)) { 
+                     $c3 = 'pay-anly-tab active';
+                     if (in_array("pid", $query1)) { 
+                           $projId =  end($query1);
+                           $projInfoById = $objProject->fetchProjectInfoById($projId);
+                           $projInfoById['project_type'];
+                      }
+                 }else{ 
+                     $c3 = 'pay-anly-tab';
+                 }
+             ?>
+
+
+                <div class="product-tabs">
+                    <a href="<?php if(!empty($projId)){ echo "/project/configuration/type/".$projInfoById['project_type']."/pid/".$projId;}else{ echo "/project/analysis";} ?>" class="pro-list-tab ">1. PROJECT SETUP</a>
+                    <a href="/product-config<?php if(!empty($projId)){ echo "/index/pid/".$projId;}?>" class="pro-list-tab active">2. PRODUCT SETUP</a>
+                    <a href="/payback-analysis<?php if(!empty($projId)){ echo "/index/pid/".$projId;}?>" class="pro-list-tab ">3. PROJECT ANALYSIS</a>
+                </div>
+<!-- Project Header >> -->
+
+
+
+<!--            </div>-->
+            <span style='margin: 20px auto 10px;display: table;width: auto!important;'>
+                <a style="margin: 0 4px 0 0;float: left; text-decoration: none;" href="/project/configuration/type/<?php echo $projectType; ?>/pid/<?php echo $projectId; ?>"><div class="gray-button">BACK</div></a>
+                <a style="margin: 0 4px 0 0;float: left; text-decoration: none;" href="/product-config/index/pid/<?php echo $projectId; ?>"><div class="gray-button">SAVE</div></a>
+                <a style="margin: 0 4px 0 0;float: left; text-decoration: none;" href="/payback-analysis/index/pid/<?php echo $projectId; ?>"><div class="gray-button">NEXT</div></a>
+            </span>
+<!--            <div class="product-tabs">
+                <a href="product-configuration.html" class="pro-list-tab active">PRODUCT CONFIGURATION</a>
+                <a href="project-configuration-residential.html" class="pro-conf-tab">PROJECT CONFIGURATION</a>
+                <a href="#" class="pay-anly-tab">PAYBACK ANALYSIS</a>
+            </div>-->
+
+            <div class="search-list-block">
+                <div class="search-list-block">
+                <?php
+                   if(!empty($productInfo)){
+                         foreach ($productInfo as $key => $value) {?>
+                            <div class="search-list">
+                                <div class="search-thumb">
+                                   <?php 
+                                        if(!empty($value['product_img'])){
+                                            if (strpos($value['product_img'],'http://') !== false) {
+                                               //http://stackoverflow.com/questions/15477232/how-to-check-url-image-is-exist-or-not-in-php
+                                                $url = $value['product_img'];
+                                                $ch = curl_init();
+                                                curl_setopt($ch, CURLOPT_URL,$url);
+                                                // don't download content
+                                                curl_setopt($ch, CURLOPT_NOBODY, 1);
+                                                curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+                                                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                                                if(curl_exec($ch)!==FALSE){
+                                                     $mainImgSrc2 = $value['product_img'];
+                                                }else{
+                                                     $mainImgSrc2 = "/images/img_unavailable.png";
+                                                }
+                                            }else{
+                                               $mainImgSrc2 = "/batchUpload/main/".$value['product_img'];
+                                            }
+                                        }else{
+                                             $mainImgSrc2 = "/images/img_unavailable.png";
+                                        }
+                                        ?>
+                                    <a href="/product/search/result/productId/<?php echo $value['product_id']; ?>"><img class="img-responsive" src="<?php echo $mainImgSrc2;?>" alt="toilet" width="" height=""/></a>
+                                </div>
+                                <div class="search-thumb-desc search-thumb-desc-fullwidth">
+                                    <h4><?php if(!empty($value['product_brand'])){ echo $value['product_brand']; }else{ echo "TOTO";}?> <!-- USA<span style="font-family: PT Sans; color: #808080; font-size: 15px; font-weight: normal;">.USA</span--></h4>
+                                    <h4><?php echo $value['product_name'];?></h4> <!--htmlentities($value['product_name'], ISO8559-1);-->
+                                    <span><?php echo 'Model No: '.$value['product_num'];?></span>
+                                    <h5><?php echo $value['product_details'];?></h5>
+                                    <span><?php echo 'List Price: $'.$value['purchase_price'];?></span>
+                                     
+                                </div>
+                                <div class="search-delet-edit-icon-box-content">
+                                       <div class="search-delet-edit-icon-second">
+                                           <!--span class="check-box-content"><input type="checkbox" class="check-box" checked="ckecked" onclick="return false"/></span-->
+                                        <?php
+                                            if(!empty($value['baseline_id'])){?>
+                                                <!--a href="/product-config/baseline/pid/<?php //echo $value['baseline_id']; ?>" data-fancybox-type="iframe" id="baseline_popup" class="setting-icon"><img src="/images/frontPanel/setting-icon.png" alt="setting" title="Baseline"/></a-->
+                                                <a href="/product-config/baseline/projectId/<?php echo $projectId; ?>/productId/<?php echo $value['product_id'];?>/baselineId/<?php echo $value['baseline_id']; ?>" data-fancybox-type="iframe" id="baseline_popup" class="setting-icon"><img class="img-responsive" src="/images/frontPanel/setting-large.png" alt="setting" title="Baseline"/></a>
+                                            <?php }
+                                        ?>
+                                        <a href="javascript:void(0);" id="<?php echo $value['product_id'];?>" class="delProductConfig"><img class="img-responsive" src="/images/frontPanel/delete-large.png" alt="delete" title="Delete"/></a>
+                                    </div>
+                                    <p>
+                                        <?php
+                                        if($value['subatt_id'] != ''){
+                                            foreach ($value['subatt_id'] as $ke => $va) {?>
+                                                <a href="#"><img class="img-responsive" src="/attributeImages/thumb/<?php echo $va['attribute_image']?>" alt="<?php echo $va['attribute_name']?>" /></a>
+                                            <?php }
+                                        }
+                                        else{
+                                            echo "No Attributes Associated!";
+                                        }
+                                        ?>
+                                        <!--a href="#"><img src="/images/frontPanel/energy.jpg" alt="energy" /></a>
+                                        <a href="#"><img src="/images/frontPanel/water.jpg" alt="water" /></a>
+                                        <a href="#"><img src="/images/frontPanel/recycle.jpg" alt="recycle" /></a>
+                                        <a href="#"><img src="/images/frontPanel/man.jpg" alt="man" /></a>
+                                        <a href="#"><img src="/images/frontPanel/map-report.png" alt="map" width="19" height="19"/></a-->   
+                                    </p>
+                                </div>
+                                <!--div class="text-field-box-content">
+                                    <div class="text-field-box-col">
+                                        <label class="lbl-col">QTY</label>
+                                        <input type="text" class="txt-col">
+                                    </div>
+                                    <div class="text-field-box-col">
+                                        <label class="lbl-col">PRICE</label>
+                                        <input type="text" class="txt-col">
+                                    </div>
+                                    <div class="text-field-box-col last-child">
+                                        <label class="lbl-col">USES/WK</label>
+                                        <input type="text" class="txt-col">
+                                    </div>
+                                </div-->
+                                <div class="text-field-box-content">
+                                    <div class="text-field-box-col">
+                                        <label class="lbl-col">QTY</label>
+                                        <input type="text" id="<?php echo $value['product_id']; ?>" class="qty" value="<?php
+                                            $flag = false;
+                                            if(!empty($qtyUsesWKInfo)){
+                                                foreach ($qtyUsesWKInfo as $k => $v) {
+                                                    if ($v['product_id'] == $value['product_id']) {
+                                                           if(!empty($v['qty_value'])){
+                                                            echo $v['qty_value'];
+                                                           }else{
+                                                               echo '1';
+                                                           }
+                                                            $flag = false;
+                                                            break;
+                                                     } else {
+                                                            $flag = true;             
+                                                     }
+                                                }
+                                            }else{
+                                                echo '1'; 
+                                            }
+                                            if($flag) {
+                                                echo '1';
+                                            }
+                                        ?>"/>
+                                    </div>
+                                    <div class="text-field-box-col">
+                                        <label class="lbl-col">PRICE $</label>
+                                        <!--input type="text" class="txt-col" value="<?php echo '$'.$value['purchase_price'];?>" readonly-->
+                                        <input type="text" id="<?php echo $value['product_id']; ?>" class="txt-col" value="<?php
+                                          $flag_price = false;
+                                            if(!empty($qtyUsesWKInfo)){
+                                                foreach ($qtyUsesWKInfo as $k => $v) {
+                                                    if ($v['product_id'] == $value['product_id']) {
+                                                            if(!empty($v['price'])){
+                                                                echo $v['price'];
+                                                            }else{
+                                                                echo $value['purchase_price'];
+                                                            }
+                                                            $flag_price = false;
+                                                            break;
+                                                     } else {
+                                                            $flag_price = true;             
+                                                     }
+                                                }
+                                            }else{
+                                                 echo $value['purchase_price'];
+                                            }
+                                            if($flag_price) {
+                                                echo $value['purchase_price'];
+                                            }
+                                        ?>"/>
+                                    </div>
+                                    
+                                    <?php
+                                      if($value['uses_day_flag']=='y'){?>
+                                          <div class="text-field-box-col last-child">
+                                               <label class="lbl-col">Uses/Day</label>
+                                               <input type="text" id="<?php echo $value['product_id']; ?>" class="usesWkValue" value="<?php
+                                                    $flag_usesWkValue = false;
+                                                    if(!empty($qtyUsesWKInfo)){
+                                                        foreach ($qtyUsesWKInfo as $k => $v) {
+                                                            if ($v['product_id'] == $value['product_id']) {
+                                                                    if(!empty($v['uses_wk_value'])){
+                                                                        echo $v['uses_wk_value'];
+                                                                    }else{
+                                                                        echo $value['uses_day_value'];
+                                                                    }
+                                                                    $flag_usesWkValue = false;
+                                                                    break;
+                                                             } else {
+                                                                    $flag_usesWkValue = true;             
+                                                             }
+                                                        }
+                                                    }else{
+                                                         echo $value['uses_day_value'];
+                                                    }
+                                                    if($flag_usesWkValue) {
+                                                        echo $value['uses_day_value'];
+                                                    }
+                                               ?>"/>
+                                          </div>
+                                      <?php }else if($value['uses_wk_flag']=='y'){?>
+                                          <div class="text-field-box-col last-child">
+                                               <label class="lbl-col">USES/WK</label>
+                                               <input type="text" id="<?php echo $value['product_id']; ?>" class="usesWkValue" value="<?php
+                                                    $flag_usesWkValue = false;
+                                                    if(!empty($qtyUsesWKInfo)){
+                                                        foreach ($qtyUsesWKInfo as $k => $v) {
+                                                            if ($v['product_id'] == $value['product_id']) {
+                                                                    if(!empty($v['uses_wk_value'])){
+                                                                        echo $v['uses_wk_value'];
+                                                                    }else{
+                                                                        echo $value['uses_wk_value'];
+                                                                    }
+                                                                    $flag_usesWkValue = false;
+                                                                    break;
+                                                             } else {
+                                                                    $flag_usesWkValue = true;             
+                                                             }
+                                                        }
+                                                    }else{
+                                                         echo $value['uses_wk_value'];
+                                                    }
+                                                    if($flag_usesWkValue) {
+                                                        echo $value['uses_wk_value'];
+                                                    }
+                                               ?>"/>
+                                          </div>
+                                      <?php }else if($value['hrs_day_flag']=='y'){?>
+                                          <div class="text-field-box-col last-child">
+                                               <label class="lbl-col">Hrs/Day</label>
+                                               <input type="text" id="<?php echo $value['product_id']; ?>" class="usesWkValue" value="<?php
+                                                    $flag_usesWkValue = false;
+                                                    if(!empty($qtyUsesWKInfo)){
+                                                        foreach ($qtyUsesWKInfo as $k => $v) {
+                                                            if ($v['product_id'] == $value['product_id']) {
+                                                                    if(!empty($v['uses_wk_value'])){
+                                                                        echo $v['uses_wk_value'];
+                                                                    }else{
+                                                                        echo $value['hrs_day_value'];
+                                                                    }
+                                                                    $flag_usesWkValue = false;
+                                                                    break;
+                                                             } else {
+                                                                    $flag_usesWkValue = true;             
+                                                             }
+                                                        }
+                                                    }else{
+                                                         echo $value['hrs_day_value'];
+                                                    }
+                                                    if($flag_usesWkValue) {
+                                                        echo $value['hrs_day_value'];
+                                                    }
+                                               ?>"/>
+                                          </div>
+                                      <?php }else if($value['hrs_wk_flag']=='y'){?>
+                                          <div class="text-field-box-col last-child">
+                                               <label class="lbl-col">Hrs/Wk</label>
+                                               <input type="text" id="<?php echo $value['product_id']; ?>" class="usesWkValue" value="<?php
+                                                    $flag_usesWkValue = false;
+                                                    if(!empty($qtyUsesWKInfo)){
+                                                        foreach ($qtyUsesWKInfo as $k => $v) {
+                                                            if ($v['product_id'] == $value['product_id']) {
+                                                                    if(!empty($v['uses_wk_value'])){
+                                                                        echo $v['uses_wk_value'];
+                                                                    }else{
+                                                                        echo $value['hrs_wk_value'];
+                                                                    }
+                                                                    $flag_usesWkValue = false;
+                                                                    break;
+                                                             } else {
+                                                                    $flag_usesWkValue = true;             
+                                                             }
+                                                        }
+                                                    }else{
+                                                         echo $value['hrs_wk_value'];
+                                                    }
+                                                    if($flag_usesWkValue) {
+                                                        echo $value['hrs_wk_value'];
+                                                    }
+                                               ?>"/>
+                                          </div>
+                                      <?php }
+                                    ?>
+                                </div>
+                               
+                            </div>
+                         <?php }
+                    }else{?>
+                        <span style='color:red;text-align: center;display: block;margin: 0 0 10px;'>No product found under this project.</span>
+                    <?php }
+                ?>
+                </div>
+               
+            </div>
+            <span style='padding-top: 20px; margin: 20px auto;display: table;width:auto!important;'>
+                <a style="margin: 0 4px 0 0;float: left; text-decoration: none;" href="/project/configuration/type/<?php echo $projectType; ?>/pid/<?php echo $projectId; ?>"><div class="gray-button">BACK</div></a>
+                <a style="margin: 0 4px 0 0;float: left; text-decoration: none;" href="/product-config/index/pid/<?php echo $projectId; ?>"><div class="gray-button">SAVE</div></a>
+                <a style="margin: 0 4px 0 0;float: left; text-decoration: none;" href="/payback-analysis/index/pid/<?php echo $projectId; ?>"><div class="gray-button">NEXT</div></a>
+            </span>
+        </div>
+        <div class="desk-side-bar" style="margin: 0;">
+            <h2>Lorem <span>Ipsum</span></h2>
+            <div>
+                <a><img src="/images/frontPanel/sidebar-img1.jpg" alt="sidebar" class="img-responsive" /></a>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ullamcorper augue eget ante faucibus aliquam. Nam sit amet commodo mauris. Donec sapien ligula, interdum et cursus luctus, bibend um in felis. Fusce bibendum fringilla risus ut eleifend. Sed egestas quam at dolor aliquet eget porta sapien lacinia.</p>
+            </div>
+            <div>
+                <a><img src="/images/frontPanel/sidebar-img2.jpg" alt="sidebar" class="img-responsive" /></a>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox1.css?v=2.1.4" media="all" />
+
+<script type="text/javascript">
+    $().ready(function(){
+        
+        $('.delProductConfig').click(function() {
+            var productId = $(this).attr('id'); 
+            var projectId = "<?php echo $projectId ?>";  
+            
+            if(confirm("Are you sure you want to delete this product?")) {
+                $.ajax({
+                    type: "GET",
+                    url: "/Product-config/ajax-product-del/projectId/"+projectId+"/productId/"+productId,
+                    success: function(data) { 
+                        if (data == 'success') {
+                            location.reload();
+                        }
+                    },
+                    error: function(event, request, settings) {
+                        return false;
+                    }
+                });
+            }
+        });
+        /*** Popup << ***/ 
+           $("#baseline_popup").fancybox({
+            	maxWidth	: 900,
+		maxHeight	: 2000,
+		fitToView	: false,
+		width		: '100%',
+		height		: 'auto',
+                autoSize	: true,
+		closeClick	: false,
+		openEffect	: 'none',
+		closeEffect	: 'none',
+                 'afterClose'  : function() {
+                   //  window.location.reload();
+                 }
+        }); 
+         /*** Popup >> ***/ 
+         
+        /*** Qty << ***/
+       /* $( ".qty" ).keyup(function( event ) {
+            var projectId = "<?php //echo $projectId; ?>";
+            var productId = $(this).attr('id');
+            var qty = $(this).val(); 
+            
+            //if(qty != ''){
+                $.ajax({
+                    type: "GET",
+                    url: "/Product-config/ajax-product-qty/projectId/"+projectId+"/productId/"+productId+"/qty/"+qty,
+                    success: function(data) { 
+                        //alert(data); return false;
+                    },
+                    error: function(event, request, settings) {
+                        return false;
+                    }
+                });
+            //}
+        });*/
+           $( ".qty" ).live('keyup',function( event ) {
+                 var projectId = "<?php echo $projectId; ?>";
+            var productId = $(this).attr('id');
+                      var qtyKeyUp = $(this).val(); 
+                      
+                      if(qtyKeyUp !== ""){
+                          
+                          //Pending Task  << 
+                        /*  var theTotal = (price*qtyKeyUp)/qty
+                          $(this).parents(".text-field-box-col").next().find('input','div').val(theTotal); //alert(qtyKeyUp+'--'+price+'--'+theTotal); 
+                          $.ajax({
+                                type: "GET",
+                                url: "/Product-config/ajax-product-price/projectId/"+projectId+"/productId/"+productId+"/price/"+theTotal,
+                                success: function(data) { 
+                                    //alert(data); return false;
+                                },
+                                error: function(event, request, settings) {
+                                    return false;
+                                }
+                          });*/
+                          //Pending Task   >>
+                          
+                          //Qty <<
+                           $.ajax({
+                                type: "GET",
+                                url: "/Product-config/ajax-product-qty/projectId/"+projectId+"/productId/"+productId+"/qty/"+qtyKeyUp,
+                                success: function(data) { 
+                                    //alert(data); return false;
+                                },
+                                error: function(event, request, settings) {
+                                    return false;
+                                }
+                            });
+                          //Qty >>
+                          
+                      }
+                 });
+        /*** Qty >> ***/
+        /*** uses_wk << ***/
+        $(".usesWkValue").keyup(function( event ) {
+            var projectId = "<?php echo $projectId; ?>";
+            var productId = $(this).attr('id');
+            var usesWK = $(this).val(); 
+           
+            //if(usesWK != ''){
+                $.ajax({
+                    type: "GET",
+                    url: "/Product-config/ajax-product-useswk/projectId/"+projectId+"/productId/"+productId+"/usesWK/"+usesWK,
+                    success: function(data) { 
+                        //alert(data); return false;
+                    },
+                    error: function(event, request, settings) {
+                        return false;
+                    }
+                });
+            //}
+        });
+        /*** uses_wk >> ***/
+        /*** price << ***/
+        $(".txt-col").keyup(function( event ) {
+            var projectId = "<?php echo $projectId; ?>";
+            var productId = $(this).attr('id');
+            var price = $(this).val(); 
+           
+            //if(usesWK != ''){
+                $.ajax({
+                    type: "GET",
+                    url: "/Product-config/ajax-product-price/projectId/"+projectId+"/productId/"+productId+"/price/"+price,
+                    success: function(data) { 
+                        //alert(data); return false;
+                    },
+                    error: function(event, request, settings) {
+                        return false;
+                    }
+                });
+            //}
+        });
+        /*** price >> ***/
+        
+        
+       /* $('.next_btn').click(function() {
+         var projectId = "<?php //echo $projectId; ?>";
+        // var projectType = "<?php //echo $projectType; ?>";
+        // window.location = '/project/configuration/type/'+projectType+'/pid/'+projectId;
+         window.location = '/payback-analysis/index/pid/'+projectId;
+        });*/
+    });
+</script>

@@ -1,0 +1,107 @@
+<?php
+$sessUser = new Zend_Session_Namespace('user');
+$objLanding = new Admin_Model_Landing();
+
+$themeInfo = $objLanding->fetchLandingInfo(); 
+$logoImg = $themeInfo['logo_image'];
+
+/*$superadmin =  $objLanding->fetchSuperadminLandingInfo('superadmin');  
+$infoSuperadmin = $objLanding->fetchLandingInfoByUserId($superadmin['user_id']);
+
+$clientadmin =  $objLanding->fetchClientadminLandingInfo('client admin'); 
+$infoAdmin   = $objLanding->fetchLandingInfoByUserId($clientadmin['user_id']); 
+
+if(!empty($infoAdmin)){ //Admin
+    $logoImg = $infoAdmin['logo_image'];
+}else{ //superadmin
+    $logoImg = $infoSuperadmin['logo_image'];
+} */
+?>
+<div class="row">
+    <div class="container">
+        <div class="top-logo"><a href="/product"><img class="img-responsive" alt="toto-logo" src="/images/frontPanel/inner-logo.png"></a></div>
+    </div>
+</div>
+
+<div class="container mob-block">
+    <div class="header">
+        <a class="back" href="javascript: window.history.go(-1)"><img src="/images/frontPanel/back.png" alt="back" class="img-responsive" /></a>
+          <?php
+                        if(!empty($logoImg)){?>
+<!--        <a class="inner-logo" href="#" style="cursor:auto;"><img src="/landingPageImages/logo/<?php echo $logoImg; ?>" alt="toto" class="img-responsive" /></a>-->
+                         <?php }else{?>
+         <a class="inner-logo" href="#" style="cursor:auto;"><img src="/images/frontPanel/mgp-logo.png" alt="toto" class="img-responsive" /></a>
+                                <?php }
+                    ?>
+        
+        <a class="home" href="/product"><img src="/images/frontPanel/home.png" alt="home" class="img-responsive" /></a>
+    </div>
+</div>
+
+
+
+<div class="row header-bg mob-none">
+    <div class="topgray-bg">
+        <div class="container">
+            <div class="social-icon">
+                <span><a target="_blank" class="align-top" href="https://twitter.com/mygreenpayback"><img src="/images/frontPanel/twitter.png" alt="twitter" class="img-responsive" /></a></span>
+                <span><a target="_blank" class="align-top" href="https://www.facebook.com/mygreenpayback"><img src="/images/frontPanel/facebook.png" alt="facebook" class="img-responsive" /></a></span>
+<!--                <span><a target="_blank" class="align-right align-top" href="#"><img src="/images/frontPanel/linkedin.png" alt="linkedin" class="img-responsive" /></a></span>-->
+                    </div>
+        </div>
+    </div>
+    <div class="container">
+        <header>
+            <div class="main-logo col-md-3 col-sm-3 col-xs-12">
+                  <?php
+                        if(!empty($logoImg)){?>
+                             <a href="/product"><img src="/landingPageImages/logo/<?php echo $logoImg; ?>" alt="toto" class="img-responsive" /></a>
+                        <?php }else{?>
+                             <a href="/product"><img src="/images/frontPanel/mgp-logo.png" alt="toto" class="img-responsive" /></a>
+                        <?php }
+                    ?>
+                <!--a href="/product"><img src="/images/frontPanel/mgp-logo.png" alt="MGP" class="img-responsive" /></a-->
+            </div>
+            <div class="navigation col-md-9 col-sm-9 col-xs-12">
+                <div class="navbar navbar-default" role="navigation">
+                    <div class="navbar-collapse collapse main-nav">
+                         <ul class="nav navbar-nav">
+                            <?php
+                               if(empty($sessUser->user_Id)){?>
+                                   <li><a href="/login/account"><img src="/images/frontPanel/login.png" alt="login" class="img-responsive" /></a></li>
+                               <?php }else{ 
+                                     $query1 = explode("/", $_SERVER['REQUEST_URI']); 
+                                     if ( (in_array("project", $query1)) || (in_array("product-config", $query1)) || (in_array("configuration", $query1)) || (in_array("payback-analysis", $query1))) { 
+                                         $projectTab = "active";
+                                     }else{
+                                         $projectTab = '';
+                                     }
+                                     
+                                     if (in_array("collection", $query1)) { 
+                                         $collectionTab = "active";
+                                     }else{
+                                          $collectionTab = "";
+                                     }
+                                     
+                                     if (in_array("my-profile", $query1)) { 
+                                         $myProfileTab = "active";
+                                     }else{
+                                          $myProfileTab = "";
+                                     }
+                                   ?>
+                                   
+                                   
+                                   <li class="<?php echo $myProfileTab; ?>"><a href="/my-profile">PROFILE</a></li>
+                                   <li class="separator <?php echo $projectTab; ?>"><a href="/project">MY PROJECTS</a></li>
+                                   <li class="separator <?php echo $collectionTab; ?>"><a class="pad-r-0" href="/collection">MY COLLECTIONS</a></li>
+                                   <li><a href="/login/account/logout"><img src="/images/frontPanel/logout.png" alt="logout" class="img-responsive" /></a></li>
+                               <?php }
+                            ?>
+                         </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
+    </div>
+</div>
+<div class="row green-strip"></div>

@@ -1,0 +1,156 @@
+<?php //login/account
+$sessUser = new Zend_Session_Namespace('user');  //echo $sessUser->user_Id . '--' . $sessUser->email_Id . '--' . $sessUser->fname;
+?>
+<style>
+    .login-block .error,.errors{
+          color:red;
+          font-size:13px;
+    }
+    #submit{
+    background-color: #8c8c8c;
+    border: medium none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    height: 24px;
+   width: 65px;
+}
+</style>
+
+<style>
+    .fancybox-type-iframe{
+        
+        width: 280px !important;
+    }
+    .fancybox-skin{
+        padding: 0 !important;
+    }
+    .fancybox-type-iframe .fancybox-inner {
+        height: 227px !important;
+        width: 280px !important;
+    }
+    
+</style>
+<div class="content">
+    <div class="login-block">
+        <!--<h1><img src="/images/logo-mgp.png" alt="mgp" class="img-responsive" /></h1>-->
+        <form class="loginAccountFrm" id="loginAccountFrm" action="" method="post" onsubmit="return isValidUser();">
+            <p><div class='errors' id="errMesg"></div></p>
+            <p>
+                <label>Enter email</label>
+                 <input type="text" name="email" id="email" value="<?php if (isset($_COOKIE['email'])){ echo base64_decode($_COOKIE['email']); } ?>" class="input" maxlength="100"/>
+                 <label style="display:none;" generated="true" id="emailError" class="error"></label>
+            </p>
+            <p>
+                <label>Password</label>
+                <input type="password" name="password" id="password" value="<?php if (isset($_COOKIE['password'])){ echo base64_decode($_COOKIE['password']); } ?>" class="input"/>
+                 <label style="display:none;"  generated="true" id="emapasswordError" class="error"></label>
+            </p>
+            <p>
+               <span style="color: #818286;display:block; float: left ; font-weight: bold;text-decoration: none;width: 15px;">
+                   <input style="margin: 0 0px 0 0;" type="checkbox" <?php if (isset($_COOKIE['email'])){ echo "checked"; } ?> name="chkremember" class="checkbox" id="remember">&nbsp;
+               
+               </span>
+                <a href="#" class="bodytextB" style="color: #818286;display: inline-block; margin:2px 0 0 7px;">Remember me</a>
+            </p>
+            <a class="login-btn"><input type="submit" name="submit" id="submit" value="Login"/></a>
+<!--            <a class="login-btn" href="#"><img src="/images/frontPanel/login-btn.jpg" alt="login" /></a>-->
+            <a href="/register">Create a New Account</a>
+            <a href="/login/account/forgot-password" data-fancybox-type="iframe" class="various">Forgot Password?</a>
+        </form>
+    </div>
+</div>
+
+
+        
+            
+            
+            
+<!--        <script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>-->
+<!--        <script src="/js/formValidation/jquery.validate.min.js"></script>
+        <script src="/js/formValidation/login_script.js"></script>-->
+        <script type="text/javascript" src="/js/common.js"></script>
+        <script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+        <link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox1.css?v=2.1.4" media="all" />
+        <script type="text/javascript">
+            $(".various").fancybox({
+                // title           : 'Create Application',
+                maxWidth	: 900,
+                maxHeight	: 700,
+                fitToView	: false,
+                 width		: 280,
+                height		: 180,
+                autoSize	: false,
+                closeClick	: false,
+                openEffect	: 'none',
+                closeEffect	: 'none',
+                'scrolling'   : 'no',
+                'afterClose'  : function() {
+                    //     window.location="/admin/index/manage";
+                    window.location.reload();
+                }
+                /*'onComplete' : function(){  
+                          $('.apps_module').click(function(){
+                              parent.$.fancybox.close();
+                          });
+                      }*/
+            }); 
+            function isValidUser(){ 
+                $("#emailError").text("").hide();
+                $("#emapasswordError").text("").hide();
+                var email    = $('#email').val(); 
+                var password = $('#password').val(); 
+                if($('#remember').is(':checked')){
+                    var remember = '1';
+                }else{
+                    var remember = '0';
+                }
+                 
+                
+                var emailReg = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+                var valid = emailReg.test(email);
+                
+	
+                if(email == ""){
+                    $("#emailError").text("Please Enter Email").show();
+                    $("#emailError").delay(4000).hide( 400 );
+                    return false;
+                }else if(!valid) {
+                     $("#emailError").text("Please Enter Valid Email").show();
+                     $("#emailError").delay(4000).hide( 400 );
+                    return false;
+                }else if(password == ""){
+                    $("#emapasswordError").text("Please Enter Password").show();
+                    $("#emapasswordError").delay(4000).hide( 400 );
+                    return false;
+                } 
+                if((email !='') && (password !='')){
+                    var action = '/login/account/ajax-chk-valid-user/email/'+email+'/pwd/'+password+'/remember/'+remember;  
+                    var data = '';
+                    var response =  getajaxResponse(action,data);
+                    //alert(response); return false;
+                    if(response == "error" ){
+                        $("#errMesg").text("Incorrect Email, Password OR Inactive User");
+                        return false;
+                    }else{
+                       //var page = "<?php //echo $_SERVER['HTTP_REFERER'];?>";  
+                      
+                       $("#loginAccountFrm").attr("action","/product/search");
+                     }
+                    /*else if(response == "changeme" ){ 
+                        $("#loginAccountFrm").attr("action","/my-profile"); 
+                    }else if(response == "project" ){ 
+                        $("#loginAccountFrm").attr("action","/project"); 
+                    }else{ 
+                        $("#loginAccountFrm").attr("action","/product/search"); 
+                    }*/
+                    
+                }
+            }
+        </script>
+            
+            
+    </body>
+</html>
+    
+    

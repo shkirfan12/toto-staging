@@ -1,0 +1,1448 @@
+<?php //echo "Path : Default_payback-analysis_index";
+//User
+$sessUser = new Zend_Session_Namespace('user');
+//echo $sessUser->user_Id . '--' . $sessUser->email_Id . '--' . $sessUser->fname.'--'.$sessUser->lname ;
+
+
+// GET PROJECT AND ITS PRODUCTS ARRAY OF VALUES
+$objField = new Product_Model_Product();
+$ProdGPM ="";
+$costSaving ="";
+$projInfo = $this->projInfo;  
+if(!empty($projInfo)){
+    $projectDetail = $projInfo[0];
+    $productDetail = $projInfo[1];
+    
+
+}else{
+    echo "<div class='container' style='text-align:center;'>No product found under this project</div>";
+}
+
+//echo "<pre>"; print_r($projectDetail);die;
+$LOA = $projectDetail['length_analysis'];
+$qtyUsesWKInfo = $this->qty_usesWK_Info; 
+//print_r($qtyUsesWKInfo); die;
+
+if(!empty($qtyUsesWKInfo)){
+    foreach ($productDetail as $key => $value) {
+        foreach ($qtyUsesWKInfo as $k1 => $v1) {
+            if($value['product_id'] == $v1['product_id']){
+                $value['qty_value'] = $v1['qty_value'];
+                $value['uses_wk_value'] = $v1['uses_wk_value'];
+                $productDetail[$key] = $value;
+            }
+        }
+    }
+}
+
+foreach($productDetail as $key => $value){
+    if(!empty($value['baseline_id'])){
+         $res = $objField->fetchProductInfoById($value['baseline_id']);
+         $value['baseline_info'] = $res;
+         $productDetail[$key] = $value;
+    }
+}
+
+/////////////////////////////////////////////////-------------ENERGY CALC VARIABLES---------///////////////////////////
+
+$energy_usage = $this->EnergyUsage;
+if(count($energy_usage)>0){
+    $productDetail = setSubattWithProd($energy_usage, $productDetail, $calcHolder = 'energy_usage', $arrKey = 'energy_usage');
+}
+
+$total_input_power  = $this->TotalInputPower;
+if(count($total_input_power)>0){
+    $productDetail = setSubattWithProd($total_input_power, $productDetail, $calcHolder = 'tip', $arrKey = 'tip' );
+}
+
+$energy_cycle       = $this->EnergyCycle;
+if(count($energy_cycle)>0){
+    $productDetail = setSubattWithProd($energy_cycle, $productDetail, $calcHolder = 'energy_cycle', $arrKey = 'energy_cycle');
+}
+
+$energy_annual     = $this->AnnualEnergy;
+if(count($energy_annual)>0){
+    $productDetail = setSubattWithProd($energy_annual, $productDetail, $calcHolder = 'energy_annual', $arrKey = 'energy_annual');
+}
+
+$bulb_life          = $this->BulbLife;
+if(count($bulb_life)>0){
+    $productDetail = setSubattWithProd($bulb_life, $productDetail, $calcHolder = 'bulb_life', $arrKey = 'bulb_life');
+}
+
+$base_energy_usage      = $this->BaseEnergyUsage;
+if(count($base_energy_usage)>0){
+    $productDetail = setSubattWithProd($base_energy_usage, $productDetail, $calcHolder = 'energy_usage', $arrKey = 'Base_energy_cycle');
+}
+
+$base_total_input_power = $this->BaseTotalInputPower;
+if(count($base_total_input_power)>0){
+    $productDetail = setSubattWithProd($base_total_input_power, $productDetail, $calcHolder = 'tip', $arrKey = 'base_tip');
+}
+
+$base_energy_cycle      = $this->BaseEnergyCycle;
+if(count($base_energy_cycle)>0){
+    $productDetail = setSubattWithProd($base_energy_cycle, $productDetail, $calcHolder = 'energy_cycle', $arrKey = 'Base_energy_cycle');
+}
+
+$base_energy_annual     = $this->BaseAnnualEnergy;
+if(count($base_energy_annual)>0){
+    $productDetail = setSubattWithProd($base_energy_annual, $productDetail, $calcHolder = 'energy_annual', $arrKey ='Base_energy_annual');
+}
+
+$base_bulb_life         = $this->BaseBulbLife;
+if(count($base_bulb_life)>0){
+    $productDetail = setSubattWithProd($base_bulb_life, $productDetail, $calcHolder = 'bulb_life', $arrKey ='Base_bulb_life');
+}
+////////////////////////////////////////-------------- WATER CALC VARIABLES------------///////////////
+
+// DUAL FLUSH HIGH FLOW
+$DFHighFlow = $this->DFH; 
+if(count($DFHighFlow)>0){
+    $productDetail = setSubattWithProd($DFHighFlow, $productDetail, $calcHolder = 'DF_high_flow', $arrKey ='DF_high_flow');
+}
+
+// DUAL FLUSH LOW FLOW
+$DFLowFlow = $this->DFL;
+if(count($DFLowFlow)>0){
+    $productDetail = setSubattWithProd($DFLowFlow, $productDetail, $calcHolder = 'DF_low_flow', $arrKey ='DF_low_flow');
+}
+
+// FLOW RATES
+$FlowRate = $this->FlowRate ;
+if(count($FlowRate)>0){
+    $productDetail = setSubattWithProd($FlowRate, $productDetail, $calcHolder = 'flow_rate', $arrKey ='flow_rate');
+}
+
+// FLUSH RATES
+$FlushRate = $this->FlushRate ; 
+if(count($FlushRate)>0){
+    $productDetail = setSubattWithProd($FlushRate, $productDetail, $calcHolder = 'flush_rate', $arrKey ='flush_rate');
+}
+
+
+$WaterCycle = $this->WaterCycle;
+if(count($WaterCycle)>0){
+    $productDetail = setSubattWithProd($WaterCycle, $productDetail, $calcHolder = 'water_cycle', $arrKey ='water_cycle');
+}
+
+
+$BaseDFHighFlow = $this->BaseDFH ;
+if(count($BaseDFHighFlow)>0){
+    $productDetail = setSubattWithProd($BaseDFHighFlow, $productDetail, $calcHolder = 'DF_high_flow', $arrKey ='Base_DF_high_flow');
+}
+
+
+$BaseDFLowFlow = $this->BaseDFL ;
+if(count($BaseDFLowFlow)>0){
+    $productDetail = setSubattWithProd($BaseDFLowFlow, $productDetail, $calcHolder = 'DF_low_flow', $arrKey ='Base_DF_low_flow');
+}
+
+$BaseFlowRate = $this->BaseFlowRate ; //print_r($BaseFlowRate);
+if(count($BaseFlowRate)>0){
+    $productDetail = setSubattWithProd($BaseFlowRate, $productDetail, $calcHolder = 'flow_rate', $arrKey ='Base_flow_rate');
+}
+
+
+$BaseFlushRate = $this->BaseFlushRate ; 
+if(count($BaseFlushRate)>0){
+    $productDetail = setSubattWithProd($BaseFlushRate, $productDetail, $calcHolder = 'flush_rate', $arrKey ='Base_flush_rate');
+}
+
+$BaseWaterCycle = $this->BaseWaterCycle;
+if(count($BaseWaterCycle)>0){
+    $productDetail = setSubattWithProd($BaseWaterCycle, $productDetail, $calcHolder = 'water_cycle', $arrKey ='Base_water_cycle');
+}
+
+///////////////////////////////////////////---------- LIFE CYCLE CALC VARIABLES-----------------/////////////////////
+
+
+$prodMonthlyMaint = $this->prodMonthlyMaint;
+if(count($prodMonthlyMaint)>0){
+    $productDetail = setSubattWithProd($prodMonthlyMaint, $productDetail, $calcHolder = 'maint_cost', $arrKey ='maint_cost');
+}
+
+$baseMonthlyMaint = $this->baseMonthlyMaint;
+if(count($baseMonthlyMaint)>0){
+    $productDetail = setSubattWithProd($baseMonthlyMaint, $productDetail, $calcHolder = 'maint_cost', $arrKey = 'Base_maint_cost' );
+}
+
+$ProdMonthlyBattery = $this->prodMonthlyBattery;
+if(count($ProdMonthlyBattery)>0){
+    $productDetail = setSubattWithProd($ProdMonthlyBattery, $productDetail, $calcHolder = 'battery_cost', $arrKey ='battery_cost');
+}
+
+$BaseMonthlyBattery = $this->baseMonthlyBattery;
+if(count($BaseMonthlyBattery)>0){
+    $productDetail = setSubattWithProd($BaseMonthlyBattery, $productDetail, $calcHolder = 'battery_cost', $arrKey ='Base_battery_cost');
+}
+
+/////////////////////////////////////---------------- PLANET/HUMAN HEALT CALC VARIABLES----------////////////////////
+
+$totalHumanYes = $this->totalHumanYes;
+$totalHumanNo = $this->totalHumanNo;
+$totalPlanetYes = $this->totalPlanetYes;
+$totalPlanetNo = $this->totalPlanetNo;
+
+//BASE PRICES
+$BasePrices =  $this->BasePrices;
+
+
+function setSubattWithProd($subName,$productDetail,$calcHolder, $arrKey){
+    //echo "<pre>";print_r($subName);
+    if(!empty($subName)){
+        foreach ($productDetail as $key => $value) {
+            foreach($subName as $subatt)
+                
+                if($value['product_id'] == $subatt['product_id']){
+                
+                $value[$arrKey] = $subatt[$calcHolder];
+                $productDetail[$key] = $value;
+            }
+        }
+    }
+    return $productDetail;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+
+// Water variables
+$CumulativeGPM = array();
+$CumulativeCost = array();
+$CumulativeBaseGPM = array();
+
+// Energy Variables
+$CumulativeEnergyCost = array();
+$CumulativeEnergy  = array();
+
+// Life Cycle Variables
+$prodMonthCost = array();
+$baseMonthCost = array();
+$CumulativeLifeCycleCost = array();
+$CumulativeLifeCycle = array();
+//echo "<pre>";print_r($productDetail);
+// Calculation Begins
+
+try{
+    
+    for($p=0;$p<count($productDetail);$p++){
+
+    $residential_household_member   = ($projectDetail['residential_household_member']) ? $projectDetail['residential_household_member'] : 10;
+    $commertial_male_occupants      = ($projectDetail['commertial_male_occupants'])? $projectDetail['commertial_male_occupants'] : 50;
+    $commertial_female_occupants    = ($projectDetail['commertial_female_occupants'])?$projectDetail['commertial_female_occupants']:50;
+    $hrs_a_day                      = ($projectDetail['hrs_a_day'])? $projectDetail['hrs_a_day']:8;
+    $days_a_week                    = ($projectDetail['days_a_week'])? $projectDetail['days_a_week']:7;
+    $days_a_year                    = ($projectDetail['days_a_year'])? $projectDetail['days_a_year']:365;
+    $length_analysis                = ($projectDetail['length_analysis'])? $projectDetail['length_analysis']:10;
+    $electricity_rate               = ($projectDetail['electricity_rate'])? $projectDetail['electricity_rate']:0.15;
+    $electricity_inflation          = ($projectDetail['electricity_inflation'])? $projectDetail['electricity_inflation']:0.05;
+    $water_rate                     = ($projectDetail['water_rate'])? $projectDetail['water_rate']:1.75;
+    $water_inflation                = ($projectDetail['water_inflation'])? $projectDetail['water_inflation']:0.05;
+
+    $qty                            = ($qtyUsesWKInfo[$p]['qty_value'])? $qtyUsesWKInfo[$p]['qty_value']:1;
+    $uses_wk_value                  = ($qtyUsesWKInfo[$p]['uses_wk_value'])? $qtyUsesWKInfo[$p]['uses_wk_value']:1;
+    // uses per day
+    //$formula                        = ($productDetail[$p]['calc'])? $productDetail[$p]['calc']:0;
+
+    // Determine the project type and select Calc module accrodungly
+    $projType = $projectDetail['project_type'];
+    //$prodcalCode = $productDetail[$p]['cal_code'];
+    
+    $formula = array();
+    $prodcalCode = array();
+    for($f=0;$f<count($productDetail[$p]['calcmod_id']);$f++){
+       
+        $formula[] = $productDetail[$p]['calcmod_id'][$f]['calc'];
+        $prodcalCode[] = $productDetail[$p]['calcmod_id'][$f]['cal_code'];
+    }
+    
+    // DETERMINE WHICH TYPE OF PROJECT COMMERCIAL/RESIDENTIAL
+
+    if($projType == 'commercial')
+    {
+        
+       for($w=0;$w<count($formula);$w++){
+         // echo $w.'-'.$prodcalCode[$w];
+           switch($prodcalCode[$w]){
+               
+           case "TDFC": // Water:Toilets-Dual Flush-Commercial
+              
+                $mathStringProdGallon = str_replace('days_a_week', $days_a_week, $formula[$w]);
+                $mathStringProdGallon = str_replace('commertial_male_occupants', $commertial_male_occupants, $mathStringProdGallon);
+                $mathStringProdGallon = str_replace('commertial_female_occupants', $commertial_female_occupants, $mathStringProdGallon);
+                $mathStringProdGallon = str_replace('DF_high_flow', $productDetail[$p]['DF_high_flow'], $mathStringProdGallon);
+                $mathStringProdGallon = str_replace('DF_low_flow', $productDetail[$p]['DF_low_flow'], $mathStringProdGallon);
+                
+               
+                $ProdGPM = round(calculate_string($mathStringProdGallon));
+                
+                $baseGPM = str_replace($productDetail[$p]['DF_high_flow'], $productDetail[$p]['Base_DF_high_flow'], $mathStringProdGallon);
+                $baseGPM = str_replace($productDetail[$p]['DF_low_flow'], $productDetail[$p]['Base_DF_low_flow'], $baseGPM);
+                 echo $baseGPM;
+                $baseGPM = round(calculate_string($baseGPM));
+                  echo $baseGPM;
+                //echo "\nMonthly Water Consumption of BASELIE(GPM) = ".$baseGPM;
+
+                $diff = $ProdGPM - $baseGPM;
+                //echo "\nMonthly Water Savings over Baseline Product = ".$diff;
+                $costSaving = ($diff/1000)*(-$projectDetail['water_rate']);
+                $costSaving = number_format($costSaving, 2);
+                
+                array_push($CumulativeCost, $costSaving);
+                array_push($CumulativeGPM, $ProdGPM);
+                
+                break;
+            
+            case "TSFC": // Water:Toilets-Single Flush-Commercial
+                //echo $formula[$w];
+                $mathStringProdGallon = str_replace('days_a_week', $days_a_week, $formula[$w]);
+                $mathStringProdGallon = str_replace('commertial_male_occupants', $commertial_male_occupants, $mathStringProdGallon);
+                $mathStringProdGallon = str_replace('commertial_female_occupants', $commertial_female_occupants, $mathStringProdGallon);
+                $mathStringProdGallon = str_replace('flush_rate', $productDetail[$p]['flush_rate'], $mathStringProdGallon);
+
+                $ProdGPM = round(calculate_string($mathStringProdGallon));
+                
+                $baseGPM = str_replace($productDetail[$p]['flush_rate'], $productDetail[$p]['Base_flush_rate'], $mathStringProdGallon);
+                
+                $baseGPM = round(calculate_string($baseGPM));
+                    
+                $diff = $ProdGPM - $baseGPM;
+                //echo "\nMonthly Water Savings over Baseline Product = ".$diff;
+                $costSaving = ($diff/1000)*(-$projectDetail['water_rate']);
+                $costSaving = number_format($costSaving, 2);
+                
+                array_push($CumulativeCost, $costSaving);
+                array_push($CumulativeGPM, $ProdGPM);
+                  
+                break;
+            
+            case "WC": // Water:Washlet-Commercial
+                
+                $mathStringProdGallon = str_replace('days_a_week', $days_a_week, $formula[$w]);
+                $mathStringProdGallon = str_replace('commertial_male_occupants', $commertial_male_occupants, $mathStringProdGallon);
+                $mathStringProdGallon = str_replace('commertial_female_occupants', $commertial_female_occupants, $mathStringProdGallon);
+                $mathStringProdGallon = str_replace('uses_wk_value', $uses_wk_value, $mathStringProdGallon);
+                $mathStringProdGallon = str_replace('flow_rate', $productDetail[$p]['flow_rate'], $mathStringProdGallon);
+
+                //echo $mathStringProdGallon;
+                $ProdGPM = round(calculate_string($mathStringProdGallon));
+                //echo "\nMonthly Water Consumption of Selected Product(GPM) =". $ProdGPM;
+
+                $baseGPM = str_replace($productDetail[$p]['flow_rate'], $productDetail[$p]['Base_flow_rate'], $mathStringProdGallon);
+               
+                $baseGPM = round(calculate_string($baseGPM));
+                //echo "\nMonthly Water Consumption of BASELIE(GPM) = ".$baseGPM;
+
+                $diff = $ProdGPM - $baseGPM;
+                //echo "\nMonthly Water Savings over Baseline Product = ".$diff;
+                $costSaving = ($diff/1000)*(-$projectDetail['water_rate']);
+                $costSaving = number_format($costSaving, 2);
+                
+                array_push($CumulativeCost, $costSaving);
+                array_push($CumulativeGPM, $ProdGPM);
+                break;
+            
+            case "FC":  // Water:Faucet-Commercial
+               
+               
+                $mathStringProdGallon = str_replace('days_a_week', $days_a_week, $formula[$w]);
+                $mathStringProdGallon = str_replace('commertial_male_occupants', $commertial_male_occupants, $mathStringProdGallon);
+                $mathStringProdGallon = str_replace('commertial_female_occupants', $commertial_female_occupants, $mathStringProdGallon);
+                $mathStringProdGallon = str_replace('flow_rate', $productDetail[$p]['flow_rate'], $mathStringProdGallon);
+                
+                $ProdGPM = round(calculate_string($mathStringProdGallon));
+                
+                $baseGPM = str_replace($productDetail[$p]['flow_rate'], $productDetail[$p]['Base_flow_rate'], $mathStringProdGallon);
+              
+                $baseGPM = round(calculate_string($baseGPM));
+                
+                $diff = $ProdGPM - $baseGPM; 
+                //echo "\nMonthly Water Savings over Baseline Product = ".$diff;
+                $costSaving = ($diff/1000)*(-$projectDetail['water_rate']);
+                $costSaving = number_format($costSaving, 2);
+                 
+                array_push($CumulativeCost, $costSaving);
+                array_push($CumulativeGPM, $ProdGPM);
+                
+                break;
+            
+            case "SC":  // Water:Shower-Commercial
+           
+                $mathStringProdGallon = str_replace('days_a_week', $days_a_week, $formula[$w]);
+                $mathStringProdGallon = str_replace('commertial_male_occupants', $commertial_male_occupants, $mathStringProdGallon);
+                $mathStringProdGallon = str_replace('commertial_female_occupants', $commertial_female_occupants, $mathStringProdGallon);
+                $mathStringProdGallon = str_replace('flow_rate', $productDetail[$p]['flow_rate'], $mathStringProdGallon);
+
+                //echo $mathStringProdGallon;
+                $ProdGPM = round(calculate_string($mathStringProdGallon));
+                //echo "\nMonthly Water Consumption of Selected Product(GPM) =". $ProdGPM;
+
+                $baseGPM = str_replace($productDetail[$p]['flow_rate'], $productDetail[$p]['Base_flow_rate'], $mathStringProdGallon);
+                
+                $baseGPM = round(calculate_string($baseGPM));
+                //echo "\nMonthly Water Consumption of BASELIE(GPM) = ".$baseGPM;
+
+                $diff = $ProdGPM - $baseGPM;
+                //echo "\nMonthly Water Savings over Baseline Product = ".$diff;
+                $costSaving = ($diff/1000)*(-$projectDetail['water_rate']);
+                $costSaving = number_format($costSaving, 2);
+
+                array_push($CumulativeCost, $costSaving);
+                array_push($CumulativeGPM, $ProdGPM);
+                break;
+            
+            
+            case "FVUC": // Water: Flush Valve Urinal-Commercial
+            
+                $mathStringProdGallon = str_replace('days_a_week', $days_a_week, $formula[$w]);
+                $mathStringProdGallon = str_replace('commertial_male_occupants', $commertial_male_occupants, $mathStringProdGallon);
+               
+                $mathStringProdGallon = str_replace('flush_rate', $productDetail[$p]['flush_rate'], $mathStringProdGallon);
+                
+                //echo $mathStringProdGallon;
+                
+                $ProdGPM = round(calculate_string($mathStringProdGallon));
+                //echo "\nMonthly Water Consumption of Selected Product(GPM) =". $ProdGPM;
+               //echo $ProdGPM;
+                $baseGPM = str_replace($productDetail[$p]['flush_rate'], $productDetail[$p]['Base_flush_rate'], $mathStringProdGallon);
+                
+                $baseGPM = round(calculate_string($baseGPM));
+                //echo "\nMonthly Water Consumption of BASELIE(GPM) = ".$baseGPM;
+                //echo $baseGPM;
+                
+                $diff = $ProdGPM - $baseGPM;
+                //echo "\nMonthly Water Savings over Baseline Product = ".$diff;
+                $costSaving = ($diff/1000)*(-$projectDetail['water_rate']);
+                $costSaving = number_format($costSaving, 2);
+
+                array_push($CumulativeCost, $costSaving);
+                array_push($CumulativeGPM, $ProdGPM);
+                
+                break;
+            
+            case "FVTC": // Water: Flush Valve Toilet-Commercial
+                
+                $mathStringProdGallon = str_replace('days_a_week', $days_a_week, $formula[$w]);
+                $mathStringProdGallon = str_replace('commertial_male_occupants', $commertial_male_occupants, $mathStringProdGallon);
+                $mathStringProdGallon = str_replace('commertial_female_occupants', $commertial_female_occupants, $mathStringProdGallon);
+                $mathStringProdGallon = str_replace('flush_rate', $productDetail[$p]['flush_rate'], $mathStringProdGallon);
+                echo $mathStringProdGallon;
+                $ProdGPM = round(calculate_string($mathStringProdGallon));
+                //echo "\nMonthly Water Consumption of Selected Product(GPM) =". $ProdGPM;
+                echo $ProdGPM;
+                $baseGPM = str_replace($productDetail[$p]['flush_rate'], $BaseFlushRate[$p]['Base_flush_rate'], $mathStringProdGallon);
+                
+                $baseGPM = round(calculate_string($baseGPM));
+                //echo "\nMonthly Water Consumption of BASELIE(GPM) = ".$baseGPM;
+                
+                $diff = $ProdGPM - $baseGPM;
+                //echo "\nMonthly Water Savings over Baseline Product = ".$diff;
+                $costSaving = ($diff/1000)*(-$projectDetail['water_rate']);
+                $costSaving = number_format($costSaving, 2);
+                //echo $costSaving;
+                array_push($CumulativeCost, $costSaving);
+                array_push($CumulativeGPM, $ProdGPM);
+                break;
+            
+           // Default:
+               
+                //echo "One or more of your products are missing values to complete your payback analysis.";
+           }
+       }
+         
+    }
+    
+    else if($projType == 'residential')
+    {
+      // Residential
+     
+       for($w=0;$w<count($formula);$w++){
+        
+           switch($prodcalCode[$w]){
+            
+            case "TDFR":
+               
+                $mathStringProdGallon = str_replace('residential_household_member', $residential_household_member, $formula[$w]);
+                $mathStringProdGallon = str_replace('DF_high_flow', $productDetail[$p]['DF_high_flow'], $mathStringProdGallon);
+                $mathStringProdGallon = str_replace('DF_low_flow', $productDetail[$p]['DF_low_flow'], $mathStringProdGallon);
+                
+                $ProdGPM = round(calculate_string($mathStringProdGallon));
+                 
+                $baseGPM = str_replace($productDetail[$p]['DF_high_flow'], $productDetail[$p]['Base_DF_high_flow'], $mathStringProdGallon);
+                $baseGPM = str_replace($productDetail[$p]['DF_low_flow'], $productDetail[$p]['Base_DF_low_flow'], $baseGPM);
+                
+                $baseGPM = round(calculate_string($baseGPM));
+                //echo "\nMonthly Water Consumption of BASELIE(GPM) = ".$baseGPM;
+
+                $diff = $ProdGPM - $baseGPM;
+                //echo "\nMonthly Water Savings over Baseline Product = ".$diff;
+                $costSaving = ($diff/1000)*(-$projectDetail['water_rate']);
+                $costSaving = number_format($costSaving, 2);
+                
+                array_push($CumulativeCost, $costSaving);
+                array_push($CumulativeGPM, $ProdGPM);
+                
+                break;
+                
+            case "TSFR":
+                
+                $mathStringProdGallon = str_replace('residential_household_member', $residential_household_member, $formula[$w]);              
+                $mathStringProdGallon = str_replace('hrs_a_day', $hrs_a_day, $mathStringProdGallon);
+                $mathStringProdGallon = str_replace('flush_rate', $productDetail[$p]['flush_rate'], $mathStringProdGallon);
+               
+                $ProdGPM = round(calculate_string($mathStringProdGallon));
+               
+                $baseGPM = str_replace($productDetail[$p]['flush_rate'], $productDetail[$p]['Base_flush_rate'], $mathStringProdGallon);
+                //$baseGPM = str_replace("0.9", "1.6", $baseGPM);
+                $baseGPM = round(calculate_string($baseGPM));
+                //echo "\nMonthly Water Consumption of BASELIE(GPM) = ".$baseGPM;
+
+                $diff = $ProdGPM - $baseGPM;
+               
+                //echo "\nMonthly Water Savings over Baseline Product = ".$diff;
+                $costSaving = ($diff/1000)*(-$projectDetail['water_rate']);
+                $costSaving = number_format($costSaving, 2);
+                
+                array_push($CumulativeCost, $costSaving);
+                array_push($CumulativeGPM, $ProdGPM);
+                break;
+            
+             case "FR":
+                    // 30 x (# of Household Members x 4 x Flow Rate (GPM) x .5 minute duration)
+                    $mathStringProdGallon = str_replace('residential_household_member', $residential_household_member, $formula[$w]);
+                    $mathStringProdGallon = str_replace('flow_rate', $productDetail[$p]['flow_rate'], $mathStringProdGallon);
+               
+                    $ProdGPM = round(calculate_string($mathStringProdGallon));
+               
+                    $baseGPM = str_replace($productDetail[$p]['flow_rate'], $productDetail[$p]['Base_flow_rate'], $mathStringProdGallon);
+                    //$baseGPM = str_replace("0.9", "1.6", $baseGPM);
+                    $baseGPM = round(calculate_string($baseGPM));
+                    //echo "\nMonthly Water Consumption of BASELIE(GPM) = ".$baseGPM;
+
+                    $diff = $ProdGPM - $baseGPM;
+
+                    //echo "\nMonthly Water Savings over Baseline Product = ".$diff;
+                    $costSaving = ($diff/1000)*(-$projectDetail['water_rate']);
+                    $costSaving = number_format($costSaving, 2);
+
+                    array_push($CumulativeCost, $costSaving);
+                    array_push($CumulativeGPM, $ProdGPM);
+                    break;
+                
+             case "WR":  // Water:Washlet-Residental
+                    
+                    $mathStringProdGallon = str_replace('residential_household_member', $residential_household_member, $formula[$w]);
+                    $mathStringProdGallon = str_replace('uses_wk_value', $uses_wk_value, $mathStringProdGallon);
+                    $mathStringProdGallon = str_replace('flow_rate', $productDetail[$p]['flow_rate'], $mathStringProdGallon);
+               
+                    $ProdGPM = round(calculate_string($mathStringProdGallon));
+               
+                    $baseGPM = str_replace($productDetail[$p]['flow_rate'], $productDetail[$p]['Base_flow_rate'], $mathStringProdGallon);
+                    
+                    $baseGPM = round(calculate_string($baseGPM));
+                    //echo "\nMonthly Water Consumption of BASELIE(GPM) = ".$baseGPM;
+
+                    $diff = $ProdGPM - $baseGPM;
+                    //echo "\nMonthly Water Savings over Baseline Product = ".$diff;
+                    $costSaving = ($diff/1000)*(-$projectDetail['water_rate']);
+                    $costSaving = number_format($costSaving, 2);
+
+                    array_push($CumulativeCost, $costSaving);
+                    array_push($CumulativeGPM, $ProdGPM);
+                    break;
+
+             case "SR":  // Water:Shower-Residental
+                    
+                    $mathStringProdGallon = str_replace('residential_household_member', $residential_household_member, $formula[$w]);
+                    $mathStringProdGallon = str_replace('flow_rate', $productDetail[$p]['flow_rate'], $mathStringProdGallon);
+               
+                    $ProdGPM = round(calculate_string($mathStringProdGallon));
+               
+                    $baseGPM = str_replace($productDetail[$p]['flow_rate'], $productDetail[$p]['Base_flow_rate'], $mathStringProdGallon);
+                    
+                    $baseGPM = round(calculate_string($baseGPM));
+                    //echo "\nMonthly Water Consumption of BASELIE(GPM) = ".$baseGPM;
+
+                    $diff = $ProdGPM - $baseGPM;
+                    //echo "\nMonthly Water Savings over Baseline Product = ".$diff;
+                    $costSaving = ($diff/1000)*(-$projectDetail['water_rate']);
+                    $costSaving = number_format($costSaving, 2);
+
+                    array_push($CumulativeCost, $costSaving);
+                    array_push($CumulativeGPM, $ProdGPM);
+                    break;
+                
+                
+             case "EWR":  // Energy:Washlet-Residental
+                
+                    // 4.345 x 168 hr/wk X Energy Usage (W) x # of fixtures
+                    $mathStringProdGallon = str_replace('qty', $qty, $formula[$w]);  
+                    $mathStringProdGallon = str_replace('energy_usage', $productDetail[$p]['energy_usage'], $mathStringProdGallon);
+
+                    $ProdEnergy = round(calculate_string($mathStringProdGallon));
+                    
+                    $baseEnergy = str_replace($productDetail[$p]['energy_usage'], $productDetail[$p]['Base_energy_usage'], $mathStringProdGallon); 
+                    
+                    $baseEnergy = round(calculate_string($baseEnergy));
+                    
+                    $diff = $baseEnergy -  $ProdEnergy;
+                    $EnergyCostSaving = ($diff)*($projectDetail['electricity_rate']);
+                    $EnergyCostSaving = number_format($EnergyCostSaving, 2);
+
+                    array_push($CumulativeEnergyCost, $EnergyCostSaving);
+                    array_push($CumulativeEnergy, $diff);
+                    break;
+                
+               // Default:
+               
+                    //echo "One or more of your products are missing values to complete your payback analysis.";
+         } // Switch Ends
+
+       }// Inner For loop ends
+      
+    }//Else IF ends
+    else{
+        
+    }
+    // SWITCH CASE FOR GENERAL CALCULATORS
+   //  print_r($CumulativeGPM);
+    for($n=0;$n<count($formula);$n++){
+       
+           switch($prodcalCode[$n]){
+              
+            case "ELB":  // Energy:Light Bulb
+                    // (4.345 * hrs_a_day * days_a_week * energy_usage  * qty)/1000
+                   
+                    $mathStringProdGallon = str_replace('hrs_a_day', $hrs_a_day, $formula[$n]);
+                    $mathStringProdGallon = str_replace('days_a_week', $days_a_week, $mathStringProdGallon);
+                    $mathStringProdGallon = str_replace('energy_usage', $productDetail[$p]['energy_usage'], $mathStringProdGallon);
+                    $mathStringProdGallon = str_replace('qty', $qty, $mathStringProdGallon);  
+                    
+                    $ProdEnergy = round(calculate_string($mathStringProdGallon));
+                  
+                    $baseEnergy = str_replace($productDetail[$p]['energy_usage'], $productDetail[$p]['Base_energy_usage'], $mathStringProdGallon); 
+                   
+                    $baseEnergy = round(calculate_string($baseEnergy));
+                    
+                    $diff = $baseEnergy -  $ProdEnergy;
+                    
+                    $EnergyCostSaving = ($diff)*($projectDetail['electricity_rate']);
+                    $EnergyCostSaving = number_format($EnergyCostSaving, 2);
+                    
+                    array_push($CumulativeEnergyCost, $EnergyCostSaving);
+                    array_push($CumulativeEnergy, $diff);
+                    break;
+             
+            case "ELF":  // Energy:Light Fixtures
+                
+                    // (4.345 * hrs_a_day * days_a_week * tip * qty)/1000
+                    $mathStringProdGallon = str_replace('hrs_a_day', $hrs_a_day, $formula[$n]);
+                    $mathStringProdGallon = str_replace('days_a_week', $days_a_week, $mathStringProdGallon);
+                    $mathStringProdGallon = str_replace('tip', $productDetail[$p]['tip'], $mathStringProdGallon);
+                    $mathStringProdGallon = str_replace('qty', $qty, $mathStringProdGallon);  
+
+                    $ProdEnergy = round(calculate_string($mathStringProdGallon));
+                    $baseEnergy = str_replace($productDetail[$p]['tip'], $productDetail[$p]['Base_tip'], $mathStringProdGallon);
+                    
+                    $baseEnergy = round(calculate_string($baseEnergy));
+                    $diff = $baseEnergy -  $ProdEnergy;
+                    
+                    $EnergyCostSaving = ($diff)*($projectDetail['electricity_rate']);
+                    $EnergyCostSaving = number_format($EnergyCostSaving, 2);
+                    
+                    array_push($CumulativeEnergyCost, $EnergyCostSaving);
+                    array_push($CumulativeEnergy, $diff);
+                    break;
+                
+             case "ECW":  // Energy:Cloth Washer
+
+                    // (qty  * ( 4.345 * (uses_wk_value)) * ( energy_cycle ))
+                    $mathStringProdGallon = str_replace('qty', $qty, $formula[$n]);
+                    $mathStringProdGallon = str_replace('uses_wk_value', $uses_wk_value, $mathStringProdGallon);
+                    $mathStringProdGallon = str_replace('energy_cycle', $productDetail[$p]['energy_cycle'], $mathStringProdGallon);
+                   
+                    $ProdEnergy = round(calculate_string($mathStringProdGallon));
+                    $baseEnergy = str_replace($productDetail[$p]['energy_cycle'], $productDetail[$p]['Base_energy_cycle'], $mathStringProdGallon);
+
+                    $baseEnergy = round(calculate_string($baseEnergy));
+                    $diff = $baseEnergy -  $ProdEnergy;
+                    
+                    $EnergyCostSaving = ($diff)*($projectDetail['electricity_rate']);
+                    $EnergyCostSaving = number_format($EnergyCostSaving, 2);
+
+                    array_push($CumulativeEnergyCost, $EnergyCostSaving);
+                    array_push($CumulativeEnergy, $diff);
+                    break;
+                
+             case "EDW":  // Energy:Dish Washer
+
+                    // (qty  * ( 4.345 * (uses_wk_value)) * ( energy_cycle ))
+                    $mathStringProdGallon = str_replace('qty', $qty, $formula[$n]);
+                    $mathStringProdGallon = str_replace('uses_wk_value', $uses_wk_value, $mathStringProdGallon);
+                    $mathStringProdGallon = str_replace('energy_cycle', $productDetail[$p]['energy_cycle'], $mathStringProdGallon);
+                   
+                    $ProdEnergy = round(calculate_string($mathStringProdGallon));
+                    
+                    $baseEnergy = str_replace($productDetail[$p]['energy_cycle'],$productDetail[$p]['Base_energy_cycle'], $mathStringProdGallon);
+
+                    $baseEnergy = round(calculate_string($baseEnergy));
+                    
+                    $diff = $baseEnergy -  $ProdEnergy;
+                    
+                    $EnergyCostSaving = ($diff)*($projectDetail['electricity_rate']);
+                    $EnergyCostSaving = number_format($EnergyCostSaving, 2);
+
+                    array_push($CumulativeEnergyCost, $EnergyCostSaving);
+                    array_push($CumulativeEnergy, $diff);
+                    break;
+                
+              case "ERF":  // Energy:Dish Washer
+
+                    // (qty  * enegry_annual)  
+                    $mathStringProdGallon = str_replace('qty', $qty, $formula[$n]);
+                    $mathStringProdGallon = str_replace('energy_annual', $productDetail[$p]['energy_annual'], $mathStringProdGallon);
+                   
+                    $ProdEnergy = round(calculate_string($mathStringProdGallon));
+                    
+                    $baseEnergy = str_replace($productDetail[$p]['energy_annual'], $productDetail[$p]['Base_energy_annual'], $mathStringProdGallon);
+
+                    $baseEnergy = round(calculate_string($baseEnergy));
+                    
+                    $diff = $baseEnergy -  $ProdEnergy;
+                    
+                    $EnergyCostSaving = ($diff)*($projectDetail['electricity_rate']);
+                    $EnergyCostSaving = number_format($EnergyCostSaving, 2);
+
+                    array_push($CumulativeEnergyCost, $EnergyCostSaving);
+                    array_push($CumulativeEnergy, $diff);
+                    break;
+               
+               case "WCW":  // WATER CLOTH WASHER
+                    
+                    // (qty  * enegry_annual)  
+                    $mathStringProdGallon = str_replace('qty', $qty, $formula[$n]);
+                    $mathStringProdGallon = str_replace('uses_wk_value', $uses_wk_value, $mathStringProdGallon);
+                    $mathStringProdGallon = str_replace('water_cycle', $productDetail[$p]['water_cycle'], $mathStringProdGallon);
+
+                    $ProdWaterCycle = round(calculate_string($mathStringProdGallon));
+                    $baseWaterCycle = str_replace($productDetail[$p]['water_cycle'], $productDetail[$p]['Base_water_cycle'], $mathStringProdGallon);
+
+                    $baseWaterCycle = round(calculate_string($baseWaterCycle));
+                    $diff = $baseWaterCycle -  $ProdWaterCycle;
+                    
+                    $WaterCostSaving = ($diff)*($projectDetail['electricity_rate']);
+                    $WaterCostSaving = number_format($WaterCostSaving, 2);
+
+                    array_push($CumulativeCost, $WaterCostSaving);
+                    array_push($CumulativeGPM, $ProdWaterCycle);
+                    break;
+               
+               case "WDW":  // WATER DISH WASHER
+                    
+                    // (qty  * enegry_annual)  
+                    $mathStringProdGallon = str_replace('qty', $qty, $formula[$n]);
+                    $mathStringProdGallon = str_replace('uses_wk_value', $uses_wk_value, $mathStringProdGallon);
+                    $mathStringProdGallon = str_replace('water_cycle', $productDetail[$p]['water_cycle'], $mathStringProdGallon);
+
+                    $ProdWaterCycle = round(calculate_string($mathStringProdGallon));
+                    $baseWaterCycle = str_replace($productDetail[$p]['water_cycle'], $productDetail[$p]['Base_water_cycle'], $mathStringProdGallon);
+
+                    $baseWaterCycle = round(calculate_string($baseWaterCycle));
+                    $diff = $baseWaterCycle -  $ProdWaterCycle;
+                    
+                    $WaterCostSaving = ($diff)*($projectDetail['electricity_rate']);
+                    $WaterCostSaving = number_format($WaterCostSaving, 2);
+
+                    array_push($CumulativeCost, $WaterCostSaving);
+                    array_push($CumulativeGPM, $ProdWaterCycle);
+                    break;
+               
+                   
+               case "LCMMC": // LifeCycle: Monthly Maintenance Cost# of Units x Monthly maintenance costs
+                   
+                  
+                    $mathStringProdGallon = str_replace('qty', $qty, $formula[$n]);
+                    $mathStringProdGallon = str_replace('maint_cost', $productDetail[$p]['maint_cost'], $mathStringProdGallon);
+                    
+                    $ProdLC = round(calculate_string($mathStringProdGallon));
+                   
+                    $baseLC = str_replace($productDetail[$p]['maint_cost'],$productDetail[$p]['Base_maint_cost'], $mathStringProdGallon);
+                    
+                    $baseLC = round(calculate_string($baseLC));
+                    
+                    $diff =  $baseLC - $ProdLC;
+                 
+                    $LifeCycleCostSaving = ($diff);
+                    
+                    array_push($CumulativeLifeCycleCost, $LifeCycleCostSaving);
+                    array_push($CumulativeLifeCycle, $diff);
+                    
+                    break;   
+                   
+               case "LCEP":  //LifeCycle: ecoPower - Monthly battery replacement costs
+                            //# of Units x Monthly Battery Replacement Costs
+                    
+                    $mathStringProdGallon = str_replace('qty', $qty, $formula[$n]);
+                    $mathStringProdGallon = str_replace('battery_cost', $productDetail[$p]['battery_cost'], $mathStringProdGallon);
+                   
+                    $ProdLC= round(calculate_string($mathStringProdGallon));
+                    //echo $ProdLC;
+                   
+                    $baseLC = str_replace($productDetail[$p]['battery_cost'], $productDetail[$p]['Base_battery_cost'], $mathStringProdGallon);
+
+                    $baseLC = round(calculate_string($baseLC));
+                   
+                    $diff = ($baseLC - $ProdLC);
+                    $LifeCycleCostSaving = ($diff);
+                    
+                    array_push($CumulativeLifeCycleCost, $LifeCycleCostSaving);
+                    array_push($CumulativeLifeCycle, $diff);
+                    break;  
+               
+               case "LCBR":  //LifeCycle: Bulb Replacement Month
+
+                    // bulb_life/(hrs_a_day*days_a_week*4.345)
+                    $mathStringProdGallon = str_replace('bulb_life', $productDetail[$p]['bulb_life'], $formula[$n]);
+                    $mathStringProdGallon = str_replace('hrs_a_day', $hrs_a_day, $mathStringProdGallon);
+                    $mathStringProdGallon = str_replace('days_a_week', $days_a_week, $mathStringProdGallon);
+                   
+                    $ProdLC = round(calculate_string($mathStringProdGallon));
+                    
+                    $baseLC = str_replace($productDetail[$p]['bulb_life'], $productDetail[$p]['Base_bulb_life'], $mathStringProdGallon);
+
+                    $baseLC = round(calculate_string($baseEnergy));
+                    
+                    $diff = ($baseLC - $ProdLC);
+                    $LifeCycleCostSaving = ($diff);
+                   
+                    array_push($CumulativeLifeCycleCost, $LifeCycleCostSaving);
+                    array_push($CumulativeLifeCycle, $diff);
+                    break;
+                
+                //Default:
+               
+                //echo "One or more of your products are missing values to complete your payback analysis.";
+                
+           }
+        }
+    }
+    //// Main FOR loop ends
+}
+
+catch(Exception $e){
+    echo 'Caught exception: ',  $e->getMessage(), "\n";
+}
+// calculate and sum up all selected products values in the project.
+// FINAL WATER VALUES
+$allProdCOST = array_sum($CumulativeCost); //echo $allProdCOST; die;
+$allProdGPM = array_sum($CumulativeGPM); 
+
+// FINAL ENERGY VALUES
+$allProdEnergyCost = array_sum($CumulativeEnergyCost);
+$allProdEnergy = array_sum($CumulativeEnergy);
+
+// FINAL LIFECYCLE VALUES
+
+$allProdLifeCycleCost =  array_sum($CumulativeLifeCycleCost);
+$allProdLifeCycle =  array_sum($CumulativeLifeCycle);
+
+//CALCULATE ROI
+
+for($r=0;$r<count($productDetail);$r++){
+        
+    $FcInv[] =  $productDetail[$r]['purchase_price'] * $qtyUsesWKInfo[$r]['qty_value'];
+   
+    for($b=0;$b<count($BasePrices);$b++)
+        $BaseInv[] = $BasePrices[$r][$b]["purchase_price"] * $qtyUsesWKInfo[$r]['qty_value'];
+    
+}
+
+$Prod_Investment = array_sum($FcInv);
+$Base_Investment = array_sum($BaseInv);
+
+$Total_Investment = $Prod_Investment - $Base_Investment;
+ //echo $Total_Investment;
+$Total_Payaback = $allProdCOST+$allProdEnergyCost+$allProdLifeCycleCost;
+
+$breakEven = $Prod_Investment / $Total_Investment; 
+
+$allWaterCost = $allProdCOST;
+$allEnergyCost = $allProdEnergyCost;
+$allLifeCycleCost = $allProdLifeCycleCost;
+
+$sumWaterCost[] = $allProdCOST;
+$sumEnergyCost[] = $allProdEnergyCost;
+$sumLifeCycle[] = $allProdLifeCycleCost;
+
+        // CALCUATE PAYBACK YR
+
+        $comboCost=-$Total_Investment;
+        $waterPB = $allProdCOST;
+        $energyPB= $allProdEnergyCost;
+        $lifecyclePB = $allProdLifeCycleCost;
+        $pos = 0;
+        $pbYr = 0;
+        $pbMnth = 0;
+
+        for($y=1;$y<$LOA;$y++){
+
+                $waterPB = number_format($waterPB *(1+0.075),2);
+                $energyPB = number_format($energyPB * (1+0.05));
+                $lifecyclePB = number_format($lifecyclePB * (1+0.05));
+
+                for($m=0;$m<12;$m++){ 
+                   $comboCost = $comboCost+($waterPB+$energyPB+$lifecyclePB);
+                    if($comboCost > 0)
+                    {
+                        $pbMnth++;
+                    }
+                }
+             if($comboCost > 0 && $pos==0){
+                  
+                  $pbYr = $y;
+                  $pos++;
+               }
+        }
+
+
+for($b=1;$b<$LOA;$b++){
+    $allWaterCost = $allWaterCost*(1+0.075);
+    $allEnergyCost = $allEnergyCost*(1+0.05);
+    $allLifeCycleCost = $allLifeCycleCost*(1+0.05);
+    
+    $sumWaterCost[] = round($allWaterCost, 2);
+    $sumEnergyCost[] = round($allEnergyCost,2);
+    $sumLifeCycle[] = round($allLifeCycleCost,2);
+}
+
+// TOTAL PAYBACK
+$tpb = ((12*array_sum($sumWaterCost))+(12*array_sum($sumEnergyCost))+(12*array_sum($sumLifeCycle)));
+
+// ROI OBATINED
+$ROI = ($tpb - $Total_Investment) / $Total_Investment * 100;
+
+
+// STRING CALCULATION FUNCTION
+function calculate_string( $mathString )    {
+    $mathString = trim($mathString);     // trim white spaces
+    $mathString = preg_replace ('[^0-9\+-\*\/\(\) ]', '', $mathString);    // remove any non-numbers chars; exception for math operators
+ 
+    $compute = create_function("", "return (" . $mathString . ");" );
+    return 0 + $compute();
+}
+
+//die;
+// Calculation Ends
+?>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+<span style='padding-left:17px;'>
+    <a href="/product-config/index/pid/<?php echo $this->pid;?>"><img src="/images/back_active.png"/></a>
+    <?php
+    if($sessUser->fname == 'Dummy'){?>
+        <a href="/login/account"><img src="/images/save_active.png"/></a>
+    <?php }else{?>
+        <a href="/payback-analysis/savepayback/pid/<?php echo $this->pid;?>/savings/<?php echo 12*$LOA*$Total_Payaback;?>/energy/<?php echo 12*$LOA*$allProdEnergy;?>/water/<?php echo 12*$LOA*$allProdGPM;?> ">
+            <img src="/images/save_active.png"/>
+        </a>
+    <?php }
+    ?>
+    <img src="/images/next_inactive.png"/>
+</span>
+<div class="analysis-block">
+    <!--div class="analysis-btn">
+        <a href="#">
+            <span><img alt="bracket" src="/images/frontPanel/left-bracket.png"></span>
+            SHARE<img src="/images/frontPanel/share.png" alt="share" />
+            <span><img alt="bracket" src="/images/frontPanel/right-bracket.png"></span>
+        </a>
+        <a href="#">
+            <span><img alt="bracket" src="/images/frontPanel/left-bracket.png"></span>
+            EDIT<img src="/images/frontPanel/edit.png" alt="edit" />
+            <span><img alt="bracket" src="/images/frontPanel/right-bracket.png"></span>
+        </a>
+        <a href="#">
+            <span><img alt="bracket" src="/images/frontPanel/left-bracket.png"></span>
+            SAVE<img src="/images/frontPanel/save_analysis.png" alt="save" />
+            <span><img alt="bracket" src="/images/frontPanel/right-bracket.png"></span>
+        </a>
+    </div-->
+    <div class="analysis-area-block">
+        <div class="analysis-counter">
+            <div class="counter-month">
+                <div class="counter-area">
+                    <span><?php echo $pbYr; ?></span>
+<!--                    <span>yrs</span>-->
+                </div>
+                <div class="counter-label">
+                    <span>PAYBACK</span><span style="margin: 0px 0px 0px 21px;">Yrs</span>
+                </div>
+            </div>
+            <div class="counter-month">
+                <div class="counter-area">
+                    <span><?php echo round($ROI);?></span>
+<!--                    <span>%</span>-->
+                </div>
+                <div class="counter-label">
+                    <span>ROI</span><span style="margin: 0px 0px 0px 7px;">%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="analysis-area">
+            <div id="container" style="min-width: 260px; height: 400px; margin: 0 auto"></div>
+        </div>
+        <div class="report-icon">
+            <ul>
+                <li id="overall" class="attIcons selected"><a href="javascript:void(0);"><img src="/images/frontPanel/color.png" alt="color" /></a></li>
+                <li id="Energy" class="attIcons"><a href="javascript:void(0);"><img src="/images/frontPanel/energy-report.png" alt="color" /></a></li>
+                <li id="Water" class="attIcons"><a href="javascript:void(0);"><img src="/images/frontPanel/water-report.png" alt="color" /></a></li>
+                <li id="Lifecycle" class="attIcons"><a href="javascript:void(0);"><img src="/images/frontPanel/recycle-report.png" alt="color" /></a></li>
+                <li id="Human" class="attIcons"><a href="javascript:void(0);"><img src="/images/frontPanel/man-report.png" alt="color" /></a></li>
+                <li id="Planet" class="attIcons"><a href="javascript:void(0);"><img src="/images/frontPanel/map-report-pba.png" alt="color" /></a></li>
+            </ul>
+        </div>
+        <div class="analysis-report">
+            
+      <!-- OVERALL SAVINGS TABLE-->
+             <table class="overallClass">
+                <tr class="heading green-txt">
+                    <td style="width: 60%;">Overall Financial Savings</td>
+                    
+                    <td class="align-right">$</td>
+                </tr>
+                <tr>
+                    <td>Monthly</td>
+                    
+                    <td class="align-right"><?php echo number_format($Total_Payaback,2); ?></td>
+                </tr>
+                <tr>
+                    <td>Yearly</td>
+                   
+                    <td class="align-right"><?php echo number_format(12*$Total_Payaback,2); ?></td>
+                </tr>
+                <tr>
+                    <td>Length of Analysis</td>
+                   
+                    <td class="align-right"><?php echo number_format(12*$LOA*$Total_Payaback,2); ?></td>
+                </tr>
+            </table>
+            
+      <!-- ENERGY TABLE-->
+             <table class="EnergyClass">
+                <tr class="heading orange-txt">
+                    <td>Energy Savings</td>
+                    <td class="align-right">kWh</td>
+                    <td class="align-right">$</td>
+                </tr>
+                <tr>
+                    <td>Monthly</td>
+                    <td class="align-right"><?php echo number_format($allProdEnergy,2); ?></td>
+                    <td class="align-right"><?php echo number_format($allProdEnergyCost,2); ?></td>
+                </tr>
+                <tr>
+                    <td>Yearly</td>
+                    <td class="align-right"><?php echo number_format(12*$allProdEnergy,2); ?></td>
+                    <td class="align-right"><?php echo number_format(12*$allProdEnergyCost,2); ?></td>
+                </tr>
+                <tr>
+                    <td>Length of Analysis</td>
+                    <td class="align-right"><?php echo number_format(12*$LOA*$allProdEnergy,2); ?></td>
+                    <td class="align-right"><?php echo number_format(12*$LOA*$allProdEnergyCost,2); ?></td>
+                </tr>
+            </table>
+      
+     <!-- WATER TABLE-->
+            <table class="WaterClass">
+                <tr class="heading blue-txt">
+                    <td>Water Savings</td>
+                    <td class="align-right">Gallons</td>
+                    <td class="align-right">$</td>
+                </tr>
+                <tr>
+                    <td>Monthly</td>
+                    <td class="align-right"><?php echo number_format($allProdGPM); ?></td>
+                    <td class="align-right"><?php echo number_format($allProdCOST,2); ?></td>
+                </tr>
+                <tr>
+                    <td>Yearly</td>
+                    <td class="align-right"><?php echo number_format(12*$allProdGPM); ?></td>
+                    <td class="align-right"><?php echo number_format(12*$allProdCOST,2); ?></td>
+                </tr>
+                <tr>
+                    <td>Length of Analysis</td>
+                    <td class="align-right"><?php echo number_format(12*$LOA*$allProdGPM); ?></td>
+                    <td class="align-right"><?php echo number_format(12*$LOA*$allProdCOST,2); ?></td>
+                </tr>
+            </table>
+     
+     
+      <!-- LIFE CYCLE TABLE-->
+            <table class="LifecycleClass">
+                <tr class="heading cyan-txt">
+                    <td style="width: 60%;">Life Cycle Savings</td>
+                    
+                    <td class="align-right">$</td>
+                </tr>
+                <tr>
+                    <td>Monthly</td>
+                    
+                    <td class="align-right"><?php echo number_format($allProdLifeCycleCost,2); ?></td>
+                </tr>
+                <tr>
+                    <td>Yearly</td>
+                   
+                    <td class="align-right"><?php echo number_format(12*$allProdLifeCycleCost,2); ?></td>
+                </tr>
+                <tr>
+                    <td>Lifetime</td>
+                   
+                    <td class="align-right"><?php echo number_format(12*$LOA*$allProdLifeCycleCost,2); ?></td>
+                </tr>
+            </table>
+            
+            
+        </div>
+    </div>
+</div>
+<span style='padding-left:17px;'>
+    <a href="/product-config/index/pid/<?php echo $this->pid;?>"><img src="/images/back_active.png"/></a>
+    <?php
+    if($sessUser->fname == 'Dummy'){?>
+        <a href="/login/account"><img src="/images/save_active.png"/></a>
+    <?php }else{?>
+          <a href="/payback-analysis/savepayback/pid/<?php echo $this->pid;?>/savings/<?php echo 12*$LOA*$Total_Payaback;?>/energy/<?php echo 12*$LOA*$allProdEnergy;?>/water/<?php echo 12*$LOA*$allProdGPM;?> ">
+             
+             <img src="/images/save_active.png"/>
+         </a>
+    <?php }
+    ?>
+    <img src="/images/next_inactive.png"/>
+</span>
+
+<script>
+$(function () {
+    
+    var data = [{
+    y: 70,
+    color: '#c40044'}];
+
+
+    data.push({
+        y: 100 - data[0].y,
+        color: '#fff',
+        id: 'dummy'
+    });
+    // --------------- HIGHCHARTS------------
+        $('#container').highcharts({
+            chart: {
+                type: 'column'
+            },
+            
+            title: {
+                text: 'Cumulative Cash Flow Chart'
+            },
+            
+            yAxis:{
+            
+//            min: -100,
+//            max: 100,
+//            tickInterval: 800,
+            
+            title: {
+                text: null
+            }
+            },
+            xAxis: {
+                categories: [<?php 
+                                for($i=0;$i<=$LOA;$i++){ 
+                                    echo "'$i'".","; 
+                                  } ?>]
+//                labels: {
+//                rotation: 270,
+//                y:40
+//                
+//            }
+                
+            },
+            credits: {
+                enabled: false
+            },
+            legend : {
+                enabled: false
+            },
+            exporting: {
+                enabled: false
+            },
+            tooltip: {
+                formatter: function() {
+                        if(this.series.name == 'Human' || this.series.name == 'Planet')
+                        return this.y+'%';
+                    else
+                         return '$'+ this.y;
+                }
+            },
+            
+            plotOptions: {
+                
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false,
+                         style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || '#000'
+                        }
+                    }
+                }
+            },
+                series: [ { // Combo
+                    data: [<?php 
+                            $combo=-$Total_Investment;
+                            $waterPBcost = $allProdCOST;
+                            $energyPBcost= $allProdEnergyCost;
+                            $lifecyclePBCost = $allProdLifeCycleCost;
+                            
+                            for($i=0;$i<$LOA;$i++){
+                                 if($i!=0){
+                                    $waterPBcost = number_format($waterPBcost *(1+0.075),2);
+                                    $energyPBcost = number_format($energyPBcost * (1+0.05));
+                                    $lifecyclePBCost = number_format($lifecyclePBCost * (1+0.05));
+                                 
+                                    for($k=0;$k<12;$k++){ 
+                                       $combo = $combo+($waterPBcost+$energyPBcost+$lifecyclePBCost);
+                                      
+
+                                     }?>
+                                {y:<?php echo $combo;?>, color:'#8CC63F'},
+                               <?php }
+                               else{ ?>
+                                  
+                                  {y:<?php echo $combo;?>, color:'#8CC63F'},
+                                   
+                             
+                           <?php  }
+                            }?> 
+                           ]      
+                     },  
+                    
+                    { // Energy
+                    
+                    data: [<?php 
+                            
+                            $energy=-$Total_Investment; 
+                            $energyPBcost= $allProdEnergyCost;
+                            if($energyPBcost > 0){
+                            for($i=0;$i<$LOA;$i++){ 
+                                   if($i!=0){
+                                    $energyPBcost = number_format($energyPBcost * (1+0.05));
+                                 
+                                    for($k=0;$k<12;$k++){ 
+                                       $energy = $energy+($energyPBcost);
+
+                                     }?>
+                                {y:<?php echo $energy;?>, color:'#29ABE2'},
+                               <?php }
+                               else{ ?>
+                                
+                                {y:<?php echo $energy;?>, color:'#29ABE2'},
+                           <?php }
+                            }
+                            
+                            }
+                            ?> 
+                           ]      
+                }, 
+                { // Water 
+                    data: [<?php 
+                    
+                            $water=-$Total_Investment;
+                            $waterPBcost = $allProdCOST;
+                            if($allProdCOST > 0){
+                            for($i=0;$i<$LOA;$i++){ 
+                                 if($i!=0){
+                                    $waterPBcost = number_format($waterPBcost *(1+0.075),2);
+                                   
+                                    for($k=0;$k<12;$k++){ 
+                                       $water = $water+($waterPBcost);
+
+                                     }?>
+                                        {y:<?php echo $water;?>, color:'#29ABE2'},
+                            <?php }
+                            
+                            else{
+                                ?>
+                                    {y:<?php echo $water;?>, color:'#29ABE2'},                   
+                                                            
+                            <?php }
+                            }
+                            }
+                            ?> 
+                           ]    
+                },
+                { // LifeCycle
+                    data: [<?php 
+                    
+                            $lc=-$Total_Investment;
+                            $lifecyclePBCost = $allProdLifeCycleCost;
+                            
+                            if($allProdLifeCycleCost>0){
+                            for($i=0;$i<$LOA;$i++){
+                                   if($i!=0){
+                                    $lifecyclePBCost = number_format($lifecyclePBCost * (1+0.05));
+                                    for($k=0;$k<12;$k++){ 
+                                       $lc = $lc+($lifecyclePBCost);
+
+                                     }?>
+                                {y:<?php echo $lc;?>, color:'#46BAB1'},
+                               <?php }
+                                 else{
+                                ?>
+                                   {y:<?php echo $lc;?>, color:'#46BAB1'},
+                                
+                                <?php
+                                    }
+                                }
+                            }?> 
+                         ]    
+                },
+                {
+                    type: 'pie',
+                    name: 'Human',
+                    data: [ {
+                        name: 'AB',
+                        y: <?php echo $totalHumanYes; ?>,
+                        color: '#c40044'
+                    }, {name: 'AB',
+                        y: <?php echo $totalHumanNo; ?>,
+                        color: '#ccc'}],
+                   
+                    size: 150
+                },{
+                    type: 'pie',
+                    name: 'Planet',
+                    data: [{
+                        name: 'AB',
+                        y: <?php echo $totalPlanetYes; ?>,
+                        color: '#662d91'
+                        
+                    },
+                     {
+                        name: 'AB',
+                        y: <?php echo $totalPlanetNo; ?>,
+                        color: '#ccc'
+                     }
+                    ],
+                    
+                   
+            size: 150
+                }]
+           
+        });
+        
+        // TOGGLE GRAPH BARS
+        var chart = $('#container').highcharts();
+        chart.series[1].hide();
+        chart.series[2].hide();
+        chart.series[3].hide();
+        chart.series[4].hide();
+        chart.series[5].hide();
+        
+        $('#overall').click(function() {
+        $('.counter-month').show();
+            chart.setTitle({text: "Cumulative Cash Flow Chart"});
+                chart.series[0].show();
+                chart.series[1].hide();
+                chart.series[2].hide();
+                chart.series[3].hide();
+                chart.series[4].hide();
+                chart.series[5].hide();
+            });
+            
+            $('#Energy').click(function() {
+                $('.counter-month').show();
+                chart.setTitle({text: "Cumulative Cash Flow Chart"});
+                chart.series[0].hide('slow');
+                chart.series[1].show();
+                chart.series[2].hide();
+                chart.series[3].hide();
+                chart.series[4].hide();
+                chart.series[5].hide();
+                
+            });
+            
+           $('#Water').click(function() {
+               $('.counter-month').show();
+               chart.setTitle({text: "Cumulative Cash Flow Chart"});
+                chart.series[0].hide('slow');
+                chart.series[1].hide();
+                chart.series[2].show();
+                chart.series[3].hide();
+                chart.series[4].hide();
+                chart.series[5].hide();
+                
+            });
+            
+            $('#Lifecycle').click(function() {
+                $('.counter-month').show();
+                 chart.setTitle({text: "Cumulative Cash Flow Chart"});
+                 chart.series[0].hide('slow');
+                chart.series[1].hide();
+                chart.series[2].hide();
+                chart.series[3].show();
+                chart.series[4].hide();
+                chart.series[5].hide();
+                
+            });
+            
+            $('#Human').click(function() {
+                $('.counter-month').hide();
+                chart.setTitle({text: "Human Health Product Contribution/Compliance"});
+                
+                chart.series[0].hide('slow');
+                chart.series[1].hide();
+                chart.series[2].hide();
+                chart.series[3].hide();
+                chart.series[4].show();
+                chart.series[5].hide();
+                
+            });
+            
+            $('#Planet').click(function() {
+                $('.counter-month').hide();
+                chart.setTitle({text: "Planet Health Product Contribution/Compliance"});
+                chart.series[0].hide('slow');
+                chart.series[1].hide();
+                chart.series[2].hide();
+                chart.series[3].hide();
+                chart.series[4].hide();
+                chart.series[5].show();
+                
+            });
+            
+            
+            
+      // ---------------TOGGLE JQUERY------------
+      
+      $('.attIcons').click(function(){
+          
+          $('*').removeClass('selected');
+          $(this).addClass('selected');
+          var aid = $(this).attr('id');
+         
+          $('table').hide();
+          if(aid == 'overall'){
+              $('table').show();
+          }
+          else{
+              $("."+aid+"Class").show();
+          }
+  
+     });
+      
+    });
+    
+    
+</script>

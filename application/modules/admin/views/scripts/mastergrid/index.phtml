@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<?php
+error_reporting(0);
+// Tiers and Tags data
+$tier1List = $this->tier1List;
+$tier2List = $this->tier2List;
+$tag1List = $this->tag1List;
+$tag2List = $this->tag2List;
+
+//Attributes abd SubAttributes Data
+$attList = $this->attList; 
+$subAttList = $this->subAttList;
+$arrAttSub = $this->arrAttSub;
+
+//echo "<pre>";
+
+//print_r($arrAttSub);
+// Product Data without basline
+$arrTemp = array();
+$arrProducts = $this->arrProducts;
+//foreach($arrProducts as $p){
+//    if ($p['baseline'] == 'n') {
+//        array_push($arrTemp, $p);
+//    }
+//}
+//$arrProducts = $arrTemp;
+
+// Displays units and values according to subattributes
+$arrUV = $this->arrUnitsValues;
+
+$arrProdId = array();
+$arrSid = array();
+$arrUnit= array();
+$arrValue = array();
+$m = 0;
+
+
+for($u=0;$u<count($arrUV);$u++)
+{
+    $arrProdId[] = $arrUV[$u]['product_id'];
+    $arrSid[] =explode(",", $arrUV[$u]['subatt_id']);
+    $arrUnit[] =explode(",", $arrUV[$u]['unit']);
+    $arrValue[] =explode(",", $arrUV[$u]['value']);
+    
+}
+ //echo count($arrSid[0]); die;
+//echo $arrSid[0][0]; die;
+?>
+
+<html>
+    <head>
+        <title>GreenMind | Admin</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <!-- Bootstrap -->
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/css/style.css" rel="stylesheet">
+        <link href="/font/font.css" rel="stylesheet">
+          <link href="/css/modalwindow.css" rel="stylesheet">
+
+      
+        <script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>
+        
+        <script type="text/javascript" src="/js/jquery.customSelect.js"></script>
+        <script type="text/javascript" src="/js/jquery.tablesorter.js"></script>
+        
+        <script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+        <link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox1.css?v=2.1.4" media="all" />
+        <script type="text/javascript" src="/js/att-subatt.js"></script>
+         <script type="text/javascript" src="/js/ajaxFunction.js"></script>
+        <script id="loader" src="/js/loaderscript.js" type="text/javascript"></script>
+        <style>
+            .ajax_loader 
+            {
+                background: url("/images/preloader.gif") no-repeat center center #FFFFFF;
+                width:100%;
+                height:100%;
+                z-index:9999; 
+                position: fixed;
+                opacity: 0.5;
+            }
+            .navigation ul li a span{
+                width: 100px;
+            }
+        </style>
+        <script type="text/javascript">
+            $().ready(function(){
+                $(".ajax_loader").hide();
+            });
+            
+            $(function(){
+     
+                var arrSubatt = [];
+                var arrUnit = [];
+                var arrValue = [];
+                
+                $('select.styled').customSelect();
+                
+                $('.addProdSpec').click(function(){
+                    var pid = $(this).attr('id');
+                    var arrSubatt = new Array();
+                    var arrValue =  new Array();
+                    
+                    $('.clsUnit_'+pid).each(function () {
+                        
+                        var sUnit = $(this).val();
+                        
+                        if( sUnit != ''){
+                            arrSubatt.push($(this).attr('id'));
+                            arrUnit.push(sUnit);
+                        }
+                   });
+                   
+                   $('.clsValue_'+pid).each(function () {
+                       // alert($(this).val());
+                        var sVal = $(this).val();
+                        
+                        if( sVal != ''){
+                            arrSubatt.push($(this).attr('id'));
+                            arrValue.push(sVal);
+                        }
+                   });
+                    
+                   //PUSH USING BUBBLE SORT
+                   for (c = 0 ; c < ( arrSubatt.length - 1 ); c++)
+                          {
+                            for (d = 0 ; d < arrSubatt.length - c - 1; d++)
+                            {
+                              if (arrSubatt[d] > arrSubatt[d+1]) /* For decreasing order use < */
+                              {
+                                swap       = arrSubatt[d];
+                                arrSubatt[d]   = arrSubatt[d+1];
+                                arrSubatt[d+1] = swap;
+
+                                swapVal = arrValue[d];
+                                arrValue[d] = arrValue[d+1];
+                                arrValue[d+1] = swapVal;
+                              }
+                            }
+                          }
+                            
+                                
+                   
+                   var uniqueVals = [];
+                    $.each(arrSubatt, function(i, el){
+                        if($.inArray(el, uniqueVals) === -1) uniqueVals.push(el);
+                    });
+                    
+                    arrSubatt = uniqueVals;
+                   //alert(arrSubatt);
+                   
+                       $.fancybox({
+                          'autoSize':false,
+                           scrolling   : 'yes',
+                          maxWidth : 900,
+                          maxHeight : 700,
+                          fitToView : false,
+                          width  : '100%',
+                          height  : '100%',
+                        'type': 'iframe',
+                        'href' : '/admin/mastergrid/prodspec/prodId/'+pid+'/arrSubatt/'+arrSubatt+'/arrUnits/'+arrUnit+'/arrValues/'+arrValue,
+                        'afterClose':function () {
+                                //window.location.reload();
+                            }
+                    });
+                  
+                });
+                
+                
+            });
+        </script>
+        <style>
+            .addProdSpec{
+                display: table;
+                margin: 0 auto;
+            }
+        </style>
+       
+        <link href="/css/Grid.css" rel="stylesheet" type="text/css" />
+        <link href="/css/Grid-data.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body><div class="ajax_loader"></div>
+        <div class="wrapper">
+            <div class="row header">
+                <div class="container">
+                    <div class="col-md-6">
+                        <!--a href="index.html" class="logo"><img src="/images/toto-logo.png" alt="toto" class="img-responsive" /></a-->
+                        <a href="index.html" class="logo"><img src="/images/frontPanel/mgp-logo.png" alt="toto" class="img-responsive" /></a>
+                        <span class="separator">|</span>
+                        <span class="admin-text">Admin</span>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="logout-block">
+                            <a href="/admin/user-management/" class="user-icon"><img src="/images/user-management-icon.jpg" alt="user management"/></a>
+                        <a href="/admin/index/logout" class="logout">
+                            <span>Logout</span>
+                            <img src="/images/logout-icon.png" alt="logout" class="img-responsive" />
+                        </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="container content master-grid">
+                    <div class="navigation">
+                        <!--ul>
+                            <li><a href="/admin/landing-page"><span>GRAPHICS/TEXT MANAGEMENT</span></a></li>
+                            <li><a href="/admin/attribute-management/"><span>ATTRIBUTE MANAGEMENT</span></a></li>
+                            <li><a href="/admin/product-management/"><span>PRODUCT MANAGEMENT</span></a></li>
+                            <li><a class="active" href="javascript:void(0);"><span>MASTER GRID</span></a></li>
+                            <li><a href="javascript:void(0);"><span>REPORT DASHBOARD</span></a></li>
+                        </ul-->
+                        <?php 
+                        $query = explode("/", $_SERVER['REQUEST_URI']);
+                        ?>
+                        <ul>
+                            <li><a <?php if (in_array("landing-page", $query)) { echo 'class="active"';}?> href="<?php if(empty($clientId)){ echo '/admin/landing-page';}else{ echo '/admin/landing-page/index/id/'.$clientId;} ?>"><span>FRONT END MANAGEMENT</span></a></li>
+                            <li><a <?php if (in_array("attribute-management", $query)) { echo 'class="active"';}?> href="/admin/attribute-management/"><span>DATABASE BUILDER</span></a></li>
+                            <li><a <?php if (in_array("product-management", $query)) { echo 'class="active"';}?> href="/admin/product-management/category-setup"><span>DATABASE MANAGEMENT</span></a></li>
+                            <!--li><a <?php if (in_array("mastergrid", $query)) { echo 'class="active"';}?> href="/admin/mastergrid/"><span>MASTER GRID</span></a></li-->
+                            <li><a <?php if (in_array("import-management", $query)) { echo 'class="active"';}?> href="/admin/import-management/"><span>IMPORT MANAGEMENT</span></a></li>
+                            <li><a href="#"><span>APP INTELLIGENCE</span></a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="content-block">
+                        <p>Master Grid</p>
+                        <form method="get" action="/search" id="search">
+                            <input name="q" type="text" size="40" placeholder="Search..." />
+                            <p>
+                            <select class="styled">
+                                <option value="0">-----Tier 1-----</option>
+                                <?php for($i=0;$i<count($tier1List);$i++) {?>
+                                    <option value="<?php echo $tier1List[$i]["tier1_id"]; ?>"><?php echo $tier1List[$i]["tier1_name"]; ?></option>
+                                <?php } ?>
+                            </select>
+                                
+                            <select class="styled" style="margin: 0 20px 0 0;">
+                                <option value="">-----Tier 2-----</option>
+                                <?php for($i=0;$i<count($tier2List);$i++) {?>
+                                    <option value="<?php echo $tier2List[$i]["tier2_id"]; ?>"><?php echo $tier2List[$i]["tier2_name"]; ?></option>
+                                <?php } ?>
+                            </select>
+                                
+                            <select class="styled">
+                                <option value="">-----Tag 1-----</option>
+                                <?php for($i=0;$i<count($tag1List);$i++) {?>
+                                    <option value="<?php echo $tag1List[$i]["tag1_id"]; ?>"><?php echo $tag1List[$i]["tag1_name"]; ?></option>
+                                <?php } ?>
+                            </select>
+                                
+                            <select class="styled">
+                                <option value="">-----Tag 2-----</option>
+                                <?php for($i=0;$i<count($tag2List);$i++) {?>
+                                    <option value="<?php echo $tag2List[$i]["tag2_id"]; ?>"><?php echo $tag2List[$i]["tag2_name"]; ?></option>
+                                <?php } ?>
+                            </select>
+                            </p>
+                             <div class="button-block">
+                            <a href="/admin/mastergrid/exportmastergrid"><img src="/images/export-template.png" alt="export template" /></a>
+                            <a href="javascript:void(0);" id="importdata" rel="#dialog" >
+                                <img src="/images/import-grid.png" alt="import grid" />
+                            
+                            </a>
+                        </div>
+                        </form>
+                        <script>
+          $('.window .close').click(function (e) {
+		//Cancel the link behavior
+		e.preventDefault();
+		
+		$('#mask').hide();
+		$('.window').hide();
+	});		
+	
+	//if mask is clicked
+	$('#mask').click(function () {
+		$(this).hide();
+		$('.window').hide();
+	});	
+   $('#importdata').live('click', function(e) {
+      
+      id = $(this).attr('rel');
+      var action ="/admin/mastergrid/popupimport";
+      var senddata ="";
+      var response = getajaxResponse(action, senddata);
+       $('#dialog').html(response); 
+		
+            // box is started
+
+            //Cancel the link behavior
+            e.preventDefault();
+
+            //Get the screen height and width
+            var maskHeight = $(document).height();
+            var maskWidth = $(window).width();
+
+            //Set heigth and width to mask to fill up the whole screen
+            $('#mask').css({'width':maskWidth,'height':maskHeight});
+
+            //transition effect		
+            $('#mask').fadeIn(1000);	
+            $('#mask').fadeTo("slow",0.8);	
+
+            //Get the window height and width
+            var winH = $(window).height();
+            var winW = $(window).width();
+
+            //Set the popup window to center
+            $(id).css('top', winH/2-$(id).height()/2);
+            $(id).css('left', winW/2-$(id).width()/2);
+
+            //transition effect
+            //alert($(id).fadeIn(2000));
+            $(id).fadeIn(2000); 
+
+});    
+                    </script>   
+
+<div class="master">
+<div id="data-sf-container">
+</div>
+          <div id="demoDiv" class="">
+            <div id="demoGrid">
+              <table id="demoTable" class="demoTable1">
+                <colgroup>
+                <col id="demoTableCol1">
+                </colgroup>
+                <thead>
+                    <tr class="t-head">
+                    <th class="tdw-40">Product Specs</th>
+                    <th class="tdw-95 tdleft">Products </th>
+                    <?php for($i=0;$i<count($attList);$i++){ ?>
+                    <th class="tdw-95"><?php echo $attList[$i]['attribute_name']; ?>
+                        <p>
+                           <?php for($j=0;$j<count($arrAttSub[$i]);$j++){?>
+                            <span class="col-head"><?php echo $arrAttSub[$i][$j]['subatt_name']; ?></span>
+                            <?php }?>
+                        </p>
+                    </th>
+                    <?php } ?>
+                    
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php for($p=0;$p<count($arrProducts);$p++){ ?>
+                  <tr>
+                        <td class="tdw-40"> 
+                            <a  class="addProdSpec" id="<?php echo $arrProducts[$p]['product_id'];?>" name="prod_<?php echo $arrProducts[$p]['product_id'];?>" href="javascript:void(0);" data-fancybox-type="iframe">
+                                <img src="/images/plus.png" alt="plus" class="img-responsive"/>
+                            </a>                                
+                        </td>
+                    <td><?php echo  htmlentities($arrProducts[$p]['product_name'], ISO8559-1); ?></td>
+                     
+                            <?php 
+                            for($a=0;$a<count($arrAttSub);$a++){                     
+                                ?>                     
+                                <td>
+                                    <p>
+                                         <?php 
+                                            for($i=0;$i<count($arrAttSub[$a]);$i++){ 
+                                         ?>
+                                           
+                                            <span class="w-auto-data">
+                                                 <!--input class="clsUnit_<?php //echo $arrProducts[$p]['product_id'];?>"  
+                                                    id="<?php //echo $arrAttSub[$a][$i]['subatt_id'];?>"  
+                                                    name="unit" type="text"
+                                                    value="<?php/* 
+                                                            for($s=0;$s<count($arrProdId);$s++){
+                                                                //Compares if product matches the attribute
+                                                                if($arrProducts[$p]['product_id'] == $arrProdId[$s])
+                                                                  
+                                                                    for($k=0;$k<count($arrSid[$s]);$k++){ 
+                                                                       if($arrAttSub[$a][$i]['subatt_id'] == $arrSid[$s][$k])
+                                                                        
+                                                                           echo $arrUnit[$s][$k];
+                                                                  }
+                                                            }*/?>"
+                                                                        
+                                                    style="margin: 0 5px 0 0;"/-->
+                                            
+                                                    
+                                             <input class="clsValue_<?php echo $arrProducts[$p]['product_id'];?>" 
+                                                    id="<?php echo $arrAttSub[$a][$i]['subatt_id'];?>" 
+                                                    name="value" 
+                                                    value="<?php 
+                                                            for($v=0;$v<count($arrProdId);$v++){ 
+                                                                
+                                                                if($arrProducts[$p]['product_id'] == $arrProdId[$v])
+                                                                  
+                                                                    for($k=0;$k<count($arrSid[$v]);$k++){ 
+                                                                       if($arrAttSub[$a][$i]['subatt_id'] == $arrSid[$v][$k])
+                                                                            
+                                                                           echo $arrValue[$v][$k];
+                                                                  }
+                                                            }?>"
+                                                            
+                                                    type="text" style="margin: 0 5px 0 0;" />
+                                            </span>
+                                         <?php 
+                                             }
+                                         ?>
+                                    </p>
+                                   
+                                </td>
+                                
+                            <?php 
+                                    
+                                }
+                            ?>
+                              
+                 </tr>
+                    <?php }?>
+                
+          
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+                    </div>
+                    
+                </div>
+              </div>
+        </div>
+        
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+     
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="/js/bootstrap.min.js"></script>
+        
+        
+        <script src="/js/script.js"></script>
+
+        <script type="text/javascript" src="/js/Grid.js"></script> 
+        <script type="text/javascript" src="/js/Grid-data.js"></script>
+        <script>
+            $(function() {
+                $('.g_HR span:empty').remove();
+                
+                var arr = [[]];
+                
+                total_HR = $( ".g_HeadStatic" ).find(".g_HR");
+                for(i=0; i<total_HR.length; i++){
+                    total_col = $(".g_HeadStatic .g_HR").eq(i).find(".col-head");
+                    
+                    for(j=0; j<total_col.length; j++){
+                        arr[[i, j]]=total_col.eq(j).outerWidth(true);
+                    }
+                }
+                
+                //console.log(arr);
+                //console.log("Single VALUE : "+arr[[0,0]]);
+
+  
+                $( ".g_BodyStatic .g_Cl:gt(2)" ).each(function( c ) {
+
+                    //console.log(c+" =>"+$(".g_BodyStatic .g_Cl").children().hasClass("g_BR"));
+                    if($(this).children().hasClass("g_BR")){
+
+                        $(this).find(".g_BR").each(function( row ) {
+                            total_col_data = $( this ).find(".w-auto-data");
+                            //console.log(total_col_data.length);
+
+                            for(k=0; k<total_col_data.length; k++){
+
+                                //console.log("["+c+","+k+"] =>"+arr[[c, k]]);
+
+                                $(this).find(".w-auto-data").eq(k).css({
+                                    'width':arr[[c, k]]+"px",
+                                    'text-align': 'center'
+                                });
+                            }
+
+                        });
+
+                    }
+
+                });
+                
+            });
+        </script>
+        <div id="boxes">
+	<div id="dialog" class="window" style="border: 1px solid #D2D2D2;
+        border-radius: 10px 10px 10px 10px;
+        float: left;
+        padding: 10px 25px;
+        font-family: PT Sans;
+      
+         overflow: hidden;">
+		
+		<a href="#" class="close">Close it</a>
+	</div>
+
+	<!-- Mask to cover the whole screen -->
+ 	<div id="mask"></div>
+</div>
+    </body>
+    <?php
+//echo "<pre>"; print_r($arrProdId);
+//echo "<pre>"; print_r($arrSid);
+
+    ?>
+</html>

@@ -1,0 +1,61 @@
+<!--div align="right"><a id="forgot-pwd" onclick="forgotPassword('<?php //echo $baseUrl; ?>')" href="#">Forgot Password ?</a></div-->
+<?php
+$loginSession = new Zend_Session_Namespace('user');
+$errorMsg = $loginSession->msgLoginError;
+
+$userType = $this->userTypeList; 
+?>
+
+<!--script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="/js/jquery-ui-1.9.2.custom_ui-lightness/js/jquery-ui-1.9.2.custom.min.js"></script>
+<script type="text/javascript" src="/js/jquery.colorbox-min.js"></script>
+<script type="text/javascript" src="/js/common.js"></script-->
+
+
+<script type="text/javascript">
+  /*  $(document).ready(function() {
+       
+        $("#login").submit(function() {
+            // e.preventDefault();
+            $.post($(this).attr("action"), $(this).serialize(), function(data) { 
+                $.colorbox({html:data});
+            }, 
+           
+            'html');return false;
+        });
+    });*/
+</script>
+
+<form class="login-form" id="login" action="/login" method="post" enctype="application/x-www-form-urlencoded">
+    <div class="login1">
+        <div class="title-login1">Login</div>
+        <?php
+        if (!empty($this->loginMessage)) {
+            echo "<div class='errors'>"; 
+            echo $this->escape($this->loginMessage);
+            echo "</div>";
+        }
+        //if (!empty($errorMsg)){   echo "<div class='errors'>"; echo $errorMsg; echo "</div>";}
+        ?>
+        </br>
+        <div class="col300">
+            <p><?php echo $this->form->email; ?></p>
+            <span>&nbsp;</span><div class="clear"></div>
+            
+            <p><?php echo $this->form->password; ?></p>
+            <span>&nbsp;</span><div class="clear"></div>
+            
+            <p><?php echo $this->form->userType; ?></p>
+            <span>&nbsp;</span><div class="clear"></div>
+            <!--span style="align:right; padding : 2px;"><a id="forgot-pwd"  href="/user/forgot-password">Forgot Your Password ?</a></span><br/-->
+           
+             
+                <div class="col105"><?php echo $this->form->chkremember; ?></div>
+                <div class="col52"><?php echo $this->form->submit; ?></div>
+               
+            </span>
+            <div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</form>    

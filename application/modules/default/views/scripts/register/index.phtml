@@ -1,0 +1,99 @@
+<?php //Register Index
+$sessUser = new Zend_Session_Namespace('user');
+?>
+<style>
+    .login-block .error,.errors{
+          color:red;
+          font-size:13px;
+    }
+    #submit{
+    background:url(/images/frontPanel/register-btn.jpg) no-repeat top left;
+    width:113px;
+    height:24px;
+    cursor:pointer;  
+    border:none;
+}
+</style>
+<script type="text/javascript">
+    $(document).ready(function(){
+        /* Check Email Availability << */
+        $("#emailId").blur(function() { // when focus out
+            if($("#emailId").val() !==''){
+                $("#message").html('checking email...'); //before AJAX response
+            }
+            $.ajax({
+                type:"GET",
+                url: "/register/ajax-chk-email-existance/emailId/"+$(this).val(),
+                success: function(result) {
+                    $("#message").html(result);
+                },
+                error:function(event, request, settings){
+                    return false;
+                }
+            });
+        });
+        /* Check Email Availability >> */
+    });
+</script>
+<div class="content">
+    <div class="login-block">
+        <form class="registrationFrm" id="registrationFrm" action="/register" method="post" onsubmit="return isValidEmail();">
+            <p><div class='errors' id="errMesg"></div></p>
+            <p>
+                <label>First Name*</label>
+                 <input type="text" name="fname" id="fname" value="" class="input" maxlength="100"/>
+            </p>
+            <p>
+                <label>Last name*</label>
+                 <input type="text" name="lname" id="lname" value="" class="input" maxlength="100"/>
+            </p>
+            <p>
+                <label>Enter email*</label>
+                 <input type="text" name="emailId" id="emailId" value="" class="input" maxlength="100"/><span id="message"></span><span id="err"></span>
+            </p>
+            <p>
+                <label>Password*</label>
+                <input type="password" name="password" id="password" value="" class="input"/>
+            </p>
+            <p>
+                <label>Confirm Password*</label>
+                <input type="password" name="confirm_password" id="confirm_password" value="" class="input"/>
+            </p>
+            <p>* Required field</p>
+            <a class="login-btn"><input type="submit" name="submit" id="submit" value=""/></a>
+        </form>
+    </div>
+</div>
+
+
+        
+            
+            
+    
+<!--<script type="text/javascript" src="/js/jquery-1.8.3.min.js"></script>-->
+<script src="/js/formValidation/jquery.validate.min.js"></script>
+<script src="/js/formValidation/login_script.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>
+<script type="text/javascript">
+    function isValidEmail(){ 
+        var errorCount  = 0;
+              
+        $('#err').html(''); 
+        if( $('#message').html() !== '' ){  
+            $('#err').attr('style','display:block');
+            document.getElementById('err').innerHTML = "<font color='red'>This Email already exists.</font>";
+            errorCount++;
+        }
+              
+        if(errorCount == 0){
+            return true; 
+        }else{
+            return false;
+        }
+    }
+</script>
+
+</body>
+</html>
+    
+    

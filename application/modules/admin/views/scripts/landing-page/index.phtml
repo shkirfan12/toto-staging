@@ -1,0 +1,348 @@
+<?php
+$landingInfo = $this->landingInfo; 
+$presetId    = $this->presetId;
+?>
+<style>
+/*      #uploader{
+        background:url(/images/save.png) no-repeat top left;
+        width:60px;
+        height:28px;
+        border:none;
+        cursor:pointer;
+    }*/
+#uploader{
+    background:url(/images/edit-main-image.jpg) no-repeat top left;
+    width:141px;
+    height:17px;
+    cursor:pointer;  
+    border:none;
+}
+#uploaderFavicon{
+    background:url(/images/edit-favicon.jpg) no-repeat top left;
+    width:119px;
+    height:17px;
+    cursor:pointer;  
+    border:none;
+}
+#uploaderLogo{
+    background:url(/images/edit-logo.jpg) no-repeat top left;
+    width:98px;
+    height:17px;
+    cursor:pointer;  
+    border:none;
+}
+#uploaderStartSearch{
+    background:url(/images/edit-search-banner-image.jpg) no-repeat top left;
+    width:212px;
+    height:17px;
+    cursor:pointer;  
+    border:none;
+}
+.jPicker .Grid {
+    background-image : none !important;
+    height: 293px;
+}
+</style>
+<div class="left-editor">
+    <div class="edit-img">
+        <div class="edit-main-img">
+            <p><input type="button" id="uploader" value=""></p>Size : 1024w x 768h
+            <!--p><span><img src="/images/left-bracket.png" alt="bracket" /></span>EDIT MAIN IMAGE <a id="i_mainImg" href="javascript:void(0);"><img src="/images/edit.png" alt="edit" class="img-responsive"/></a><span><img src="/images/right-bracket.png" alt="bracket" /></span></p-->
+
+                <?php 
+                    if(!empty($landingInfo)){
+                        if(!empty($landingInfo['main_image'])){?> 
+                            <img height="274px;" width="160px;" id="main_image" src="/landingPageImages/main/<?php if(!empty($landingInfo)){ if(!empty($landingInfo['main_image'])){echo $landingInfo['main_image'];}}?>"/>
+                        <?php }
+                    }else{?>
+                        <textarea></textarea>
+                    <?php }
+                ?>
+
+        </div>
+        <div class="edit-main-img edit-favicon">
+             <p><input type="button" id="uploaderFavicon" value=""></p>Size : 128h x 128w
+            <!--p><span><img src="/images/left-bracket.png" alt="bracket" /></span>EDIT FAVICON <a href="javascript:void(0);"><img src="/images/edit.png" alt="edit" class="img-responsive"></a><span><img src="/images/right-bracket.png" alt="bracket" /></span></p-->
+            <?php 
+                    if(!empty($landingInfo)){
+                        if(!empty($landingInfo['favicon_image'])){?> 
+                            <img id="favicon_image" src="/landingPageImages/favicon/<?php if(!empty($landingInfo)){ if(!empty($landingInfo['favicon_image'])){echo $landingInfo['favicon_image'];}}?>" style="display: table;height: 32px;margin: 0 auto;resize: none;width: 32px;"/>
+                        <?php }else{?>
+                        <textarea></textarea>
+                    <?php }
+                    }else{?>
+                        <textarea></textarea>
+                    <?php }
+                ?>
+        </div>
+        <div class="edit-main-img edit-logo">
+             <p><input type="button" id="uploaderLogo" value=""></p>Size : 62h x 226w
+<!--            <p><span><img src="/images/left-bracket.png" alt="bracket" /></span>EDIT LOGO <a href="#"><img src="/images/edit.png" alt="edit" class="img-responsive"/></a><span><img src="/images/right-bracket.png" alt="bracket" /></span></p>-->
+            <?php 
+                    if(!empty($landingInfo)){
+                        if(!empty($landingInfo['logo_image'])){?> 
+                            <img  height="32px;" width="114px;" id="logo_image" src="/landingPageImages/logo/<?php if(!empty($landingInfo)){ if(!empty($landingInfo['logo_image'])){echo $landingInfo['logo_image'];}}?>" style="   display: table;height: 32px;margin: 0 auto;resize: none;width: 114px;"/>
+                        <?php }else{?>
+                        <textarea></textarea>
+                    <?php }
+                    }else{?>
+                        <textarea></textarea>
+                    <?php }
+                ?>
+                        
+                        
+        </div>
+    </div>
+    <div class="edit-text">
+        <div class="edit-copy copy-one">
+            <p>Landing Page COPY 1
+            <input id="Callbacksbodyfont" type="hidden" value="<?php if(!empty($landingInfo['copy1_color'])){echo $landingInfo['copy1_color']; }else{ echo "e2ddcf"; }?>" /></p>
+            <textarea id="copy1_text"><?php if(!empty($landingInfo)){ if(!empty($landingInfo['copy1_content'])){echo $landingInfo['copy1_content']; } }?></textarea>
+        </div>
+        <div class="edit-copy copy-two">
+            <p>Landing Page COPY 2
+            <input id="Callbacksfooterfont" type="hidden" value="<?php if(!empty($landingInfo['copy2_color'])){echo $landingInfo['copy2_color']; }else{ echo "e2ddcf"; }?>" /></p>
+            <textarea id="copy2_text"><?php if(!empty($landingInfo)){ if(!empty($landingInfo['copy2_content'])){echo $landingInfo['copy2_content']; } }?></textarea>
+        </div>
+        
+         <!-- Search Banner Image >> --->
+         <br/><div class="edit-copy copy-two">
+            <p><input type="button" id="uploaderStartSearch" value=""/><br/>Size : 72h x 1024w
+             <?php 
+                if(!empty($landingInfo)){
+                    if(!empty($landingInfo['start_search_image'])){?> 
+                        <img id="uploaderStartSearch_image" src="/landingPageImages/startSearch/<?php if(!empty($landingInfo)){ if(!empty($landingInfo['start_search_image'])){echo $landingInfo['start_search_image'];}}?>" style="display: table;height: 72px;margin: 0 auto;resize: none;width: 314px;"/>
+                    <?php }else{?>
+                      <img alt="banner" src="/images/frontPanel/banner.jpg"/> 
+                <?php }
+                }else{?>
+                      <img alt="banner" src="/images/frontPanel/banner.jpg"/> s
+                <?php }
+            ?>
+          </p>
+          <p>Search Banner Copy
+          <input id="CallbacksSearchfont" type="hidden" value="<?php if(!empty($landingInfo['start_search_color'])){echo $landingInfo['start_search_color']; }else{ echo "e2ddcf"; }?>" /></p>
+            <textarea id="start_search_content"><?php 
+                    if(!empty($landingInfo)){ 
+                        if(!empty($landingInfo['start_search_content'])){
+                            echo $landingInfo['start_search_content']; 
+                        }//else{ echo "Start your Search";}  
+                    }
+                    //else{ echo "Start your Search";} 
+                ?></textarea>
+           
+        </div>
+         <!--- Search Banner Image << --->
+        
+        <div class="save-btn">
+            <input type="hidden" id="hidden_presetId" value="<?php if(!empty($presetId)){ echo $presetId; }?>"/>
+            <a href="javascript:void(0);" id="saveTheme"><img src="/images/save-btn.png" alt="save" class="img-responsive" /></a>
+        </div>
+        
+        
+        
+    </div>
+</div>
+<div class="separator"></div>
+<div id="Livebody" class="theme-content" >
+<div class="iphone-clip">
+    <?php
+     if(!empty($landingInfo)){
+         if(!empty($landingInfo['main_image'])){
+              $style =  "background: url('/landingPageImages/main/".$landingInfo['main_image']."')no-repeat scroll 0 0 rgba(0, 0, 0, 0); background-size:100% 67.1%;"; 
+         }
+     }else{
+         $style =  'background: url("../images/background.jpg") no-repeat scroll 0 0 rgba(0, 0, 0, 0);';
+     }
+    ?>
+    <div class="iphone-bg" style="<?php echo $style; ?>">
+        <div>
+            <div>
+                <div class="logo-block">
+                    <?php
+                    if(!empty($landingInfo)){
+                       if(!empty($landingInfo['logo_image'])){?>
+                            <img id="logoTemplate" src="/landingPageImages/logo/<?php echo $landingInfo['logo_image']; ?>" alt="toto" class="img-responsive logo"/>
+                       <?php }
+                    }else{?>
+                            <img id="logoTemplate" src="images/logo.png" alt="toto" class="img-responsive logo"/>
+                    <?php }
+                    ?>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div>
+                <div class="get-start-block">
+                    
+                    <?php
+                     if(!empty($landingInfo)){
+                         if(!empty($landingInfo['copy1_content'])){
+                             if(!empty($landingInfo['copy1_color'])){
+                                 $c1_color= '#'.$landingInfo['copy1_color'];
+                             }else{
+                                 $c1_color = '#FFFFFF';
+                             }
+                            echo "<h2 id='Live' class='theme-title' style='color:".$c1_color."'>".$landingInfo['copy1_content']."</h2>";
+                        }
+                     }else{?>
+                        <h2 class="theme-title">editable & customizable text</h2>
+                     <?php }
+                    ?>
+                   
+                    <?php
+                      if(!empty($landingInfo)){
+                           if(!empty($landingInfo['copy2_content'])){
+                                if(!empty($landingInfo['copy2_color'])){
+                                    $c1_color= '#'.$landingInfo['copy2_color'];
+                                }else{
+                                     $c1_color = '#8CC63F';
+                                }
+                                echo "<p id='Live2' style='color:".$c1_color."'>".$landingInfo['copy2_content']."</p>";
+                           }
+                      }else{?>
+                           <p>LOREM IPSUM DOLOR<br> NAM SIT AMET COMMODO<br> PORTA ADIPISCING</p>
+                      <?php }
+                    ?>
+                   
+                    <span>Powered by My Green Payback</span>
+                    <a href="search.html"><img src="/images/get-start.jpg" alt="get started" class="img-responsive" /></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- jpicker << -->
+<link rel="Stylesheet" type="text/css" href="/js/jpicker/jPicker_min.css" />
+<!--<link rel="Stylesheet" type="text/css" href="/js/jpicker/jPicker.css" />-->
+<script src="/js/jpicker/jpicker-1.1.6.js" type="text/javascript"></script>
+<script src="/js/jpicker/theme.js" type="text/javascript"></script>
+<!-- jpicker >> -->
+
+<script src="/js/upclick-min.js" type="text/javascript"></script>
+
+<script src="/js/landingpage.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        //Main Image<<
+    var uploader = document.getElementById('uploader');
+    var presetId = '<?php echo $presetId; ?>'; 
+    if(presetId == ''){
+        presetId = 'empty';
+    }
+    upclick({ //https://code.google.com/p/upload-at-click/
+        element: uploader,
+        action: '/admin/landing-page/main-img/presetId/'+presetId,
+        onstart:function(filename){
+            var file = filename;
+            if((file != '')){
+                var extension = file.split('.');
+                var ext       = extension['1'].toLowerCase();
+                if( (ext != 'jpeg') && (ext != 'jpg') && (ext != 'png') && (ext != 'gif') && (ext !='bmp')){
+                    alert('Invalid File Format.<br>Please select .jpeg, .jpg, .png, .gif, .bmp file');
+                    return false;
+                }
+            }
+        },
+        oncomplete:function(response_data)  { //alert("123--"+response_data); return false;
+            if(presetId == 'empty'){
+                window.location = response_data;
+            }else{
+                $('#main_image').attr('src', response_data);
+                var style =  "background: url('"+response_data+"')no-repeat scroll 0 0 rgba(0, 0, 0, 0);background-size:100% 67.1%;"; 
+                $('.iphone-bg').attr('style',style);
+                alert('Your image has been successfully added.');
+            }
+        }
+    });
+    //Main Image>>
+        
+    // Favicon Image<<
+    var uploaderFavicon = document.getElementById('uploaderFavicon');
+    upclick({  
+        element: uploaderFavicon,
+        action: '/admin/landing-page/favicon/presetId/'+presetId,
+        onstart:function(filename) { //alert(presetId); return false;
+            var file = filename;
+            if((file != '')){
+                var extension = file.split('.');
+                var ext       = extension['1'].toLowerCase();
+                if( (ext != 'jpeg') && (ext != 'jpg') && (ext != 'png') && (ext != 'gif') && (ext !='bmp')){
+                    alert('Invalid File Format.<br>Please select .jpeg, .jpg, .png, .gif, .bmp file');
+                    return false;
+                }
+            }
+        },
+        oncomplete:function(response_data) {
+            // alert(response_data); return false;
+            if(presetId == 'empty'){
+                window.location = response_data;
+            }else{
+                $('#favicon_image').attr('src', response_data);
+                alert('Your image has been successfully added.');
+            }
+        }
+    });
+    //Favicon Image >>
+        
+    // Logo Image <<
+    var uploaderLogo = document.getElementById('uploaderLogo');
+    upclick({  
+        element: uploaderLogo,
+        action: '/admin/landing-page/logo/presetId/'+presetId,
+        onstart: function(filename){
+            var file = filename;
+            if((file != '')){
+                var extension = file.split('.');
+                var ext       = extension['1'].toLowerCase();
+                if( (ext != 'jpeg') && (ext != 'jpg') && (ext != 'png') && (ext != 'gif') && (ext !='bmp')){
+                    alert('Invalid File Format.<br>Please select .jpeg, .jpg, .png, .gif, .bmp file');
+                    return false;
+                }
+            }
+        },
+        oncomplete: function(response_data){  //alert(presetId+'--'+response_data); return false;
+            if(presetId == 'empty'){
+                window.location = response_data;
+            }else{
+                $('#logo_image').attr('src', response_data);
+                $('#logoTemplate').attr('src', response_data);
+                alert('Your image has been successfully added.');
+            }
+        }
+    });
+//Logo Image >>
+
+// Start Serach Image <<
+    var uploaderStartSearch = document.getElementById('uploaderStartSearch');
+    upclick({  
+        element: uploaderStartSearch,
+        action: '/admin/landing-page/start-search/presetId/'+presetId,
+        onstart: function(filename){
+            var file = filename;
+            if((file != '')){
+                var extension = file.split('.');
+                var ext       = extension['1'].toLowerCase();
+                if( (ext != 'jpeg') && (ext != 'jpg') && (ext != 'png') && (ext != 'gif') && (ext !='bmp')){
+                    alert('Invalid File Format.<br>Please select .jpeg, .jpg, .png, .gif, .bmp file');
+                    return false;
+                }
+            }
+        },
+        oncomplete: function(response_data){  //alert(response_data); return false;
+           if(presetId == 'empty'){
+                window.location = response_data;
+            }else{
+                $('#uploaderStartSearch_image').attr('src', response_data);
+                alert('Your image has been successfully added.');
+            }
+        }
+    });
+// Start Serach Image >>
+    });
+</script>
+
+    

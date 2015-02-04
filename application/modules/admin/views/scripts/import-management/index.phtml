@@ -1,0 +1,178 @@
+<?php
+
+$modifiedRecord = $this->modifiedRecord; 
+?>
+<link href="/css/modalwindow.css" rel="stylesheet"/>
+<style>
+    .navigation ul li a span{
+        width: 100px;
+    }
+    body {
+        font-family: "PT Sans";
+    }
+    .fancybox-inner{ height: 321px !important; } 
+    #save1{
+        width:62px;
+        height:30px;
+        border:none;
+        cursor:pointer;
+        color: #FFFFFF;
+        background: #8CC63F;
+        float: left;
+    }
+    /*    .navigation ul {
+        margin: 0;
+        padding: 0;
+    }*/
+    .export-import-btn,#export-import-btn   {
+        
+         float:left; display: block; padding: 4px 8px;
+         background-color: #8cc63f;
+         color: #fff;
+         border-radius:6px;
+         min-width: 240px;
+         text-align: center;
+         margin-bottom: 50px;
+         margin-right: 28px;
+    }
+    .export-import-btn:hover,#export-import-btn:hover    { color: #fff;}
+    .export-import-wrapper{ width: 540px; margin: 0 auto; display: table;padding-top: 60px;}
+</style>
+
+<div class="content-block" style="height: 400px;">
+    
+    <div class="export-import-wrapper">
+        <?php 
+        error_reporting(0);
+       
+      $date = date("m-d-Y", strtotime($modifiedRecord['modified_date']));
+      $time = date("h:i:s", strtotime($modifiedRecord['modified_date']));
+      
+        if(!empty($modifiedRecord)){            
+           // echo "Last imported ". APP_TITLE ." ".$modifiedRecord['fname']."".$modifiedRecord['file_name']." on Date: <b>".$date."</b> Time: <b>".$time."</b><br/><br/>";
+            echo "<b>Last Imported:&nbsp;&nbsp;</b> ".$modifiedRecord['file_name']."<br/>" ;
+            echo  "<b>Date:&nbsp;&nbsp;</b> ".$date."&nbsp;&nbsp;<b>Time:</b>&nbsp;&nbsp;".$time."<br/>" ;
+             echo  "<b>Imported by:&nbsp;&nbsp;</b> ".$modifiedRecord['fname']." ".$modifiedRecord['lname']."<br/><br/>" ;
+                   
+        }
+        ?>
+        <a class="export-import-btn" href="/admin/mastergrid/export-blank-template">Export Blank Database Template</a>
+        <a class="export-import-btn" id="importdata" rel="#dialog" href="javascript:void(0);" >Import Database Template</a>
+        <a class="export-import-btn" href="/admin/mastergrid/exportmastergrid">Export Current Database Template</a>
+        <a id="export-import-btn" href="javascript:void(0);"  rel="#dialog" class="batchUpload" >Import Product Images</a>
+    </div>
+    <div id="boxes">
+        <div id="dialog" class="window" style="border: 1px solid #D2D2D2;border-radius: 10px 10px 10px 10px;float: left;padding: 10px 25px;font-family: PT Sans;overflow: hidden;">
+            <a href="#" class="close">Close it</a>
+        </div>
+        <!-- Mask to cover the whole screen -->
+        <div id="mask"></div>
+    </div>
+</div>
+<script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox.css?v=2.1.4" media="all" /> 
+<script type="text/javascript">
+    $('.window .close').click(function (e) {
+        //Cancel the link behavior
+        e.preventDefault();
+        
+        $('#mask').hide();
+        $('.window').hide();
+    });		
+    
+    //if mask is clicked
+    $('#mask').click(function () {
+        $(this).hide();
+        $('.window').hide();
+    });	
+   
+   $('#importdata').live('click', function(e) {
+        id = $(this).attr('rel');
+        var action ="/admin/mastergrid/popupimport";
+        var senddata ="";
+        var response = getajaxResponse(action, senddata);
+        $('#dialog').html(response); 
+        
+        // box is started
+        
+        //Cancel the link behavior
+        e.preventDefault();
+        
+        //Get the screen height and width
+        var maskHeight = $(document).height();
+        var maskWidth = $(window).width();
+        
+        //Set heigth and width to mask to fill up the whole screen
+        $('#mask').css({'width':maskWidth,'height':maskHeight});
+        
+        //transition effect		
+        $('#mask').fadeIn(1000);	
+        $('#mask').fadeTo("slow",0.8);	
+        
+        //Get the window height and width
+        var winH = $(window).height();
+        var winW = $(window).width();
+        
+        //Set the popup window to center
+        $(id).css('top', winH/2-$(id).height()/2);
+        $(id).css('left', winW/2-$(id).width()/2);
+        
+        //transition effect
+        //alert($(id).fadeIn(2000));
+        $(id).fadeIn(2000); 
+    });   
+     $('.batchUpload').live('click', function(e) {
+        id = $(this).attr('rel');
+        var action ="/admin/product-management/batch-upload";
+        var senddata ="";
+        var response = getajaxResponse(action, senddata);
+        $('#dialog').html(response); 
+        
+        // box is started
+        
+        //Cancel the link behavior
+        e.preventDefault();
+        
+        //Get the screen height and width
+        var maskHeight = $(document).height();
+        var maskWidth = $(window).width();
+        
+        //Set heigth and width to mask to fill up the whole screen
+        $('#mask').css({'width':maskWidth,'height':maskHeight});
+        
+        //transition effect		
+        $('#mask').fadeIn(1000);	
+        $('#mask').fadeTo("slow",0.8);	
+        
+        //Get the window height and width
+        var winH = $(window).height();
+        var winW = $(window).width();
+        
+        //Set the popup window to center
+        $(id).css('top', winH/2-$(id).height()/2);
+        $(id).css('left', winW/2-$(id).width()/2);
+        
+        //transition effect
+        //alert($(id).fadeIn(2000));
+        $(id).fadeIn(2000); 
+    });   
+    $().ready(function(){
+                $(".batchUploads").fancybox({
+                    maxWidth	: 900,
+                    maxHeight	: 700,
+                    fitToView	: false,
+                    width       : '35%',
+                    height	: '56%',
+                    autoSize	: false,
+                    closeClick	: false,
+                    openEffect	: 'none',
+                    closeEffect	: 'none',
+                    'afterClose'  : function() {
+                        window.location.reload();
+                    }
+                }); 
+                
+            });
+</script>  
+
+

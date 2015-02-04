@@ -1,0 +1,568 @@
+<?php 
+$ids = $this->ids;
+$arrIds = explode(',', $ids);
+$count = count($arrIds);
+
+$productList = $this->productList;
+$attList = $this->attList;
+$subAttList = $this->subAttList;
+
+$sessCompare = new Zend_Session_Namespace('Sessioncomapare');
+$sessCompare->productList='';
+
+// <<
+$sInfo = array();
+foreach ($productList as $key => $value) {
+    if (isset($value[1])) {
+        $sInfo[] = $value[1];
+    }
+    if (isset($value[2])) {
+        $attInfo[] = $value[2];
+    }
+} 
+// >>
+
+//<<
+foreach ($subAttList as $k => $v) {
+    $temp[] = $v['subatt_id'];
+}
+$sInfotemp = array();
+foreach ($sInfo as $ks => $vs) {
+    $temp2 = array();
+    $temp3 = array();
+    foreach ($vs as $k => $v) {
+        $temp2[] = $v['subatt_id'];
+    }
+    $temp3 = array_diff($temp, $temp2);
+    foreach ($temp3 as $kt => $vt) {
+        $temp4 = array();
+        $temp4['subatt_id'] = $vt;
+        $vs[] = $temp4;
+    }
+    $sInfotemp[] = $vs;
+} 
+//>>
+
+// Master Attribute << 
+$count = count($attInfo);  
+ if($count=='2'){
+      $finalAtt = array_merge($attInfo[0], $attInfo[1]);
+ }else if($count== '3'){
+      $finalAtt = array_merge($attInfo[0], $attInfo[1], $attInfo[2]);
+ }else{
+     $finalAtt = array_merge($attInfo[0]);
+ }
+ 
+//http://stackoverflow.com/questions/307650/how-to-remove-duplicate-values-from-an-array-in-php 
+$duplicated=array();
+foreach($finalAtt as $k=>$v) {
+if( ($kt=array_search($v,$finalAtt))!==false and $k!=$kt )
+ { unset($finalAtt[$kt]);  $duplicated[]=$v; }
+}
+sort($finalAtt); // optional
+sort($duplicated); // optional
+// Master Attribute >> 
+
+//Master SubAtt <<
+$count1 = count($sInfo);  
+ if($count1=='2'){
+      $finalSubAtt = array_merge($sInfo[0], $sInfo[1]);
+ }else if($count1== '3'){
+      $finalSubAtt = array_merge($sInfo[0], $sInfo[1], $sInfo[2]);
+ }else{
+     $finalSubAtt = array_merge($sInfo[0]);
+ }
+
+$duplicated1=array();
+foreach($finalSubAtt as $k=>$v) {
+if( ($kt=array_search($v,$finalSubAtt))!==false and $k!=$kt )
+ { unset($finalSubAtt[$kt]);  $duplicated1[]=$v; }
+}
+sort($finalSubAtt); // optional
+sort($duplicated1); // optional
+
+//$uniqueSubAtt = array_unique(array_map(function ($i) { return $i['subatt_id']; }, $finalSubAtt));
+//print_R($uniqueSubAtt); die;
+
+
+function uniqueAssocArray($array, $uniqueKey) {
+  if (!is_array($array)) {
+    return array();
+  }
+  $uniqueKeys = array();
+  foreach ($array as $key => $item) {
+    if (!in_array($item[$uniqueKey], $uniqueKeys)) {
+      $uniqueKeys[$item[$uniqueKey]] = $item;
+    }
+  }
+  return $uniqueKeys;
+}
+$uniqueSubAtt = uniqueAssocArray($finalSubAtt, 'subatt_id');
+sort($uniqueSubAtt); 
+
+//Master SubAtt >>
+?>
+<style>
+    .remove{
+    background-color: #98CA51;
+    border-radius: 3px;
+    color: #FFFFFF !important;
+    display: inline-block;
+    font-family: "PT Sans";
+    font-size: 13px;
+    margin: 0 5px;
+    padding: 2px 8px;
+    text-decoration: none;
+    border:none !important;
+    width:70px;
+    }
+     body {
+         font-size: 12px;
+    }
+</style>
+<div class="container">
+    <div class="content">
+        <div class="comparison">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tbody><tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="padd-space">
+                                <tbody>
+                                    <tr>
+                                        <td style="width: 26%;"></td> 
+                                        <?php 
+                                            foreach($productList as $key => $value){
+                                                if(isset($value[1])){
+                                                    $projectInfo = $value[0];
+                                                    $subAttInfo = $value[1];
+                                                    $attInfo = $value[2];
+                                                }else{
+                                                    $projectInfo = $value;
+                                                }
+                                                ?>
+                                                <td>
+                                                    <a id="<?php echo $projectInfo['product_id']; ?>" class="remove" href="javascript:void(0);">
+<!--                                                        <span><img alt="bracket" src="/images/frontPanel/left-bracket.png"></span>-->
+                                                        REMOVE
+<!--                                                        <span><img alt="cross" src="/images/frontPanel/cross.png"/></span>-->
+<!--                                                        <span><img alt="bracket" src="/images/frontPanel/right-bracket.png"></span>-->
+                                                    </a>
+                                                </td>
+                                            <?php }
+                                         ?>
+                                    </tr>
+                                </tbody></table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="padd-space">
+                                <tbody>
+                                    <tr>
+                                        <td style="width: 26%;"></td>
+                                         <?php 
+                                            foreach($productList as $key => $value){
+                                                 if(isset($value[1])){
+                                                    $projectInfo = $value[0];
+                                                    $subAttInfo = $value[1];
+                                                    $attInfo = $value[2];
+                                                }else{
+                                                    $projectInfo = $value;
+                                                }
+                                                ?>
+                                                <td><img width="102" height="85" alt="comparison" src="/batchUpload/main/<?php echo $projectInfo['product_img'] ?>"></td>
+                                            <?php }
+                                         ?>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="padd-space">
+                                <tbody>
+                                    <tr>
+                                        <td style="width: 26%;"></td>
+                                        <?php 
+                                            foreach($productList as $key => $value){
+                                                 if(isset($value[1])){
+                                                    $projectInfo = $value[0];
+                                                    $subAttInfo = $value[1];
+                                                    $attInfo = $value[2];
+                                                }else{
+                                                    $projectInfo = $value;
+                                                }
+                                                ?>
+                                                <td><h4 style="font-size:12px;"><?php if(!empty($projectInfo['product_brand'])){ echo $projectInfo['product_brand']; }else{ echo "TOTO";}?><!--span style="font-family: PT Sans; color: #808080; font-size: 15px; font-weight: normal;">.USA</span--> USA</h4></td>
+                                            <?php }
+                                        ?>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 26%;"></td>
+                                        <?php 
+                                            foreach($productList as $key => $value){
+                                                 if(isset($value[1])){
+                                                    $projectInfo = $value[0];
+                                                    $subAttInfo = $value[1];
+                                                    $attInfo = $value[2];
+                                                }else{
+                                                    $projectInfo = $value;
+                                                }
+                                                ?>
+                                                <td><?php echo $projectInfo['product_name'];?></td>
+                                            <?php }
+                                        ?>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    
+                    
+                    <?php
+                   /* foreach($attList as $key => $value){
+                        if($value['attribute_name'] == 'Energy'){
+                            $c = 'w-233 orange';
+                        }else if($value['attribute_name'] == 'Water'){
+                            $c = 'w-233 blue';
+                        }elseif($value['attribute_name'] == 'Lifecycle'){
+                             $c = 'w-233 cyan';
+                        }else if($value['attribute_name'] == 'Human Health'){
+                            $c = 'w-233 red';
+                        }elseif($value['attribute_name'] == 'Planet Health'){
+                             $c = 'w-233 purple';
+                        }*/
+                        foreach($finalAtt as $key => $value){
+                        if($value[1] == 'Energy'){
+                            $c = 'w-233 orange';
+                        }else if($value[1] == 'Water'){
+                            $c = 'w-233 blue';
+                        }elseif($value[1] == 'Lifecycle'){
+                             $c = 'w-233 cyan';
+                        }else if($value[1] == 'Human Health'){
+                            $c = 'w-233 red';
+                        }elseif($value[1] == 'Planet Health'){
+                             $c = 'w-233 purple';
+                        }
+                        ?>
+                    
+                        <tr>
+                            <td>
+                                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                    <tbody>
+                                        <tr>
+                                            <td class="w-77"><img alt="<?php echo $value[1];?>" src="/attributeImages/thumb/<?php echo $value[2];?>"></td>
+                                            <td class="<?php echo $c; ?>"><?php echo $value[1];?></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <?php
+                             foreach($uniqueSubAtt as $k => $v){
+                                    if($value[0] == $v['attribute_id'] ){?>
+                                        <tr>
+                                            <td>
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                                    <tbody><tr <?php if($value[1]== 'Planet Health'){ echo "style = 'border-bottom: 1px solid #CCCCCC;'";}?>>
+                                                            <td class="w-77"><?php echo $v['subatt_name']; ?></td>
+
+                                                            <td class="w-233">
+                                                                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <?php
+                                                                             foreach($sInfotemp as $ks => $vs){
+                                                                                  foreach($vs as $ks1 => $vs1){
+                                                                                        if($vs1['subatt_id'] == $v['subatt_id']){
+                                                                                            if(isset($vs1['value'])){
+                                                                                                if($v['subatt_name'] == 'SM Transparency Report'){
+                                                                                                    echo "<td><a target='_blank' href='".$vs1['value']."'>Link</a></td>";
+                                                                                                }else{
+                                                                                                     echo "<td>".$vs1['value']."</td>";
+                                                                                                }
+                                                                                            }else{
+                                                                                                 echo "<td>--</td>";
+                                                                                            }
+                                                                                            
+                                                                                         }
+                                                                                   }
+                                                                              }
+                                                                            ?>
+<!--                                                                            <td id="11">0</td>
+                                                                            <td id="19">0</td>-->
+                                                                        </tr>
+                                                                    </tbody></table>
+                                                            </td>
+
+                                                        </tr>
+                                                    </tbody></table>
+                                            </td>
+                                        </tr>
+                                    <?php }
+                              }
+                        ?>
+                    <?php }
+                    ?>
+                    <!--tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                <tbody>
+                                    <tr>
+                                        <td class="w-77"><img alt="energy" src="/images/frontPanel/energy-big.jpg"></td>
+                                        <td class="w-233 orange">Energy</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                <tbody><tr>
+                                        <td class="w-77">Energy Consumption</td>
+
+                                        <td class="w-233">
+                                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                                <tbody><tr>
+                                                        <td id="11">0</td>
+                                                        <td id="19">0</td>
+                                                    </tr>
+                                                </tbody></table>
+                                        </td>
+
+                                    </tr>
+                                </tbody></table>
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                <tbody><tr>
+                                        <td class="w-77"><img alt="water" src="/images/frontPanel/water-big.jpg"></td>
+                                        <td class="w-233 blue">Water</td>
+                                    </tr>
+                                </tbody></table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                <tbody><tr>
+                                        <td class="w-77">GPF (high)</td>
+
+                                        <td class="w-233">
+                                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                                <tbody><tr>
+                                                        <td id="11">1.28</td>
+                                                        <td id="19">1.28</td>
+                                                    </tr>
+                                                </tbody></table>
+                                        </td>
+                                    </tr>
+                                </tbody></table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                <tbody><tr>
+                                        <td class="w-77">GPF (low)</td>
+
+                                        <td class="w-233">
+                                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                                <tbody><tr>
+                                                        <td id="11">0.8</td>
+                                                        <td id="19">0.8</td>
+                                                    </tr>
+                                                </tbody></table>
+                                        </td>
+
+                                    </tr>
+                                </tbody></table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                <tbody><tr>
+                                        <td class="w-77">GPF</td>
+
+                                        <td class="w-233">
+                                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                                <tbody><tr>
+                                                        <td id="11">0</td>
+                                                        <td id="19">0</td>
+                                                    </tr>
+                                                </tbody></table>
+                                        </td>
+
+                                    </tr>
+                                </tbody></table>
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                <tbody><tr>
+                                        <td class="w-77"><img alt="Lifecycle" src="/images/frontPanel/recycle-big.jpg"></td>
+                                        <td class="w-233 cyan">Lifecycle</td>
+                                    </tr>
+                                </tbody></table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                <tbody><tr>
+                                        <td class="w-77">Purchase Price</td>
+
+                                        <td class="w-233">
+                                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                                <tbody><tr>
+                                                        <td id="11">$325</td>
+                                                        <td id="19">$325</td>
+                                                    </tr>
+                                                </tbody></table>
+                                        </td>
+
+                                    </tr>
+                                </tbody></table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                <tbody><tr>
+                                        <td class="w-77">Warranty length</td>
+
+                                        <td class="w-233">
+                                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                                <tbody><tr>
+                                                        <td id="11">15 years</td>
+                                                        <td id="19">15 years</td>
+                                                    </tr>
+                                                </tbody></table>
+                                        </td>
+
+                                    </tr>
+                                </tbody></table>
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                <tbody><tr>
+                                        <td class="w-77"><img alt="Human Health" src="/images/frontPanel/man-big.jpg"></td>
+                                        <td class="w-233 red">Human Health</td>
+                                    </tr>
+                                </tbody></table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                <tbody><tr>
+                                        <td class="w-77">Redlist Free</td>
+
+                                        <td class="w-233">
+                                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                                <tbody><tr>
+                                                        <td id="11">Y</td>
+                                                        <td id="19">Y</td>
+                                                    </tr>
+                                                </tbody></table>
+                                        </td>
+
+                                    </tr>
+                                </tbody></table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                <tbody><tr>
+                                        <td class="w-77">Google Green List</td>
+
+                                        <td class="w-233">
+                                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                                <tbody><tr>
+                                                        <td id="11">Y</td>
+                                                        <td id="19">Y</td>
+                                                    </tr>
+                                                </tbody></table>
+                                        </td>
+
+                                    </tr>
+                                </tbody></table>
+                        </td>
+                    </tr>
+                    
+                    
+                    <tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                <tbody><tr>
+                                        <td class="w-77"><img alt="Planetary Health" src="/images/frontPanel/map-big.jpg"></td>
+                                        <td class="w-233 green">Planetary Health</td>
+                                    </tr>
+                                </tbody></table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table last-table">
+                                <tbody><tr>
+                                        <td class="w-77">LCA Published</td>
+
+                                        <td class="w-233">
+                                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="loop-table">
+                                                <tbody><tr>
+                                                        <td id="11">Y_1</td>
+                                                        <td id="19">Y_1</td>
+                                                    </tr>
+                                                </tbody></table>
+                                        </td>
+
+                                    </tr>
+                                </tbody></table>
+                        </td>
+                    </tr-->
+                </tbody></table>
+        </div>
+        <div class="desk-side-bar" style="margin: 75px 0 0;">
+            <h2>Lorem <span>Ipsum</span></h2>
+            <div>
+                <a><img src="/images/frontPanel/sidebar-img1.jpg" alt="sidebar" class="img-responsive" /></a>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ullamcorper augue eget ante faucibus aliquam. Nam sit amet commodo mauris. Donec sapien ligula, interdum et cursus luctus, bibend um in felis. Fusce bibendum fringilla risus ut eleifend. Sed egestas quam at dolor aliquet eget porta sapien lacinia.</p>
+            </div>
+            <div>
+                <a><img src="/images/frontPanel/sidebar-img2.jpg" alt="sidebar" class="img-responsive" /></a>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var ids = "<?php echo $ids ?>"+',';
+        $(".remove").click(function(){ 
+            var count = "<?php echo $count ?>"; 
+            if(count != '1'){
+                var productId = $(this).attr('id')+','; 
+                var res = ids.replace(productId, ""); 
+                var finalRes = res.slice(0,-1); // alert(ids+'---'+productId+'--'+res+'--'+finalRes);
+                location.href = '/product/comparison/index/ids/'+finalRes;
+            }else{ 
+                location.href = '/product';
+            }
+            
+        });
+    });
+</script>

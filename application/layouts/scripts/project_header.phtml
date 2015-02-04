@@ -1,0 +1,50 @@
+<?php
+$objProject = new Default_Model_Project();
+                        
+$query1 = explode("/", $_SERVER['REQUEST_URI']); 
+
+ if (in_array("product-config", $query1)) { 
+     $c1 = 'pro-list-tab active';
+     if (in_array("pid", $query1)) { 
+           $projId =  end($query1);
+           $projInfoById = $objProject->fetchProjectInfoById($projId);
+           $projInfoById['project_type'];
+      }
+ }else{ 
+     $c1 = 'pro-list-tab';
+ }
+ 
+ if (in_array("configuration", $query1)) { 
+     $c2 = 'pro-conf-tab active'; 
+      if (in_array("pid", $query1)) { 
+           $projId =  end($query1);
+           $projInfoById = $objProject->fetchProjectInfoById($projId);
+      }
+ }else{ 
+     $c2 = 'pro-conf-tab';
+ } 
+ 
+ if (in_array("payback-analysis", $query1)) { 
+     $c3 = 'pay-anly-tab active';
+     if (in_array("pid", $query1)) { 
+           $projId =  end($query1);
+           $projInfoById = $objProject->fetchProjectInfoById($projId);
+           $projInfoById['project_type'];
+      }
+ }else{ 
+     $c3 = 'pay-anly-tab';
+ }
+?>
+<!--<div class="row">
+    <div class="container">
+        <div class="content">
+            <div class="project-config-block">
+                div class="product-tabs">
+                    <a href="<?php //if(!empty($projId)){ echo "/project/configuration/type/".$projInfoById['project_type']."/pid/".$projId;}else{ echo "/project/analysis";} ?>" class="<?php //echo $c2; ?>">1. PROJECT SETUP</a>
+                    <a href="/product-config<?php //if(!empty($projId)){ echo "/index/pid/".$projId;}?>" class="<?php //echo $c1; ?>">2. PRODUCT SETUP</a>
+                    <a href="/payback-analysis<?php //if(!empty($projId)){ echo "/index/pid/".$projId;}?>" class="<?php //echo $c3; ?>">3. PAYBACK ANALYSIS</a>
+                </div
+            </div>
+        </div>
+    </div>
+</div>-->

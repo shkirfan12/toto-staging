@@ -1,0 +1,597 @@
+<?php 
+$loginSession = new Zend_Session_Namespace('login');
+$userType = $loginSession->userType;
+$tag1List = $this->tag1List;
+$tag2List = $this->tag2List;
+$tier1List = $this->tier1List; 
+$tier2List = $this->tier2List;
+$tier3List = $this->tier3List;
+$productList = $this->productList;
+$hdnSearch   = $this->hdnSearch; 
+
+$productInfo = $this->productInfo;   
+if(!empty($productInfo)){
+    $pid = $productInfo['product_id'];
+
+    if(!empty($productInfo['tag1_id'])){
+        $tag1Arr = explode(",",$productInfo['tag1_id']);
+    }
+    if(!empty($productInfo['tag2_id'])){
+        $tag2Arr = explode(",",$productInfo['tag2_id']); 
+    }
+}
+$productImg = $this->productImg;
+
+$objProduct = new Admin_Model_Product();
+$firstProductId = $objProduct->fetchFirstProductId();
+
+
+?>
+<style>
+.fancybox-inner{ height: 321px !important; } 
+#save1{
+width:62px;
+height:30px;
+border:none;
+cursor:pointer;
+color: #FFFFFF;
+background: #8CC63F;
+float: left;
+}
+#searchProduct{
+    width:86px;
+    height:30px;
+    border:none;
+    cursor:pointer;  
+    float: right;
+    color: #FFFFFF;
+    background: #8CC63F;
+    margin: 0 0 0 10px;
+}
+.addImg{
+   background:#8cc63f;
+    width:auto;
+    height:auto;
+    border:none;
+    cursor:pointer;   
+    color:#fff;
+    border-radius: 4px;
+    font-size: 16px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+     padding: 2px 5px 4px 5px;
+}
+.add-image a:hover{ text-decoration: none;}
+.editImg{
+   background:#8cc63f;
+    width:auto;
+    height:auto;
+    border:none;
+    cursor:pointer;   
+    color:#fff;
+    border-radius: 4px;
+    font-size: 16px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+     padding: 2px 5px 4px 5px;
+}
+.errors {
+    color: #FF0000;
+}
+</style>
+<!-- Multiselect << -->
+  <link href="/js/multiple-select-master/multiple-select.css" rel="stylesheet" />
+  <script src="/js/multiple-select-master/jquery.multiple.select.js"></script>
+  <!--[if lt IE 9]>
+    <script src="/js/multiple-select-master/docs/assets/html5shiv.js"></script>
+    <script src="/js/multiple-select-master/docs/assets/respond.min.js"></script>
+  <![endif]-->
+<!--  <script src="/js/multiple-select-master/docs/js/index.js"></script>-->
+<!-- Multiselect >> -->
+
+<link rel="stylesheet" type="text/css" href="/js/jcarousels/jcarousel.connected-carousels.css">
+
+<script src="/js/upclick-min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#tag1").multipleSelect({ //http://www.jqueryrain.com/?Vn3Q3xQR
+             //content: "/js/multiple-select-master/jquery.multiple.select.js",
+             filter: true,
+             placeholder: "Select - Tag1",
+             keeyOpen: true
+        });
+        $("#tag2").multipleSelect({ 
+            // content: "/js/multiple-select-master/jquery.multiple.select1.js",
+             filter: true,
+             placeholder: "Select - Tag2",
+             keeyOpen: true
+        }); 
+       
+      $('#tier1').change(function() {
+           var tier1Id = $(this).attr('value'); 
+           var action = '/admin/product-management/ajax-tier2/';
+           var data = 'tier1Id='+tier1Id;
+           var response =  getajaxResponse(action,data);
+           $('#tier2Data').html(response);
+            
+           $('#tier2').change(function() {
+                var tier2Id = $(this).attr('value');   
+                var action1 = '/admin/product-management/ajax-tier3/';
+                var data1 = 'tier2Id='+tier2Id;
+                var response1 =  getajaxResponse(action1,data1);
+                $('#tier3Data').html(response1);
+           }); 
+           
+           var action2 = '/admin/product-management/ajax-tier3-tier1/';
+           var data2 = 'tier1Id='+tier1Id;
+           var response2 =  getajaxResponse(action2,data2);
+           $('#tier3Data').html(response2);
+           
+       }); 
+       $('#tier2').change(function() { 
+           var tier2Id = $(this).attr('value');   
+           var action = '/admin/product-management/ajax-tier3/';
+           var data = 'tier2Id='+tier2Id;
+           var response =  getajaxResponse(action,data);  
+           $('#tier3Data').html(response);
+       }); 
+      
+              
+        $("input:checkbox").click(function() {
+            if ($(this).is(":checked")) {
+                var className = $(this).attr('class');
+                
+                if(className == 'chk_uses_day_flag'){
+                    $('#uses_wk_value').attr('disabled','disabled'); $('#uses_wk_value').val('');
+                    $('#hrs_day_value').attr('disabled','disabled'); $('#hrs_day_value').val('');
+                    $('#hrs_wk_value').attr('disabled','disabled'); $('#hrs_wk_value').val('');
+                    $('#uses_day_value').removeAttr('disabled','disabled'); 
+                }else if(className == 'chk_uses_wk_flag'){
+                    $('#uses_day_value').attr('disabled','disabled'); $('#uses_day_value').val('');
+                    $('#hrs_day_value').attr('disabled','disabled'); $('#hrs_day_value').val('');
+                    $('#hrs_wk_value').attr('disabled','disabled'); $('#hrs_wk_value').val('');
+                    $('#uses_wk_value').removeAttr('disabled','disabled'); 
+                }else if(className == 'chk_hrs_day_flag'){
+                    $('#uses_day_value').attr('disabled','disabled'); $('#uses_day_value').val('');
+                    $('#uses_wk_value').attr('disabled','disabled'); $('#uses_wk_value').val('');
+                    $('#hrs_wk_value').attr('disabled','disabled'); $('#hrs_wk_value').val('');
+                    $('#hrs_day_value').removeAttr('disabled','disabled'); 
+                }else {
+                    $('#uses_day_value').attr('disabled','disabled'); $('#uses_day_value').val('');
+                    $('#uses_wk_value').attr('disabled','disabled'); $('#uses_wk_value').val('');
+                    $('#hrs_day_value').attr('disabled','disabled'); $('#hrs_day_value').val('');
+                    $('#hrs_wk_value').removeAttr('disabled','disabled'); 
+                }
+                
+                var group = "input:checkbox[id='" + $(this).attr("id") + "']"; //alert(group+'---'+className); return false;
+                $(group).attr("checked", false);
+                $(this).attr("checked", true);
+            } else {
+                   var className = $(this).attr('class'); 
+                   if(className == 'chk_uses_day_flag'){
+                       $('#uses_day_value').attr('disabled','disabled'); 
+                   }else if(className == 'chk_uses_wk_flag'){
+                       $('#uses_wk_value').attr('disabled','disabled'); 
+                   } else if(className == 'chk_hrs_day_flag'){  
+                       $('#hrs_day_value').attr('disabled','disabled'); 
+                   }else {
+                       $('#hrs_wk_value').attr('disabled','disabled'); 
+                   }
+                $(this).attr("checked", false);
+            }
+         });
+         $("#chkBaseline").click(function() {
+            if ($('#chkBaseline').is(":checked")) {
+               $('.search-add-form').attr('onsubmit','return baselineValidation();');
+            }else{
+               $('.search-add-form').attr('onsubmit','return validation();');  
+            } 
+        });
+        
+        $(".ajax_loader").hide();
+         
+        $("#thumbUl li").click(function(){
+             $("#thumbUl li").removeClass('active');
+             $(this).addClass('active');
+        });
+        
+        
+        
+        //Add Img <<
+        var uploader = document.getElementById('addImgUploder');
+        upclick(
+        {  //https://code.google.com/p/upload-at-click/
+            element: uploader,
+            action: '/admin/product-management/product-detail',
+            onstart:
+                function(filename)
+            {
+                var file = filename;
+                if((file != '')){
+                    var extension = file.split('.');
+                    var ext       = extension['1'].toLowerCase();
+                    if( (ext != 'jpeg') && (ext != 'jpg') && (ext != 'png') && (ext != 'gif') && (ext !='bmp')){
+                        alert('Invalid File Format.<br>Please select .jpeg, .jpg, .png, .gif, .bmp file');
+                        return false;
+                    }else{
+                       //alert(file); 
+                       $('#hdnProductImg').val(file);
+                    }
+                }
+            },
+            oncomplete:
+                function(response_data) 
+            { //alert(response_data); 
+//                if(presetId == 'empty'){
+//                   window.location = response_data;
+//               }else{
+//                   $('#main_image').attr('src', response_data);
+//               }
+            }
+        });
+        //Add Img >>
+    });
+    </script>
+<div class="button-block">
+    <a href="/admin/product-management/category-setup"><img src="/images/catergory-setup-deselect.png" alt="catergory setup" /></a>
+    <a href="/admin/product-management/product-detail/pid/<?php echo $firstProductId; ?>"><img src="/images/product-detail.png" alt="product detail" /></a>
+</div>
+
+
+<div class="content-block">
+    <form class="search-add-form" method="post" action="/admin/product-management/product-detail<?php if(!empty($productInfo)){ echo '/pid/'.$pid;}?>" onsubmit="return validation();">
+        <p class="title">Search or Add New</p>
+        <div class="errors" id="errors"></div>
+            <p><label style="width: 55px;">Tier 1</label>
+                <select class="styled" name="tier1" id="tier1" style='width:82%'><option value="none">Select - Tier1</option>
+                <?php
+                for ($i = 0; $i < count($tier1List); $i++) {?>
+                    <option value="<?php echo $tier1List[$i]['tier1_id']; ?>" <?php if(!empty($productInfo)){ if($productInfo['tier1_id']==$tier1List[$i]['tier1_id']){ echo 'selected=selected';}}?>><?php echo $tier1List[$i]['tier1_name']; ?></option>
+                <?php }
+                ?>
+                </select><span id="eTier1" style="">&ast;</span>
+            </p>
+            <p id="tier2Data"><label style="width: 55px;">Tier 2</label>
+                <select class="styled" name="tier2" id="tier2" style='width:82%'><option value="none">Select - Tier2</option>
+                <?php
+                for ($i = 0; $i < count($tier2List); $i++) {?>
+                    <option value="<?php echo $tier2List[$i]['tier2_id']; ?>" <?php if(!empty($productInfo)){ if($productInfo['tier2_id']==$tier2List[$i]['tier2_id']){ echo 'selected=selected';}}?>><?php echo $tier2List[$i]['tier2_name']; ?></option>
+                <?php }
+                ?>
+                </select>
+            </p>
+
+             <!--p id="tier3Data"><label style="width: 55px;">Tier 3</label>
+                <select class="styled" name="tier3" id="tier3" style='width:82%'><option value="none">Select - Tier3</option>
+                <?php
+                //for ($i = 0; $i < count($tier3List); $i++) {?>
+                    <option value="<?php //echo $tier3List[$i]['tier3_id']; ?>" <?php //if(!empty($productInfo)){ if($productInfo['tier3_id']==$tier3List[$i]['tier3_id']){ echo 'selected=selected';}}?>><?php //echo $tier3List[$i]['tier3_name']; ?></option>
+                <?php //}
+                ?>
+                </select>
+            </p-->
+
+            <!--p>
+                <select class="styled" name="tag1" id="tag1"><option value="none">Select - Tag1</option>
+                <?php
+               /* for ($i = 0; $i < count($tag1List); $i++) {?>
+                    <option value="<?php echo $tag1List[$i]['tag1_id']; ?>" <?php if(!empty($productInfo)){ if($productInfo['tag1_id']==$tag1List[$i]['tag1_id']){ echo 'selected=selected';}}?>><?php echo $tag1List[$i]['tag1_name']; ?></option>
+                <?php }*/
+                ?>
+                </select>
+            </p>
+            <p>
+                <select class="styled" name="tag2" id="tag2"><option value="none">Select - Tag2</option>
+                <?php
+               /* for ($i = 0; $i < count($tag2List); $i++) {?>
+                    <option value="<?php echo $tag2List[$i]['tag2_id']; ?>" <?php if(!empty($productInfo)){ if($productInfo['tag2_id']==$tag2List[$i]['tag2_id']){ echo 'selected=selected';}}?>><?php echo $tag2List[$i]['tag2_name']; ?></option>
+                <?php }*/
+                ?>
+                </select>
+            </p-->
+<!--    MultiSelect <<         -->
+            <p><label style="width: 55px;">Tag 1</label>
+                <select class="styled" id="tag1"  multiple="multiple" name="tag1[]" style='width:82%'>
+                <?php
+                for ($i = 0; $i < count($tag1List); $i++) {?>
+                    <option value="<?php echo $tag1List[$i]['tag1_id']; ?>" 
+                    <?php 
+                    if(!empty($productInfo)){ 
+                        if(!empty($tag1Arr)){
+                            foreach($tag1Arr as $k => $v){
+                                if($v == $tag1List[$i]['tag1_id']){ 
+                                    echo 'selected=selected';
+                                }
+                            }
+                        }
+                    }
+                    ?>><?php echo $tag1List[$i]['tag1_name']; ?></option>
+                <?php }
+                ?>
+                </select>
+            </p>
+            <p><label style="width: 55px;">Tag 2</label>
+                <select class="styled" id="tag2" multiple="multiple" name="tag2[]" style='width:82%'>
+                    <?php
+                        for ($i = 0; $i < count($tag2List); $i++) {?>
+                            <option value="<?php echo $tag2List[$i]['tag2_id']; ?>" 
+                            <?php 
+                            if(!empty($productInfo)){ 
+                                if(!empty($tag2Arr)){
+                                    foreach($tag2Arr as $k => $v){
+                                        if($v == $tag2List[$i]['tag2_id']){ 
+                                            echo 'selected=selected';
+                                        }
+                                    }
+                                }
+                            }
+                            ?>><?php echo $tag2List[$i]['tag2_name']; ?></option>
+                        <?php }
+                        ?>
+                </select>
+           </p>
+<!--    MultiSelect >>        -->
+            <p>
+                <label>Product Name</label>
+                <input type="text" name="product_name" id="product_name" value="<?php if(!empty($productInfo)){ echo $productInfo['product_name']; }?>"/><span id="ePname" style="">&ast;</span>
+            </p>
+            <p>
+                <label>Product Number</label>
+                <input type="text" name="product_number" id="product_number" value="<?php if(!empty($productInfo)){ echo $productInfo['product_num']; }?>"/><span id="ePno" style="">&ast;</span>
+            </p>
+            <p>
+                <label>Product Brand</label>
+                <input type="text" name="product_brand" id="product_brand" value="<?php if(!empty($productInfo)){ echo $productInfo['product_brand']; }?>"/><span id="ePbrand" style="">&ast;</span>
+            </p>
+
+            <?php
+            if($userType == 'superadmin'){?>
+            <p class="price">
+                <label>Purchase Price  $</label>
+                <input type="text" name="purchase_price" id="purchase_price" value="<?php if(!empty($productInfo)){ echo $productInfo['purchase_price']; }?>"/><span id="ePprice" style="">&ast;</span>
+            </p>
+            <p class="price">
+                <label>Installation Price $</label>
+                <input type="text" name="installation_price" id="installation_price" value="<?php if(!empty($productInfo)){ echo $productInfo['installation_price']; }?>"/><span id="eIprice" style="">&ast;</span>
+            </p>
+            <p class="price">
+                <label>Replacement Cost  $</label>
+                <input type="text" name="replacement_price" id="replacement_price" value="<?php if(!empty($productInfo)){ echo $productInfo['replacement_price']; }?>"/><span id="eRcost" style="">&ast;</span>
+            </p>
+            <p class="price">
+                <label>Product Life Span(yrs)</label>
+                <input type="text" name="product_life_span" id="product_life_span" value="<?php if(!empty($productInfo)){ echo $productInfo['product_life_span']; }?>"/><span id="eLspan" style="">&ast;</span>
+            </p> 
+            <?php }else{?>
+            <p class="price">
+                <label>Cost$</label>
+                <input type="text" name="purchase_price" id="purchase_price" value="<?php if(!empty($productInfo)){ echo $productInfo['purchase_price']; }?>"/><span id="ePprice" style="">&ast;</span> 
+            </p>    
+            <?php 
+            }
+            ?>
+            <p class="price">
+                <label>Baseline</label><input type="checkbox" name="chkBaseline" id="chkBaseline" <?php if($productInfo['baseline'] == 'y'){ echo "checked=checked;";}?>/>
+            </p>
+            <p>
+                <label style="width: 130px;">Uses/day</label><input type="text" name="uses_day_value" id="uses_day_value" value="<?php if(!empty($productInfo)){ if(!empty($productInfo['uses_day_value'])){echo $productInfo['uses_day_value']; }}?>" <?php if($productInfo['uses_day_flag'] == 'n'){ echo 'disabled="disabled"';}?>/><input type="checkbox" style="width:auto; margin-left:10px;" name="chk_uses_day_flag" class="chk_uses_day_flag" id="chkUses" <?php if($productInfo['uses_day_flag'] == 'y'){ echo "checked=checked;";}?>>
+            </p>
+            <p>    
+                <label style="width: 130px;">Uses/wk</label><input type="text" name="uses_wk_value" id="uses_wk_value" value="<?php if(!empty($productInfo)){ if(!empty($productInfo['uses_wk_value'])){echo $productInfo['uses_wk_value']; }}?>" <?php if($productInfo['uses_wk_flag'] == 'n'){ echo 'disabled="disabled"';}?>/><input type="checkbox" style="width:auto; margin-left:10px;" name="chk_uses_wk_flag" class="chk_uses_wk_flag" id="chkUses" <?php if($productInfo['uses_wk_flag'] == 'y'){ echo "checked=checked;";}?>>
+            </p> 
+            <p>    
+                <label style="width: 130px;">Hrs/day</label><input type="text" name="hrs_day_value" id="hrs_day_value" value="<?php if(!empty($productInfo)){  if(!empty($productInfo['hrs_day_value'])){echo $productInfo['hrs_day_value']; }}?>" <?php if($productInfo['hrs_day_flag'] == 'n'){ echo 'disabled="disabled"';}?>/><input type="checkbox" style="width:auto; margin-left:10px;" name="chk_hrs_day_flag" class="chk_hrs_day_flag" id="chkUses" <?php if($productInfo['hrs_day_flag'] == 'y'){ echo "checked=checked;";}?>>
+            </p> 
+            <p>    
+                <label style="width: 130px;">Hrs/wk</label><input type="text" name="hrs_wk_value" id="hrs_wk_value" value="<?php if(!empty($productInfo)){  if(!empty($productInfo['hrs_wk_value'])){echo $productInfo['hrs_wk_value']; }}?>" <?php if($productInfo['hrs_wk_flag'] == 'n'){ echo 'disabled="disabled"';}?>/><input type="checkbox" style="width:auto; margin-left:10px;" name="chk_hrs_wk_flag" class="chk_hrs_wk_flag" id="chkUses" <?php if($productInfo['hrs_wk_flag'] == 'y'){ echo "checked=checked;";}?>>
+            </p>
+            <p>(<span style="color:red">&ast;</span>) Required fields</p>
+            <p class="button">
+                <a style="float:left;background: #8CC63F;color: #fff; text-decoration: none;font-weight: normal;padding: 2px 8px;border-radius: 5px;" href="/admin/product-management/product-detail">Reset</a>
+                <input type="submit" name="submit" class="save" id="save1" value="Save"/>
+                <input type="button" name="search" class="searchProduct" id="searchProduct" value="Search"/>
+                <input type="hidden" id="hdnProductId" name="hdnProductId" value="<?php if(!empty($productInfo)){ echo $productInfo['product_id'];}?>"/>
+                <input type="hidden" name="hdnProductImg" id="hdnProductImg" value="<?php if(!empty($productInfo)){ echo $productInfo['product_img'];}?>"/>
+                  <input type="hidden" name="hdnSearch" id="hdnSearch" value="<?php if(!empty($hdnSearch)){ echo $hdnSearch; }?>"/>
+    <!--            <a href="#" class="save"><img src="/images/save.png" alt="save" /></a>-->
+                  <br><br><br>
+                <span style="display: block;width: 73%;"><img style="float: left;margin: 10px 0 0 0;" src="/images/icon.png" /><a style="float:left;background: #8CC63F;color: #fff; text-decoration: none;font-weight: normal;padding: 2px 8px;border-radius: 5px;margin: 10px 0 0 10px;font-size: 16px;height: 30px;width: 230px;text-align: center;" href="/admin/product-management/download">Download Product Template</a></span>
+                <span style="display: block;width: 73%;"><img style="float: left;margin: 10px 0 0 0;" src="/images/import.png" /><a style="float:left;background: #8CC63F;color: #fff; text-decoration: none;font-weight: normal;padding: 2px 8px;border-radius: 5px;margin: 10px 0 0 10px;font-size: 16px;height: 30px;width: 230px;text-align: center;" data-fancybox-type="iframe" href="/admin/product-management/import" class="import">Upload Products Details</a></span>
+                <span style="display: block;width: 73%;"><img style="float: left;margin: 10px 0 0 0;" src="/images/import.png" /><a style="float:left;background: #8CC63F;color: #fff; text-decoration: none;font-weight: normal;padding: 2px 8px;border-radius: 5px;margin: 10px 0 0 10px;font-size: 16px;height: 30px;width: 230px;text-align: center;" href="/admin/product-management/batch-upload" data-fancybox-type="iframe" class="batchUpload">Upload Images</a></span>
+            </p>
+    </form>
+    
+
+    <div class="add-image-slider">
+
+
+
+
+        <div class="connected-carousels">
+            <div class="add-image">
+                <?php
+                if(!empty($pid)){ ?>
+                    <a style="padding-right:427px;"><input type="button" id="addImgUploder" class="editImg" value="Edit Image"/> <span id="eAddImg" style="color:#333333;"><b>&ast;</b></span></a><br/><span style="padding-right:405px;">Size : 400h x 520w</span>
+                <?php }else{?>
+                    <a style="padding-right:427px;"><input type="button" id="addImgUploder" class="addImg" value="Add Image"/> <span id="eAddImg" style="color:#333333;"><b>&ast;</b></span></a><br/><span style="padding-right:405px;">Size : 400h x 520w</span>
+                <?php }
+                ?>
+            </div>
+              <div class="stage">
+                  <div class="carousel carousel-stage">
+                      <ul>
+                          <li class="li_Big">
+                              <?php
+                              if(!empty($pid)){
+                                  if(!empty($productInfo['product_img'])){
+                                    if (strpos($productInfo['product_img'],'http://') !== false) {
+                                          $mainImgSrc = $productInfo['product_img'];
+                                    }else{
+                                         $mainImgSrc = "/batchUpload/main/".$productInfo['product_img'];
+                                    }
+                                  }else{
+                                       $mainImgSrc = "/images/img_unavailable.png";
+                                  }                                       
+                                  ?>
+                                  <img id="bigImg" src="<?php if(!empty($productInfo)){ echo $mainImgSrc; }?>" width="520" height="400" alt="">
+                              <?php }else{?>
+                                  <img id="bigImg" src="/images/product_emptyImag.jpg" width="520" height="400" alt="">
+                              <?php }
+                              ?>
+                              
+                          </li>
+                      </ul>
+                  </div>
+<!--                  <a href="#" class="prev prev-stage"><span>&lsaquo;</span></a>
+                  <a href="#" class="next next-stage"><span>&rsaquo;</span></a>-->
+              </div>
+            <!--div class="stage">
+                <div class="carousel carousel-stage">
+                    <ul>
+                        <?php
+                        /*if(!empty($productList)){ 
+                            foreach ($productList as $key => $value) { ?>
+                               <li><img src="/batchUpload/main/<?php echo $value['product_img']?>" width="520" height="400" alt=""></li>
+                         <?php  }
+                      }else{?>
+                             <li><img src="/images/product_emptyImag.jpg" width="520" height="400" alt=""></li>
+                        <?php }*/
+                        ?>
+                        
+                    </ul>
+                </div>
+                <a href="#" class="prev prev-stage"><span>&lsaquo;</span></a>
+                <a href="#" class="next next-stage"><span>&rsaquo;</span></a>
+            </div-->
+
+            <div class="navigation">
+                <a href="#" class="prev prev-navigation">&lsaquo;</a>
+                <a href="#" class="next next-navigation">&rsaquo;</a>
+                <div class="carousel carousel-navigation">
+                    <ul id="thumbUl">
+                        <?php
+                         if(!empty($productList)){
+                             foreach ($productList as $key1 => $value1) { 
+                                 if(!empty($value1['product_img'])){
+                                    if (strpos($value1['product_img'],'http://') !== false) {
+                                           $src = $value1['product_img'];
+                                     }else{
+                                          $src = "/batchUpload/main/".$value1['product_img'];
+                                     }
+                                 }else{
+                                     $src = "/images/img_unavailable.png";
+                                 }
+                                 
+                                 ?>
+                                
+                             <li id="<?php echo $value1['product_id']; ?>">
+                                 <script type="text/javascript">
+                                $(document).ready(function(){
+                                    $("#<?php echo $value1['product_id']; ?>").click(function(){
+                                        $('#bigImg').attr('src','<?php echo $src ?>')
+                                        
+                                        var action = '/admin/product-management/ajax-thumbimag-click/';
+                                        var data = 'pid='+<?php echo $value1['product_id']?>;
+                                        var response =  getajaxResponse(action,data);  
+                                        var obj = JSON.parse(response);   
+                                       // var p = obj.product_name.replace(/&reg;/g,'<sup>&reg;</sup>'); 
+                                        $("#tier1 option[value=" +obj.tier1_id+ "]").attr('selected', 'selected'); 
+                                        
+                                        if(obj.tier2_id == '0' || obj.tier2_id ==''){
+                                            $("#tier2 option[value=none]").attr('selected', 'selected'); 
+                                        }else{
+                                             $("#tier2 option[value=" +obj.tier2_id+ "]").attr('selected', 'selected'); 
+                                        }
+                                       
+                                        if(obj.tier3_id == '0' || obj.tier3_id == ''){
+                                             $("#tier3 option[value=none]").attr('selected', 'selected'); 
+                                        }else{
+                                            $("#tier3 option[value=" +obj.tier3_id+ "]").attr('selected', 'selected'); 
+                                        }
+                                        
+                                        $("#tag1").multipleSelect("setSelects", obj.tag1_id);
+                                        $("#tag2").multipleSelect("setSelects", obj.tag2_id);
+                                        /*$("#tag1 option[value=" +obj.tag1_id+ "]").attr('selected', 'selected'); 
+                                        $("#tag2 option[value=" +obj.tag2_id+ "]").attr('selected', 'selected'); */
+                                        $('#product_name').val(obj.product_name);
+                                        $('#product_number').val(obj.product_num);
+                                        $('#product_brand').val(obj.product_brand);
+                                        $('#purchase_price').val(obj.purchase_price);
+                                        $('#installation_price').val(obj.installation_price);
+                                        $('#replacement_price').val(obj.replacement_price);
+                                        $('#product_life_span').val(obj.product_life_span);
+                                        
+                                        $('#uses_day_value').val(obj.uses_day_value);
+                                        $('#uses_wk_value').val(obj.uses_wk_value);
+                                        $('#hrs_day_value').val(obj.hrs_day_value);
+                                        $('#hrs_wk_value').val(obj.hrs_wk_value);
+                                   
+                                        if(obj.baseline == 'y'){ $('#chkBaseline').attr('checked', 'checked'); }else{ $('#chkBaseline').removeAttr('checked'); }
+                                        
+                                        if(obj.uses_day_flag == 'y'){  $('.chk_uses_day_flag').attr('checked', 'checked'); }else{  $('.chk_uses_day_flag').removeAttr('checked'); }
+                                        if(obj.uses_wk_flag == 'y'){  $('.chk_uses_wk_flag').attr('checked', 'checked'); }else{ $('.chk_uses_wk_flag').removeAttr('checked'); }
+                                        if(obj.hrs_day_flag == 'y'){  $('.chk_hrs_day_flag').attr('checked', 'checked'); }else{  $('.chk_hrs_day_flag').removeAttr('checked'); }
+                                        if(obj.hrs_wk_flag == 'y'){  $('.chk_hrs_wk_flag').attr('checked', 'checked'); }else{ $('.chk_hrs_wk_flag').removeAttr('checked'); }
+                                        
+                                        $('#hdnProductId').val(obj.product_id);
+                                        $('#hdnProductImg').val(obj.product_img);
+                                      
+                                    }); 
+                                });
+                                </script>
+                                <?php
+                                if(!empty($value1['product_img'])){
+                                    if (strpos($value1['product_img'],'http://') !== false) {
+                                           $mainSmallImgSrc = $value1['product_img'];
+                                     }else{
+                                          $mainSmallImgSrc = "/batchUpload/main/".$value1['product_img'];
+                                     }
+                                 }else{
+                                     $mainSmallImgSrc = "/images/img_unavailable.png";
+                                 }
+                                ?>
+                                <img src="<?php echo $mainSmallImgSrc; ?>" width="90" height="90" alt="">
+                                <!--img src="/batchUpload/thumb/<?php //echo $value1['product_img']?>" width="90" height="90" alt=""-->
+                                <span>
+<!--                                    <a href="/admin/product-management/edit-img/pImgId/<?php //echo $value1['product_img']; ?>" data-fancybox-type="iframe" class="batchUpload"><img src="/images/edit-icon.png" alt="edit" /></a>-->
+<!--                                     <a href="javascript:void(0);" onclick="editProduct('<?php //echo $value1['product_id']; ?>')"><img src="/images/edit-icon.png" alt="edit" /></a>-->
+                                      <a href="javascript:void(0);" id="<?php echo $value1['product_id']; ?>"><img src="/images/edit-icon.png" alt="edit" /></a>
+                                    <a href="javascript:void(0);" onclick="javascript:fnDelProduct('<?php echo $value1['product_id']; ?>','<?php echo $value1['product_img']; ?>')"><img src="/images/delete-icon.png" alt="delete" /></a>
+                                </span>
+                            </li>
+                              <?php  }
+                          }else{?>
+                             <li>
+                                <img src="/images/th_productEmptyImg.jpg" width="90" height="90" alt="">
+                             </li>
+                         <?php }
+                        ?>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox.css?v=2.1.4" media="all" />     
+
+<script type="text/javascript" src="/js/jcarousels/jquery.jcarousel.min.js"></script>
+<script type="text/javascript" src="/js/jcarousels/jcarousel.connected-carousels.js"></script>
+<script type="text/javascript" src="/js/jquery.customSelect.js"></script>
+<script type="text/javascript" src="/js/product-detail.js"></script>
+
+<script type="text/javascript">
+//    function editProduct(productId){ 
+//        window.location = '/admin/product-management/product-detail/pid/'+productId;
+//    }
+jQuery(document).ready(function() {
+    $('.carousel-navigation').jcarousel({
+        itemLoadCallback: getCurrImage()
+    });
+
+    function getCurrImage(carousel, state){
+        console.log(carousel)
+        var currentImage = carousel.first-1;
+    }
+});
+</script>

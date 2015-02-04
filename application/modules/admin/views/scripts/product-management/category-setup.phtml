@@ -1,0 +1,249 @@
+<?php
+$tier1List = $this->tier1List;
+$tier2List = $this->tier2List;
+$tag1List = $this->tag1List;
+$tag2List = $this->tag2List;
+$tierTagMasterName = $this->tierTagMasterName;  
+
+$objProduct = new Admin_Model_Product();
+$firstProductId = $objProduct->fetchFirstProductId();
+?>
+
+<script src="/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+<script type="text/javascript" src="/js/jquery.tablesorter.js"></script>
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox.css?v=2.1.4" media="all" />
+<script type="text/javascript" src="/js/att-subatt.js"></script>
+
+
+<script>
+$( document ).ready(function() {
+     
+     $('#btnSubmit').click(function(){
+         
+        window.location.href= '#close';
+     })
+     
+     $('.clsDel').live('click' , function(){
+            var checkstr =  confirm('Are you sure you want to delete this?');
+            if(checkstr == true){
+              var tagVal = $(this).attr('id');
+              var catVal = $(this).attr('rel');
+              var action = '/admin/product-management/deltiertag/tid/'+tagVal+'/cat/'+catVal;
+              $.post(action);
+              $(this).parent().parent().remove();
+            //location.reload();
+            }else{
+            return false;
+            }
+      });
+});
+
+</script>
+
+<div class="button-block">
+                        <a href="javascript:void(0);" ><img src="/images/catergory-setup.png" alt="catergory setup" /></a>
+                        <a href="/admin/product-management/product-detail/pid/<?php echo $firstProductId; ?>"><img src="/images/product-detail-deselect.png" alt="product detail" /></a>
+                    </div>
+                  
+
+                    <div class="content-block">
+                        <p class="title">Core Hierarchical Tiers</p>
+        <!--***TIER 1*** -->             
+                    <div class="content-table">
+                        <p class="add-attr-btn"><a class="addAtt" href="/admin/product-management/addtierone/" data-fancybox-type="iframe"><img src="/images/plus.png" alt="plus" class="img-responsive"/></a>Add <input typr="text" style="border:none;cursor:pointer;color: #4D4D4D;" name="masterTier1Name" id="masterTier1Name" value="<?php echo $tierTagMasterName['tier1_name'];?>" title="Edit"/></p>
+                        <table id="attTier1" class="tablesorter">
+                             <thead class="t-head">
+                                <th class="tdw-95 tdleft">Tier 1
+                                    <span class="sort">
+                                        <a href="#" class="up"><img src="/images/sort-up.png" alt="sort" /></a>
+                                        <a href="#"><img src="/images/sort-down.png" alt="sort" /></a>
+                                    </span>
+                                </th>
+                                <th class="tdw-50">Image</th>
+                                <th class="tdw-40">Edit</th>
+                                <th class="tdw-52">Delete</th>
+                            </thead>
+                            <?php
+                            if(!empty($tier1List)){
+                                foreach($tier1List as $t1){ ?>
+
+                                <tr>
+                                    <td class="tdleft"><?php echo $t1["tier1_name"]; ?></td>
+                                    <td><a class ="addAtt" id="<?php echo $t1["tier1_id"]; ?>" href="<?php echo "/tier1Images/".$t1["tier1_image"]; ?>">
+                                            <img src="/images/camera-icon.png" alt="camera" />
+                                        </a>
+                                    </td>
+                                    <td><a class ="addAtt" id="<?php echo $t1["tier1_id"]; ?>" href="/admin/product-management/addtierone/tid/<?php echo $t1["tier1_id"]; ?>" data-fancybox-type="iframe">
+                                            <img src="/images/edit-icon.png" alt="edit" />
+                                        </a>
+                                    </td>
+                                    <td><a id="<?php echo $t1["tier1_id"]; ?>" class="clsDel"  rel="tier1">
+                                            <img src="/images/delete-icon.png" alt="delete" />
+                                        </a>
+                                    </td>
+
+                                </tr>
+
+                                <?php 
+                                }
+                            }else{?>
+                                <tr><td colspan="4">No Records Found.</td></tr>
+                            <?php }
+                            ?>
+                            
+                        </table>
+                    </div>
+        
+        <!--***TIER 2*** -->         
+                        
+                   <div class="content-table">
+                        <p class="add-attr-btn"><a class="addAtt" href="/admin/product-management/addtiertwo/" data-fancybox-type="iframe"><img src="/images/plus.png" alt="plus" class="img-responsive"/></a>Add <input typr="text" style="border:none;cursor:pointer;color: #4D4D4D;" name="masterTier2Name" id="masterTier2Name" value="<?php echo $tierTagMasterName['tier2_name'];?>" title="Edit"/></p>
+                        <table id="attTier2" class="tablesorter">
+                             <thead class="t-head">
+                                <th class="tdw-95 tdleft">Tier 2
+                                    <span class="sort">
+                                        <a href="#" class="up"><img src="/images/sort-up.png" alt="sort" /></a>
+                                        <a href="#"><img src="/images/sort-down.png" alt="sort" /></a>
+                                    </span>
+                                </th>
+                                <!--<th class="tdw-50">Photo</th>-->
+                                <th class="tdw-40">Edit</th>
+                                <th class="tdw-52">Delete</th>
+                            </thead>
+                            <?php
+                            if(!empty($tier2List)){
+                            foreach($tier2List as $t2){
+                            ?>
+                            
+                            <tr>
+                                <td class="tdleft"><?php echo $t2["tier2_name"]; ?></td>
+                                <!--td><a class ="addAtt" id="<?php //echo $t2["tier2_id"]; ?>" href="<?php //echo "/tier1Images/".$t2["tier2_image"]; ?>">
+                                        <img src="/images/camera-icon.png" alt="camera" />
+                                    </a>
+                                </td-->
+                                <td><a class ="addAtt" id="<?php echo $t2["tier2_id"]; ?>" href="/admin/product-management/addtiertwo/tid/<?php echo $t2["tier2_id"]; ?>" data-fancybox-type="iframe">
+                                        <img src="/images/edit-icon.png" alt="edit" />
+                                    </a>
+                                </td>
+                                <td><a id="<?php echo $t2["tier2_id"]; ?>" class="clsDel" href="#" rel="tier2">
+                                        <img src="/images/delete-icon.png" alt="delete" />
+                                    </a>
+                                </td>
+                             
+                            </tr>
+                            
+                            <?php 
+                            }
+                            }else{?>
+                                <tr><td colspan="4">No Records Found.</td></tr>
+                            <?php }
+                            ?>
+                        </table>
+                    </div>
+                    </div>
+
+
+
+                    <div class="content-block" style="padding: 20px 0 0 10px;">
+                        <p class="title">Additional Filter Tags</p>
+                   
+          <!--***---TAG 1---*** -->
+        
+                  <div class="content-table">
+                       
+                      <p class="add-attr-btn"><a class="addAtt" href="/admin/product-management/addtagone/" data-fancybox-type="iframe"><img src="/images/plus.png" alt="plus" class="img-responsive"/></a>Add <input typr="text" style="border:none;cursor:pointer;color: #4D4D4D;" name="masterTag1Name" id="masterTag1Name" value="<?php echo $tierTagMasterName['tag1_name'];?>" title="Edit"/></p>
+
+                        <table id="attTag1" class="tablesorter">
+                            <thead class="t-head">
+                                <th class="tdw-95 tdleft">Tag 1
+                                    <span class="sort">
+                                        <a href="#" class="up"><img src="/images/sort-up.png" alt="sort" /></a>
+                                        <a href="#"><img src="/images/sort-down.png" alt="sort" /></a>
+                                    </span>
+                                </th>
+                                <!--th class="tdw-50">Photo</th-->
+                                <th class="tdw-40">Edit</th>
+                                <th class="tdw-52">Delete</th>
+                            </thead>
+                            <?php
+                            if(!empty($tag1List)){
+                                foreach($tag1List as $tg1){
+                                ?>
+
+                                <tr>
+                                    <td class="tdleft"><?php echo $tg1["tag1_name"]; ?></td>
+                                    <!--td><a class ="addAtt" id="<?php //echo $tg1["tag1_id"]; ?>" href="<?php //echo "/tier1Images/".$tg1["tag1_image"]; ?>">
+                                            <img src="/images/camera-icon.png" alt="camera" />
+                                        </a>
+                                    </td-->
+                                    <td><a class ="addAtt" id="<?php echo $tg1["tag1_id"]; ?>" href="/admin/product-management/addtagone/tid/<?php echo $tg1["tag1_id"]; ?>" data-fancybox-type="iframe">
+                                            <img src="/images/edit-icon.png" alt="edit" />
+                                        </a>
+                                    </td>
+                                    <td><a id="<?php echo $tg1["tag1_id"]; ?>" class="clsDel" href="#" rel="tag1">
+                                            <img src="/images/delete-icon.png" alt="delete" />
+                                        </a>
+                                    </td>
+
+                                </tr>
+
+                                <?php 
+                                }
+                            }else{?>
+                                <tr><td colspan="4">No Records Found.</td></tr>
+                            <?php }
+                            ?>
+                        </table>
+                    </div>
+                    
+        
+        <!--***---TAG 2---*** -->
+        
+                   <div class="content-table">
+                         <p class="add-attr-btn"><a class="addAtt" href="/admin/product-management/addtagtwo/" data-fancybox-type="iframe"><img src="/images/plus.png" alt="plus" class="img-responsive"/></a>Add <input typr="text" style="border:none;cursor:pointer;color: #4D4D4D;" name="masterTag2Name" id="masterTag2Name" value="<?php echo $tierTagMasterName['tag2_name'];?>" title="Edit"/></p>
+                        <table id="attTag2" class="tablesorter">
+                            <thead class="t-head">
+                                <th class="tdw-95 tdleft">Tag 2
+                                    <span class="sort">
+                                        <a href="#" class="up"><img src="/images/sort-up.png" alt="sort" /></a>
+                                        <a href="#"><img src="/images/sort-down.png" alt="sort" /></a>
+                                    </span>
+                                </th>
+                                <!--th class="tdw-50">Photo</th-->
+                                <th class="tdw-40">Edit</th>
+                                <th class="tdw-52">Delete</th>
+                            </thead>
+                             <?php
+                             if(!empty($tag2List)){
+                                foreach($tag2List as $tg2){
+                                ?>
+
+                                <tr>
+                                    <td class="tdleft"><?php echo $tg2["tag2_name"]; ?></td>
+                                    <!--td><a class ="addAtt" id="<?php //echo $tg2["tag2_id"]; ?>" href="<?php //echo "/tier1Images/".$tg2["tag2_image"]; ?>">
+                                            <img src="/images/camera-icon.png" alt="camera" />
+                                        </a>
+                                    </td-->
+                                    <td><a class ="addAtt" id="<?php echo $tg2["tag2_id"]; ?>" href="/admin/product-management/addtagtwo/tid/<?php echo $tg2["tag2_id"]; ?>" data-fancybox-type="iframe">
+                                            <img src="/images/edit-icon.png" alt="edit" />
+                                        </a>
+                                    </td>
+                                    <td><a id="<?php echo $tg2["tag2_id"]; ?>" class="clsDel" href="#" rel="tag2">
+                                            <img src="/images/delete-icon.png" alt="delete" />
+                                        </a>
+                                    </td>
+
+                                </tr>
+
+                                <?php 
+                                }
+                            }else{?>
+                                <tr><td colspan="4">No Records Found.</td></tr>
+                            <?php }
+                            ?>
+                        </table>
+                    </div>
+                    </div>
+
+

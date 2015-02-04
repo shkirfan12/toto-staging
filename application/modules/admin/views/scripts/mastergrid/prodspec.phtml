@@ -1,0 +1,243 @@
+<script src="/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="/js/fancybox/source/jquery.fancybox.js?v=2.1.4"></script>
+<link rel="stylesheet" type="text/css" href="/js/fancybox/source/jquery.fancybox.css?v=2.1.4" media="all" />
+<link rel="stylesheet" type="text/css" href="/css/style.css" media="all" />
+<style>
+
+    .overlay-block-grid {
+        -moz-border-bottom-colors: none;
+        -moz-border-left-colors: none;
+        -moz-border-right-colors: none;
+        -moz-border-top-colors: none;
+        background: none repeat scroll 0 0 #FFFFFF;
+        border-color: #8CC63F -moz-use-text-color;
+        border-image: none;
+        border-style: solid none;
+        border-width: 40px 0;
+        display: table;
+        left: 0;
+        padding: 20px;
+        position: fixed;
+        top: 0;
+        width: 100%;
+    }
+
+    .sort {
+        float: right;
+        margin: 2px 0 0;
+        width: 20px;
+    }
+</style>
+
+<?php
+error_reporting(0);
+$attInfo = $this->attInfo;
+$arrProducts = $this->arrProducts; // Product Array
+$arrCalc = $this->arrCalc;         // Calculator Module Array
+$arrCalcBase = $this->arrCalcAndBase;
+
+print_r($arrCalcBase);
+
+$calcList = explode(",", $arrCalcBase["calcmod_id"]);
+
+
+$arrTemp = array();
+
+// Data for subattributes
+$arrSubatt = $this->data;
+$arrUnitsValue = array("prodId" => $arrSubatt['prodId'],
+    "subattIds" => $arrSubatt['arrSubatt'],
+    "units" => $arrSubatt['arrUnits'],
+    "values" => $arrSubatt['arrValues']);
+//$arrUnits = ;
+//print_r($arrSubatt);
+//Filter through all products and pull out baseline products
+
+
+foreach ($arrProducts as $p) {
+    if ($p['baseline'] == 'y') {
+        array_push($arrTemp, $p);
+    }
+}
+// Assigns baseline products
+$baseline = $arrTemp;
+?>    
+   
+
+ <script language="JavaScript" type="text/javascript">
+        $(document).ready(function() {
+            $('#btnSubmit').click(function(){
+                
+                 // parent.jQuery.fancybox.close();
+            })
+               
+//               $(".calClass").click(function () {
+//                    var ele = $(this).find(':checkbox');
+//                    if ($(':checked').length) {
+//                      ele.prop('checked', false);
+//                      $(this).removeClass('calClass');
+//                    } else {
+//                      ele.prop('checked', true);
+//                      $(this).addClass('calClass');
+//                    }
+//                 });
+//           
+        });
+       
+    </script>
+
+<div class="errors" id="errors"></div>
+<div class='contact-content' >
+
+    <div class="overlay-block-grid">
+        <!--h3 style="padding-left:65px;">Create Application</h3><br-->
+        <form name="frm_createApp" id="frm_createApp" action="/admin/mastergrid/manageprodspec" method="post" enctype="multipart/form-data" onsubmit="return validation();" >
+
+            <div class="calcBox" style="float: left; height:280px;  width: 50%; overflow-y:scroll; ">
+
+                <!-- CALCULATOR MODULE TABLE-->
+                <table id="attTable" class="tablesorter" border="0" >
+                    <thead class="t-head">
+                    <th class="tdw-130 tdleft"  style="cursor: pointer;">Calculator Name
+                        <span class="sort">
+                            <a href="#" class="up"><img src="/images/sort-up.png" alt="sort" /></a>
+                            <a href="#"><img src="/images/sort-down.png" alt="sort" /></a>
+                        </span>
+                    </th>
+                    <th class="tdw-60">Type</th>
+                    <th class="tdw-40">Select</th>
+                    </thead>
+
+                    <?php
+                 
+                    if (!empty($arrCalc)) {
+                        foreach ($arrCalc as $value) {
+                         
+                            ?>
+                            <tr>
+                                <td class="tdleft">
+                                    <?php echo $value['name']; ?>
+                                </td>
+
+                                <td class="tdleft">
+                                    <?php
+                                    if ($value['type'] == "C")
+                                        echo "Commercial";
+                                    else
+                                        echo "Residential";
+                                    ?> 
+                                    
+                                </td>
+
+                                <td>
+                                    <input id="calc_<?php echo $value['id']; ?>" name="calc_<?php echo $value['id']; ?>" type="checkbox" class="calClass" 
+                                           <?php for($c=0;$c<count($calcList);$c++){ if($calcList[$c] == $value['id']){ 
+                                                        echo "checked='1'";
+                                                        
+                                                        }
+                                                        else{
+                                                            echo "";
+                                                        }
+                                           }
+                                           ?> />  
+                                </td>
+                            </tr>
+                        <?php 
+                        $c++;
+                        }
+                    }else { ?>
+                        <tr><td colspan="4">No Record found.</td></tr>
+                    <?php } ?>
+                </table>
+            </div>
+
+            <div style="float: left; width: 46%; overflow-y: auto; height: 281px;">
+                <!-- BASE LINE PRODUCT TABLE-->
+                <table id="attTable" class="tablesorter" border="0" >
+                    <thead class="t-head">
+        <!--            <tr class="t-head">-->
+                    <th class="tdw-130 tdleft"  style="cursor: pointer;">Baseline Products
+                        <span class="sort">
+                            <a href="#" class="up"><img src="/images/sort-up.png" alt="sort" /></a>
+                            <a href="#"><img src="/images/sort-down.png" alt="sort" /></a>
+                        </span>
+                    </th>
+
+                    <th class="tdw-40">Select</th>
+
+                    <!--            </tr>-->
+                    </thead>
+
+                    <?php
+                    if (!empty($baseline)) {
+                        foreach ($baseline as $value) {
+                            ?>
+                            <tr>
+                                <td class="tdleft">
+                                    <?php echo $value['product_name']; ?>
+                                </td>
+
+                                <td>
+                                    <input id="base_<?php echo $value['product_id']; ?>" name="base_<?php echo $value['product_id']; ?>" type="checkbox" class="baseClass"
+                                            <?php if($arrCalcBase["baseline_id"] == $value['product_id']){ 
+                                                        echo "checked='1'";
+                                                        
+                                                        }
+                                                        else{
+                                                            echo "";
+                                                        }
+                                           ?>
+                                           />  
+                                </td>
+                            </tr>
+                        <?php }
+                    } else { ?>
+                        <tr><td colspan="4">No Record found.</td></tr>
+                    <?php } ?>
+                </table>
+
+
+            </div>
+            <p style="float: left; margin-bottom: 10px; width: 100%;">
+                <input id="btnSubmit" type="submit" name="submit" value="Assign and Save" />
+
+                <!-- SUV : Sub attributes - Units - Values -->
+                <input type="hidden" name="hdnSUV" value="<?php print_r($arrUnitsValue); ?>"/>
+            </p>
+
+        </form>
+    </div>
+</div> 
+
+<script type="text/javascript">
+
+    function validation(){
+        var errorCount  = 0;
+        var alphaExp    = /^[a-zA-Z\s]+$/;
+        var alphaNumExp = /^[a-zA-Z0-9\s]+$/;
+        var numExp      = /^[0-9]+$/;
+
+        $('#errors').html('');
+        if(($('#tiertag_title').val() == '')){
+            errorCount++;
+            $('<font color="red" style="font-family: verdana; font-size: 12px;">Attribute Name cannot be blank.</font><br>').appendTo('#errors');
+        }
+        if(($('#imgfile').val() != '')){
+            var rootPath  = '<?php echo $_SERVER['DOCUMENT_ROOT']; ?>'; 
+            var fileName  = '';//document.getElementById('imgfile').value;
+            var imgPath   = "file:///"+rootPath+"attributeImages/thumb/th_"+ fileName; 
+            var extension = fileName.split('.');
+            var ext       = extension['1'].toLowerCase();
+            if( (ext != 'jpeg') && (ext != 'jpg') && (ext != 'png') && (ext != 'gif') && (ext !='bmp')){
+                errorCount++;
+                $('<font color="red" style="font-family: verdana; font-size: 12px;">Invalid File Format.<br>Please select .jpeg, .jpg, .png, .gif, .bmp file</font><br>').appendTo('#errors');
+            }
+        }
+       
+        if(errorCount == 0){ 
+            return true; //parent.$.fancybox.close();
+        }else{
+            return false;
+        }
+    }
+</script>
