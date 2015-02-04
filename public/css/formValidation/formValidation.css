@@ -1,0 +1,69 @@
+
+
+/*@import url('bootstrap.min.css');
+@import url('bootstrap-responsive.min.css');*/
+
+/* New styles below */
+
+/*label .valid {
+    width: 24px;
+    height: 24px;
+    background: url(/img/valid.png) center center no-repeat;
+    display: inline-block;
+    text-indent: -9999px;
+}*/
+.first-col .error {
+    color: red !important;
+    font-size: 10px !important;
+    font-weight: normal;
+    margin-top: 2px;
+    padding: 2px 8px;
+    width: auto !important;
+}
+.account-row-2 .error{
+    color: red !important;
+    font-size: 10px !important;
+    font-weight: normal;
+    margin-top: 2px;
+    padding: 2px 8px;
+    width: auto !important;
+}
+
+#box-education .error {
+    color: red !important;
+    font-size: 10px !important;
+    font-weight: normal;
+    margin-top: 2px;
+    padding: 2px 7px;
+    width: auto !important;
+}
+#box-employment-history .error {
+    color: red !important;
+    font-size: 10px !important;
+    font-weight: normal;
+    margin-top: 2px;
+    padding: 2px 8px;
+    width: auto !important;
+}
+#box-references .error {
+    color: red !important;
+    font-size: 10px !important;
+    font-weight: normal;
+    margin-top: 2px;
+    padding: 2px 8px;
+    width: auto !important;
+}
+#langingLogin .error {
+    color: red !important;
+    font-size: 10px !important;
+    font-weight: normal;
+    margin-top: 2px;
+    padding: 2px 8px;
+    width: auto !important;
+}
+.account-information .error {
+	padding: 2px 8px 2px 95px;
+}
+#contact-form .error {
+    padding: 2px 8px 2px 95px;
+}

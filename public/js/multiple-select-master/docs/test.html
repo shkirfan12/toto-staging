@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Multiple Select</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width">
+  <meta content="Multiple Select" property="og:title">
+  <meta content="Multiple select is a jQuery plugin to select multiple elements with checkboxes :)." name="description">
+  
+  <!-- css -->
+  <link rel="stylesheet" href="css/base.css" />
+
+  <script src="assets/jquery.min.js"></script>
+  <script src="assets/es5-shim.min.js"></script>
+  <!-- Flatdoc -->
+  <script src="assets/flatdoc/legacy.js"></script>
+  <script src="assets/flatdoc/flatdoc.js"></script>
+
+  <!-- Flatdoc theme -->
+  <link href="assets/flatdoc/theme-white/style.css" rel="stylesheet">
+  <script src="assets/flatdoc/theme-white/script.js"></script>
+
+  <!-- Multiple Select -->
+  <link href="../multiple-select.css" rel="stylesheet" />
+  <script src="../jquery.multiple.select.js"></script>
+  
+  <!--[if lt IE 9]>
+    <script src="assets/html5shiv.js"></script>
+    <script src="assets/respond.min.js"></script>
+  <![endif]-->
+
+  <!-- js -->
+  <script src="js/index.js"></script>
+</head>
+<body role="flatdoc">
+ <select multiple="multiple" id="vid">
+     <option value="1">January_1</option>
+     <option value="2">January_2</option> 
+     <option value="3">January_3</option> 
+     <option value="4">January_4</option> 
+     <option value="5">January_5</option>
+     <option value="6">December_6</option>
+    </select>
+    <script>
+        $('#vid').multipleSelect();
+    </script>
+      
+</body>
+</html>
